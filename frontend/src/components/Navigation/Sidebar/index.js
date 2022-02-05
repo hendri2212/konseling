@@ -32,9 +32,9 @@ class Sidebar extends Component {
         {/* <!-- Sidebar - Brand --> */}
         <a className="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
           <div className="sidebar-brand-icon rotate-n-15">
-            <i className="fas fa-laugh-wink"></i>
+            <i className="fas fa-book"></i>
           </div>
-          <div className="sidebar-brand-text mx-3">SB Admin <sup>2</sup></div>
+          <div className="sidebar-brand-text mx-3">Konseling</div>
         </a>
 
         {/* <!-- Divider --> */}
@@ -52,11 +52,78 @@ class Sidebar extends Component {
 
         {/* <!-- Heading --> */}
         <div className="sidebar-heading">
-          Interface
+          Bio Sekolah
         </div>
 
-        {/* <!-- Nav Item - Pages Collapse Menu --> */}
+        {/* <!-- Nav Item - Identitas Sekolah --> */}
         <li className="nav-item">
+          <Link className="nav-link" to="/identitas-sekolah">
+            <i className="fas fa-fw fa-chart-area"></i>
+            <span>Identitas Sekolah</span>
+          </Link>
+        </li>
+
+        {/* <!-- Nav Item - Data Siswa --> */}
+        <li className="nav-item">
+          <Link className="nav-link" to="/identitas-sekolah">
+            <i className="fas fa-fw fa-chart-area"></i>
+            <span>Data Siswa</span>
+          </Link>
+        </li>
+
+        {/* <!-- Divider --> */}
+        <hr className="sidebar-divider" />
+
+        {/* <!-- Heading --> */}
+        <div className="sidebar-heading">
+          Angket Kebutuhan Peserta Didik
+        </div>
+
+        {/* <!-- Nav Item - Kelola AKPD --> */}
+        <li className="nav-item">
+          <Link className="nav-link" to="/">
+            <i className="fas fa-fw fa-chart-area"></i>
+            <span>Kelola Butir AKPD</span>
+          </Link>
+        </li>
+
+        <li className="nav-item">
+          <Link className="nav-link" to="/">
+            <i className="fas fa-fw fa-chart-area"></i>
+            <span>Kelola jawaban Peserta Didik</span>
+          </Link>
+        </li>
+
+        {/* <!-- Divider --> */}
+        <hr className="sidebar-divider" />
+
+        {/* <!-- Heading --> */}
+        <div className="sidebar-heading">
+          Hasil Analisis
+        </div>
+
+        {/* <!-- Nav Item - Profil Kelas --> */}
+        <li className="nav-item">
+          <Link className="nav-link" to="/charts">
+            <i className="fas fa-fw fa-chart-area"></i>
+            <span>Profil Kelas</span>
+          </Link>
+        </li>
+
+        {/* <!-- Nav Item - Profil Konseling --> */}
+        <li className="nav-item">
+          <Link className="nav-link" to="/charts">
+            <i className="fas fa-fw fa-chart-area"></i>
+            <span>Profil Konseling</span>
+          </Link>
+        </li>
+
+        {/* <!-- Divider --> */}
+        <hr className="sidebar-divider d-none d-md-block" />
+
+        {/* <!-- Nav Item - Pages Collapse Menu --> */}
+        {/* <li className="nav-item">
+
           <a className='nav-link collapsed' href="#" data-toggle="collapse" data-target="#collapseTwo"  aria-controls="collapseTwo">
             <i className="fas fa-fw fa-cog"></i>
             <span>Components</span>
@@ -68,49 +135,15 @@ class Sidebar extends Component {
               <Link className="collapse-item" to="/cards">Cards</Link>
             </div>
           </div>
-        </li>
-
-        {/* <!-- Nav Item - Utilities Collapse Menu --> */}
-        <li className="nav-item">
-          <a className="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities" aria-expanded="true" aria-controls="collapseUtilities">
-            <i className="fas fa-fw fa-wrench"></i>
-            <span>Utilities</span>
-          </a>
-          <div id="collapseUtilities" className="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
-            <div className="bg-white py-2 collapse-inner rounded">
-              <h6 className="collapse-header">Custom Utilities:</h6>
-              <a className="collapse-item" href="utilities-color.html">Colors</a>
-              <a className="collapse-item" href="utilities-border.html">Borders</a>
-              <a className="collapse-item" href="utilities-animation.html">Animations</a>
-              <a className="collapse-item" href="utilities-other.html">Other</a>
-            </div>
-          </div>
-        </li>
-
-        {/* <!-- Divider --> */}
-        <hr className="sidebar-divider" />
-
-        {/* <!-- Heading --> */}
-        <div className="sidebar-heading">
-          Addons
-        </div>
+        </li> */}
 
         {/* <!-- Nav Item - Charts --> */}
-        <li className="nav-item">
+        {/* <li className="nav-item">
           <Link className="nav-link" to="/charts">
             <i className="fas fa-fw fa-chart-area"></i>
-            <span>Charts</span></Link>
-        </li>
-
-        {/* <!-- Nav Item - Tables --> */}
-        <li className="nav-item">
-          <a className="nav-link" href="tables.html">
-            <i className="fas fa-fw fa-table"></i>
-            <span>Tables</span></a>
-        </li>
-
-        {/* <!-- Divider --> */}
-        <hr className="sidebar-divider d-none d-md-block" />
+            <span>Charts</span>
+          </Link>
+        </li> */}
 
         {/* <!-- Sidebar Toggler (Sidebar) --> */}
         <div className="text-center d-none d-md-inline">
