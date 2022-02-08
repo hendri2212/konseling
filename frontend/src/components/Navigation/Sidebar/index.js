@@ -119,6 +119,56 @@ class Sidebar extends Component {
         </li>
 
         {/* <!-- Divider --> */}
+        <hr className="sidebar-divider" />
+
+        {/* <!-- Heading --> */}
+        <div className="sidebar-heading">
+          Kelola
+        </div>
+
+        <li className="nav-item">
+          <Link className="nav-link" to="/">
+            <i className="fas fa-fw fa-chart-area"></i>
+            <span>Kelola Rumusan Tujuan</span>
+          </Link>
+        </li>
+
+        <li className="nav-item">
+          <Link className="nav-link" to="/">
+            <i className="fas fa-fw fa-chart-area"></i>
+            <span>Kelola Komponen Program</span>
+          </Link>
+        </li>
+
+        <li className="nav-item">
+          <Link className="nav-link" to="/">
+            <i className="fas fa-fw fa-chart-area"></i>
+            <span>Kelola Action Plan</span>
+          </Link>
+        </li>
+
+        <li className="nav-item">
+          <Link className="nav-link" to="/">
+            <i className="fas fa-fw fa-chart-area"></i>
+            <span>Kelola Jadwal Kegiatan</span>
+          </Link>
+        </li>
+
+        <li className="nav-item">
+          <Link className="nav-link" to="/">
+            <i className="fas fa-fw fa-chart-area"></i>
+            <span>Kelola Program Semester</span>
+          </Link>
+        </li>
+
+        <li className="nav-item">
+          <Link className="nav-link" to="/">
+            <i className="fas fa-fw fa-chart-area"></i>
+            <span>Kelola Rencana Pelaksanaan Layanan</span>
+          </Link>
+        </li>
+
+        {/* <!-- Divider --> */}
         <hr className="sidebar-divider d-none d-md-block" />
 
         {/* <!-- Nav Item - Pages Collapse Menu --> */}
