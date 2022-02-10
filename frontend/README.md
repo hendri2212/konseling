@@ -1,6 +1,10 @@
 # SB Admin 2 (React Version)
 > React version SB Admin 2
 
+# Features
+- React version SB Admin 2 : 
+- react-data-table-component : https://www.npmjs.com/package/react-data-table-component
+
 **Under Construction** <br/>
 A React version of admin template [SB Admin 2](https://startbootstrap.com/themes/sb-admin-2/) created by [Start Bootstrap](https://startbootstrap.com).
 
