@@ -19,6 +19,7 @@ const Routes = () => (
             <Route exact path="/" component={SignIn} />
             <Route exact path="/dashboard" component={Dashboard} />
             <Route path="/signup" component={SignUp} />
+            <Route path="/kelas" component={Kelas} />
             <Route path="/identitas-sekolah" component={IdentitasSekolah} />
             {/* <Route path="/cards" component={Cards} /> */}
             {/* <Route path="/charts" component={Charts} /> */}
