@@ -63,11 +63,19 @@ class Sidebar extends Component {
           </Link>
         </li>
 
+        {/* <!-- Nav Item - Data Kelas --> */}
+        <li className="nav-item">
+          <Link className="nav-link" to="/kelas">
+            <i className="fas fa-fw fa-chart-area"></i>
+            <span>Kelas</span>
+          </Link>
+        </li>
+
         {/* <!-- Nav Item - Data Siswa --> */}
         <li className="nav-item">
           <Link className="nav-link" to="/identitas-sekolah">
             <i className="fas fa-fw fa-chart-area"></i>
-            <span>Data Siswa</span>
+            <span>Data Peserta Didik</span>
           </Link>
         </li>
 
@@ -83,14 +91,14 @@ class Sidebar extends Component {
         <li className="nav-item">
           <Link className="nav-link" to="/">
             <i className="fas fa-fw fa-chart-area"></i>
-            <span>Kelola Butir AKPD</span>
+            <span>Kelola Soal AKPD</span>
           </Link>
         </li>
 
         <li className="nav-item">
           <Link className="nav-link" to="/">
             <i className="fas fa-fw fa-chart-area"></i>
-            <span>Kelola jawaban Peserta Didik</span>
+            <span>Jawaban Peserta Didik</span>
           </Link>
         </li>
 
@@ -115,56 +123,6 @@ class Sidebar extends Component {
           <Link className="nav-link" to="/charts">
             <i className="fas fa-fw fa-chart-area"></i>
             <span>Profil Konseling</span>
-          </Link>
-        </li>
-
-        {/* <!-- Divider --> */}
-        <hr className="sidebar-divider" />
-
-        {/* <!-- Heading --> */}
-        <div className="sidebar-heading">
-          Kelola
-        </div>
-
-        <li className="nav-item">
-          <Link className="nav-link" to="/">
-            <i className="fas fa-fw fa-chart-area"></i>
-            <span>Kelola Rumusan Tujuan</span>
-          </Link>
-        </li>
-
-        <li className="nav-item">
-          <Link className="nav-link" to="/">
-            <i className="fas fa-fw fa-chart-area"></i>
-            <span>Kelola Komponen Program</span>
-          </Link>
-        </li>
-
-        <li className="nav-item">
-          <Link className="nav-link" to="/">
-            <i className="fas fa-fw fa-chart-area"></i>
-            <span>Kelola Action Plan</span>
-          </Link>
-        </li>
-
-        <li className="nav-item">
-          <Link className="nav-link" to="/">
-            <i className="fas fa-fw fa-chart-area"></i>
-            <span>Kelola Jadwal Kegiatan</span>
-          </Link>
-        </li>
-
-        <li className="nav-item">
-          <Link className="nav-link" to="/">
-            <i className="fas fa-fw fa-chart-area"></i>
-            <span>Kelola Program Semester</span>
-          </Link>
-        </li>
-
-        <li className="nav-item">
-          <Link className="nav-link" to="/">
-            <i className="fas fa-fw fa-chart-area"></i>
-            <span>Kelola Rencana Pelaksanaan Layanan</span>
           </Link>
         </li>
 
