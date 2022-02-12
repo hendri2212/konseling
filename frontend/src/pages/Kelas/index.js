@@ -1,33 +1,40 @@
-import { Component } from "react";
 import PageHeading from "../../components/PageHeading";
 
 //Navigation
 import Sidebar from '../../components/Navigation/Sidebar';
 import Topbar from '../../components/Navigation/Topbar';
 import CardDefault from "../../components/Cards/Default";
-import DataTable from "react-data-table-component";
 
 function Kelas() {
-    const columns = [
-        {
-            name: 'Kelas',
-            selector: row => row.kelas,
-        },
-    ];
-    
+
+    // raw data
     const data = [
         {
             id: 1,
-            kelas: '7',
-            year: '1988',
+            kelas: '10',
+            year: '2021',
         },
         {
             id: 2,
-            kelas: '8',
-            year: '1984',
+            kelas: '11',
+            year: '2021',
+        },
+        {
+            id: 3,
+            kelas: '12',
+            year: '2021',
         },
     ];
-    
+
+    // data mapping & table body
+    const tableBody = data.map((item) =>
+        <tr>
+            <th scope="row">{item.id}</th>
+            <td>{item.kelas}</td>
+            <td></td>
+        </tr>
+    );
+
     return (
         <div>
             <div id="wrapper">
@@ -51,12 +58,19 @@ function Kelas() {
 
                             <div className="row">
                                 <div class="col-lg-12">
-                                    <CardDefault title="Card Default Example">
-                                        <DataTable
-                                            columns={columns}
-                                            data={data}
-                                            pagination
-                                        />
+                                    <CardDefault title="SMK Negeri 1 Kotabaru">
+                                        <table className="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">No</th>
+                                                    <th scope="col">Kelas</th>
+                                                    <th scope="col">actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {tableBody}
+                                            </tbody>
+                                        </table>
                                     </CardDefault>
                                 </div>
                             </div>
