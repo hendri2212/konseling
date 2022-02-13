@@ -1,4 +1,6 @@
+import { useState } from "react";
 import PageHeading from "../../components/PageHeading";
+import { Button, Modal, Form } from 'react-bootstrap';
 
 //Navigation
 import Sidebar from '../../components/Navigation/Sidebar';
@@ -26,12 +28,54 @@ function Kelas() {
         },
     ];
 
+
+    const [show, setShow] = useState(false);
+
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+
     // data mapping & table body
     const tableBody = data.map((item) =>
         <tr>
             <th scope="row">{item.id}</th>
             <td>{item.kelas}</td>
-            <td></td>
+            <td>
+                <Button variant="warning" onClick={handleShow}>
+                    Edit
+                </Button>
+
+                <Modal
+                    show={show}
+                    onHide={handleClose}
+                    backdrop="static"
+                    keyboard={false}>
+                    <Modal.Header>
+                        <Modal.Title>id: {item.id}</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <Form>
+                            <Form.Group controlId="formBasicEmail">
+                                <Form.Label>Kelas</Form.Label>
+                                <Form.Control type="text" placeholder="Enter kelas" />
+                                <Form.Text className="text-muted">
+                                    Masukkan nama kelas.
+                                </Form.Text>
+                            </Form.Group>
+                            <Form.Group controlId="formBasicCheckbox">
+                                <Form.Check type="checkbox" label="Check me out" />
+                            </Form.Group>
+                            <Button variant="primary" type="submit">
+                                Submit
+                            </Button>
+                        </Form>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={handleClose}>
+                            Close
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+            </td>
         </tr>
     );
 
@@ -57,7 +101,7 @@ function Kelas() {
                             {/* <!-- Content Row --> */}
 
                             <div className="row">
-                                <div class="col-lg-12">
+                                <div className="col-lg-12">
                                     <CardDefault title="SMK Negeri 1 Kotabaru">
                                         <table className="table table-hover">
                                             <thead>
