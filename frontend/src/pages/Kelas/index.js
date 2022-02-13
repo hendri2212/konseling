@@ -6,8 +6,9 @@ import { Button, Modal, Form } from 'react-bootstrap';
 import Sidebar from '../../components/Navigation/Sidebar';
 import Topbar from '../../components/Navigation/Topbar';
 import CardDefault from "../../components/Cards/Default";
+import ModalForm from "./modal";
 
-function Kelas() {
+function Kelas(props) {
 
     // raw data
     const data = [
@@ -29,10 +30,25 @@ function Kelas() {
     ];
 
 
-    const [show, setShow] = useState(false);
-
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
+    const deleteItem = id => {
+        let confirmDelete = window.confirm('Delete item forever?');
+        if (confirmDelete) {
+            fetch('http://localhost:3000/crud', {
+                method: 'delete',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    id
+                })
+            })
+                .then(response => response.json())
+                .then(item => {
+                    props.deleteItemFromState(id)
+                })
+                .catch(err => console.log(err));
+        }
+    }
 
     // data mapping & table body
     const tableBody = data.map((item) =>
@@ -40,41 +56,13 @@ function Kelas() {
             <th scope="row">{item.id}</th>
             <td>{item.kelas}</td>
             <td>
-                <Button variant="warning" onClick={handleShow}>
-                    Edit
+                <ModalForm
+                    buttonLabel="Edit"
+                    item={item}
+                    updateState={props.updateState} />
+                <Button variant="danger" onClick={() => deleteItem(item.id)}>
+                    Delete
                 </Button>
-
-                <Modal
-                    show={show}
-                    onHide={handleClose}
-                    backdrop="static"
-                    keyboard={false}>
-                    <Modal.Header>
-                        <Modal.Title>id: {item.id}</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <Form>
-                            <Form.Group controlId="formBasicEmail">
-                                <Form.Label>Kelas</Form.Label>
-                                <Form.Control type="text" placeholder="Enter kelas" />
-                                <Form.Text className="text-muted">
-                                    Masukkan nama kelas.
-                                </Form.Text>
-                            </Form.Group>
-                            <Form.Group controlId="formBasicCheckbox">
-                                <Form.Check type="checkbox" label="Check me out" />
-                            </Form.Group>
-                            <Button variant="primary" type="submit">
-                                Submit
-                            </Button>
-                        </Form>
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="secondary" onClick={handleClose}>
-                            Close
-                        </Button>
-                    </Modal.Footer>
-                </Modal>
             </td>
         </tr>
     );
