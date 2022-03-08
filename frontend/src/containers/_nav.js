@@ -29,7 +29,7 @@ export default [
         _name: 'CSidebarNavItem',
         name: 'Data Peserta Didik',
         to: '/bio/peserta-didik',
-        icon: 'cil-school'
+        icon: 'cil-pencil'
       },
       // angket kebutuhan peserta didik
       {
@@ -57,7 +57,7 @@ export default [
         _name: 'CSidebarNavItem',
         name: 'Analisis Profil Kelas',
         to: '/analisis/profil-kelas',
-        icon: 'cib-google-analytics'
+        icon: 'cil-pencil'
       },
       {
         _name: 'CSidebarNavItem',
