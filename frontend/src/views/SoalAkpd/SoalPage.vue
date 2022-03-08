@@ -5,26 +5,9 @@
         Soal AKPD
 
         <div class="card-header-actions">
-          <CButton color="primary" @click="showModal = true"
-            >Tambah Soal</CButton
-          >
-          <CModal title="Add Kelas" :show.sync="showModal">
-            <CRow>
-              <CCol sm="12">
-                <CInput label="Kelas" placeholder="Masukkan Kelas" />
-              </CCol>
-              <CCol sm="12">
-                <CInput label="Tahun" placeholder="Masukkan Tahun" />
-              </CCol>
-            </CRow>
+          <CButton color="primary" @click="$refs.addModal.setModal(true)">Tambah Soal</CButton>
 
-            <template #footer>
-              <CButton color="secondary" @click="showModal = false"
-                >Close</CButton
-              >
-              <CButton color="primary">Save</CButton>
-            </template>
-          </CModal>
+          <SoalModal ref="addModal"></SoalModal>
         </div>
       </CCardHeader>
 
@@ -60,28 +43,49 @@
             >
               <CCardBody>
                 <CMedia :aside-image-props="{ height: 102 }">
-                  <h4>Bidang: {{ item.nama_bidang }}</h4>
-                  <p class="text-muted">
-                    SKKPD: {{ item.SKKPD }} <br />
-                    pengenalan: {{ item.pengenalan }} <br />
-                    akomodasi: {{ item.akomodasi }} <br />
-                    tindakan: {{ item.tindakan }}
-                  </p>
-                  <CButton size="sm" color="info"> Edit </CButton>
-                  <CButton size="sm" color="danger" class="ml-1">
-                    Delete
-                  </CButton>
+                  <table>
+                    <thead>
+                      <th>Bidang</th>
+                      <th>SKKPD</th>
+                      <th>Pengenalan</th>
+                      <th>Akomodasi</th>
+                      <th>Tindakan</th>
+                    </thead>
+                    <tbody>
+                      <td>{{ item.nama_bidang }}</td>
+                      <td>{{ item.SKKPD }}</td>
+                      <td>{{ item.pengenalan }}</td>
+                      <td>{{ item.akomodasi }}</td>
+                      <td>{{ item.tindakan }}</td>
+                      <td>
+                        <CButton size="sm" color="info" @click="$refs.addModal.setModal(true, item)"> Edit </CButton>
+                        <CButton size="sm" color="danger" class="ml-1" @click="(deleteData.id = item.id), (deleteData.modal = true)">
+                          Delete
+                        </CButton>
+                      </td>
+                    </tbody>
+                  </table>
                 </CMedia>
               </CCardBody>
             </CCollapse>
           </template>
         </CDataTable>
+
+        <CModal title="Hapus Soal" color="danger" :show.sync="deleteData.modal">
+          {{ deleteData.id }} delete Permanent?
+          <template #footer>
+            <CButton color="primary" variant="outline" @click="deleteData.modal = false">Close</CButton>
+            <CButton @click="deleteSoal">Yes</CButton>
+          </template>
+        </CModal>
       </CCardBody>
     </CCard>
   </div>
 </template>
 
 <script>
+import SoalModal from "./SoalModal.vue";
+
 // data items
 const items = [
   {
@@ -138,13 +142,15 @@ const fields = [
     label: "",
     _style: "width:1%",
     sorter: false,
-    filter: false,
-    showModal: false,
+    filter: false
   },
 ];
 
 export default {
   name: "KelasPage",
+  components: {
+    SoalModal,
+  },
   data() {
     return {
       items: items.map((item, id) => {
@@ -153,7 +159,10 @@ export default {
       fields,
       details: [],
       collapseDuration: 0,
-      showModal: false,
+      deleteData: {
+        id: null,
+        modal: false,
+      },
     };
   },
   methods: {
@@ -163,6 +172,15 @@ export default {
       this.$nextTick(() => {
         this.collapseDuration = 0;
       });
+    },
+    deleteSoal() {
+      console.log(this.deleteData.id);
+      // di sini fungsi axios
+
+      // hapus data di frontend
+      this.items.splice(this.deleteData.id, 1);
+
+      this.deleteData.modal = false;
     },
   },
 };
