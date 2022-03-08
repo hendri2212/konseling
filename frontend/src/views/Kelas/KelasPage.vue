@@ -45,10 +45,10 @@
           </template>
         </CDataTable>
 
-        <CModal title="Delete" color="danger" :show.sync="deleteData.modal">
-          Delete Permanent? {{ deleteData.id }}
+        <CModal title="Hapus Kelas" color="danger" :show.sync="deleteData.modal">
+          {{ deleteData.id }} delete Permanent?
           <template #footer>
-            <CButton color="primary" @click="showModal = false">Close</CButton>
+            <CButton color="primary" variant="outline" @click="deleteData.modal = false">Close</CButton>
             <CButton @click="deleteKelas">Yes</CButton>
           </template>
         </CModal>
@@ -119,6 +119,8 @@ export default {
 
       // hapus data di frontend
       this.items.splice(this.deleteData.id, 1);
+
+      this.deleteData.modal = false;
     },
   },
 };
