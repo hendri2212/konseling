@@ -1,15 +1,9 @@
 <template>
   <div>
     <CCard accent-color="primary">
-      <!-- <CCardHeader>
+      <CCardHeader>
         Jawaban Peserta Didik
-
-        <div class="card-header-actions">
-          <CButton color="primary" @click="$refs.addModal.setModal(true)"
-            >Tambah Kelas</CButton
-          >
-        </div>
-      </CCardHeader> -->
+      </CCardHeader>
 
       <CCardBody>
         <CDataTable
