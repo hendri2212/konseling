@@ -14,7 +14,7 @@
     /> -->
 
     <CHeaderNav class="mr-4">
-        <UserAccount />
+        <!-- <UserAccount /> -->
     </CHeaderNav>
 
     <CSubheader class="px-3">
