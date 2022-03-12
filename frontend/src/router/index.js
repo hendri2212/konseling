@@ -8,6 +8,7 @@ const TheContainer = () => import('@/containers/TheContainer')
 const DashboardPage = () => import('@/views/DashboardPage')
 const KelasPage = () => import('@/views/Kelas/KelasPage')
 const SoalPage = () => import('@/views/SoalAkpd/SoalPage')
+const JawabanPage = () => import('@/views/JawabanPeserta/JawabanPage')
 
 Vue.use(Router)
 
@@ -40,6 +41,11 @@ function configRoutes() {
           path: '/akpd/soal',
           name: 'Soal AKPD',
           component: SoalPage
+        },
+        {
+          path: '/akpd/jawaban',
+          name: 'Jawaban Peserta Didik',
+          component: JawabanPage
         },
         // {
         //   path: 'buttons',
