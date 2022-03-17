@@ -41,10 +41,25 @@ return [
             'provider' => 'users',
         ],
 
-        'api' => [
-            'driver' => 'token',
-            'provider' => 'users',
-            'hash' => false,
+        // 'api' => [
+        //     'driver' => 'token',
+        //     'provider' => 'users',
+        //     'hash' => false,
+        // ],
+
+        'admin' => [
+            'driver' => 'sanctum',
+            'provider' => 'admin',
+        ],
+    
+        'guru' => [
+            'driver' => 'sanctum',
+            'provider' => 'guru',
+        ],
+    
+        'siswa' => [
+            'driver' => 'sanctum',
+            'provider' => 'siswa',
         ],
     ],
 
@@ -68,7 +83,22 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => App\User::class,
+            'model' => App\Models\User::class,
+        ],
+
+        'admin' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\AdminUser::class,
+        ],
+    
+        'guru' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\GuruUser::class,
+        ],
+    
+        'siswa' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\SiswaUser::class,
         ],
 
         // 'users' => [

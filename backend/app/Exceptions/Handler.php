@@ -3,7 +3,8 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Throwable;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class Handler extends ExceptionHandler
 {
@@ -27,29 +28,49 @@ class Handler extends ExceptionHandler
     ];
 
     /**
-     * Report or log an exception.
+     * Register the exception handling callbacks for the application.
      *
-     * @param  \Throwable  $exception
      * @return void
-     *
-     * @throws \Throwable
      */
-    public function report(Throwable $exception)
+    public function register()
     {
-        parent::report($exception);
+        // $this->renderable(function (\Illuminate\Auth\AuthenticationException $e, $request) {
+        //     if ($request->is('api/*')) {
+        //         return response()->json([
+        //             'status' => 'error',
+        //             'errors' => [
+        //                 'global' => 'Unauthorized'
+        //             ],
+        //             'data' => []
+        //         ], 401);
+        //     }
+        // });
+
+        // $this->renderable(function (AccessDeniedHttpException $e, $request) {
+        //     if ($request->is('api/*')) {
+        //         return response()->json([
+        //             'status' => 'error',
+        //             'errors' => [
+        //                 'global' => 'Tidak diizinkan mengakses resource'
+        //             ],
+        //             'data' => []
+        //         ], 403);
+        //     }
+        // });
+
+        // $this->renderable(function (HttpException $e, $request) {
+        //     if ($request->is('api/*')) {
+        //         if ($e->getStatusCode() == 422) {
+        //             $response = [
+        //                 'status' => 'error',
+        //                 'errors' => $e->getMessage(),
+        //                 'data' => []
+        //             ];
+        //         }
+        //         return response()->json($response, $e->getStatusCode());
+        //     }
+        // });
     }
 
-    /**
-     * Render an exception into an HTTP response.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Throwable  $exception
-     * @return \Symfony\Component\HttpFoundation\Response
-     *
-     * @throws \Throwable
-     */
-    public function render($request, Throwable $exception)
-    {
-        return parent::render($request, $exception);
-    }
+    
 }
