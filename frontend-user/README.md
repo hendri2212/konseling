@@ -1,6 +1,4 @@
-# vue-konseling
-
-coreui : https://coreui.io/vue/docs/3.1/introduction/
+# frontend-user
 
 ## Project setup
 ```
