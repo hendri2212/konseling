@@ -1,22 +1,13 @@
 <template>
   <div class="home container-sm p-4">
     <div class="row justify-content-center">
-      <!-- <div class="col-sm-3 p-4 border collapse " id="collapseSoal">
-        <a class="btn btn-close" data-bs-toggle="collapse" href="#collapseSoal" role="button" aria-expanded="false" aria-controls="collapseExample"></a>
-
-        <h3>soal list</h3>
-
-        <div class="soal row row-cols-5">
-          <div v-for="number in numbers" :key="number" class="col text-center px-1 pb-1">
-            <a href="#" :class="['btn', number.isAnswered ? answeredClass : defaultClass /*, activePage */ ]">{{ number.num }}</a>
-          </div>
-        </div>
-      </div> -->
-
 
       <div class="col-lg-9 p-md-4 py-4 border">
-        <div class="">
+        <div class="btn-controller pb-4 d-flex justify-content-between">
           <h3>Soal 1</h3>
+          <p class="fs-6">00:60:00</p>
+        </div>
+        <div class="">
           <span class="my-4">
             <p class="fs-6">Saya merasa belum disiplin dalam beribadah pada Tuhan YME</p>
           </span>          
@@ -40,26 +31,10 @@
           <button type="button" class="btn btn-primary">Selanjutnya</button>
         </div>
         <div class="btn-controller py-4 d-flex justify-content-center">
-          <!-- <button type="button" class="btn btn-outline-success">Semua Soal</button> -->
-          <!-- <a class="btn btn-outline-success" data-bs-toggle="collapse" href="#collapseSoal" role="button" aria-expanded="false" aria-controls="collapseExample">
-            Semua Soal
-          </a> -->
           <a class="btn btn-outline-success" data-bs-toggle="offcanvas" href="#offcanvasSoal" role="button" aria-controls="offcanvasExample">
             Daftar Soal
           </a>
         </div>
-
-        <!-- <div class="collapse testIndex" id="collapseSoal">
-          <div class="card card-body">
-            <h3>soal list</h3>
-
-            <div class="soal row row-cols-5">
-              <div v-for="number in numbers" :key="number" class="col text-center px-1 pb-1">
-                <a href="#" :class="['btn', number.isAnswered ? answeredClass : defaultClass /*, activePage */ ]">{{ number.num }}</a>
-              </div>
-            </div>
-          </div>
-        </div> -->
 
       </div>
     </div>
