@@ -2,7 +2,7 @@
   <div class="home container-sm p-4">
     <div class="row justify-content-center">
 
-      <div class="col-lg-9 p-md-4 py-4 border">
+      <div class="col-lg-9 p-md-4 py-4">
         <div class="btn-controller pb-4 d-flex justify-content-between">
           <h3>Soal 1</h3>
           <p class="fs-6">00:60:00</p>
@@ -31,7 +31,7 @@
           <button type="button" class="btn btn-primary">Selanjutnya</button>
         </div>
         <div class="btn-controller py-4 d-flex justify-content-center">
-          <a class="btn btn-outline-success" data-bs-toggle="offcanvas" href="#offcanvasSoal" role="button" aria-controls="offcanvasExample">
+          <a class="btn btn-success" data-bs-toggle="offcanvas" href="#offcanvasSoal" role="button" aria-controls="offcanvasExample">
             Daftar Soal
           </a>
         </div>
