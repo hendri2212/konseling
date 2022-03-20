@@ -94,7 +94,29 @@ class KelasController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        try {
+            $is_duplicate = Kelas::where([
+                'nama' => $request->nama,
+                'guru_id' => auth()->id(),
+            ])->first();
+            if ($is_duplicate) {
+                if ($is_duplicate->id == $id) {
+                    return $this->responseRepository->ResponseError([
+                        'global' => 'Tidak merubah data apapun'
+                    ], "Tidak merubah data apapun", JsonResponse::HTTP_NOT_MODIFIED);
+                }
+                return $this->responseRepository->ResponseError([
+                    'global' => 'Kelas ini sudah pernah dibuat'
+                ], "Kelas ini sudah pernah dibuat", JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
+            }
+            $kelas = Kelas::find($id);
+            $kelas->nama = $request->nama;
+            $kelas->save();
+            return $this->responseRepository->ResponseSuccess(null, "Success memrubah data kelas", JsonResponse::HTTP_OK);
+        } catch (\Exception $e) {
+            return $e->getMessage();
+            return $this->responseRepository->ResponseError(null);
+        }
     }
 
     /**
