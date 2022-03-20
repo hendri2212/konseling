@@ -1,9 +1,13 @@
 // Make sure the functions come before custom variables 
-@import "../../node_modules/bootstrap/scss/functions";
+@import "bootstrap/scss/functions";
 // Our custom variables file
 @import "./_variables";
 
 // The bootstrap file that compiles the CSS
-@import "../../node_modules/bootstrap/scss/bootstrap";
+@import "bootstrap/scss/variables";
+// custom Colors
+@import "./_colors";
+
+@import "bootstrap/scss/bootstrap";
 
 // 6. Add additional custom code here
