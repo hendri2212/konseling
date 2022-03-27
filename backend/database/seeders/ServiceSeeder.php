@@ -24,6 +24,11 @@ class ServiceSeeder extends Seeder
                 'id' => '41b3c74a-717b-4aed-95ca-b75d242c92ac',
                 'service' => 'role',
                 'description' => 'Fitur untuk mengelola role'
+            ],
+            [
+                'id' => 'ff0ad73c-df42-45f6-8e0b-59c1c36bbbc2',
+                'service' => 'sekolah',
+                'description' => 'Fitur untuk mengelola data sekolah'
             ]
         ];
 

@@ -4,6 +4,8 @@ use App\Http\Controllers\admin\AuthenticationController;
 use App\Http\Controllers\admin\RoleController;
 use App\Http\Controllers\admin\ServiceController;
 use App\Http\Controllers\guru\AuthenticationController as GuruAuthenticationController;
+use App\Http\Controllers\sekolah\AuthenticationController as SekolahAuthenticationController;
+use App\Http\Controllers\sekolah\KelasController as Sekolah_KelasController;
 use App\Http\Controllers\guru\KelasController as GuruKelasController;
 use App\Http\Controllers\guru\UjianController;
 use Illuminate\Http\Request;
@@ -29,16 +31,28 @@ Route::middleware('api')->group(function() {
     ->middleware(['signed', 'throttle:6,1'])
     ->name('verification.verify');
     
+    Route::prefix('sekolah')->group(function() {
+        Route::post('login', [SekolahAuthenticationController::class, 'login']);
+        Route::post('register', [SekolahAuthenticationController::class, 'register']);
+        
+        Route::middleware('auth:sekolah')->group(function() {
+            // Route::get('ability', [GuruAuthenticationController::class, 'me']);
+            // Route::get('me', [GuruKelasController::class, 'me']);
+            Route::resource('kelas', Sekolah_KelasController::class)->middleware('ability:kelas.*');
+            // Route::resource('ujian', UjianController::class);
+        });
+    });
+
     Route::prefix('guru')->group(function() {
         Route::post('login', [GuruAuthenticationController::class, 'login']);
-        Route::post('register', [GuruAuthenticationController::class, 'register']);
+        // Route::post('register', [GuruAuthenticationController::class, 'register']);
         
-        Route::middleware('auth:guru')->group(function() {
-            // Route::get('ability', [GuruAuthenticationController::class, 'me']);
-            Route::get('me', [GuruKelasController::class, 'me']);
-            Route::resource('kelas', GuruKelasController::class)->middleware('ability:kelas.*');
-            Route::resource('ujian', UjianController::class);
-        });
+        // Route::middleware('auth:guru')->group(function() {
+        //     // Route::get('ability', [GuruAuthenticationController::class, 'me']);
+        //     Route::get('me', [GuruKelasController::class, 'me']);
+        //     Route::resource('kelas', GuruKelasController::class)->middleware('ability:kelas.*');
+        //     Route::resource('ujian', UjianController::class);
+        // });
     });
     
     

@@ -16,13 +16,15 @@ class CreateKelasTable extends Migration
         Schema::create('kelas', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('nama');
+            $table->uuid('sekolah_id');
             $table->uuid('guru_id');
             $table->timestamps();
             // relasi
-            $table->foreign('guru_id')->references('id')->on('guru');
+            $table->foreign('sekolah_id')->references('id')->on('sekolah');
+            $table->foreign('guru_id')->references('id')->on('kelas');
 
             //unique
-            $table->unique(['nama', 'guru_id']);
+            $table->unique(['nama', 'sekolah_id']);
         });
     }
 

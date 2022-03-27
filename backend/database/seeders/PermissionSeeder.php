@@ -25,6 +25,11 @@ class PermissionSeeder extends Seeder
                 'id' => '86bf5618-1017-4fc1-9cc3-f31ef98e8d95',
                 'permission' => '*',
                 'service_id' => '41b3c74a-717b-4aed-95ca-b75d242c92ac'
+            ],
+            [
+                'id' => 'd2531c30-28a0-4efa-81a3-983535ded190',
+                'permission' => '*',
+                'service_id' => 'ff0ad73c-df42-45f6-8e0b-59c1c36bbbc2'
             ]
         ];
 

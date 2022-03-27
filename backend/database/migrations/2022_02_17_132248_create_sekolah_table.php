@@ -15,15 +15,22 @@ class CreateSekolahTable extends Migration
     {
         Schema::create('sekolah', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('nama');
-            $table->string('kepsek');
-            $table->string('alamat_lengkap');
-            $table->string('provinsi');
-            $table->string('kabupaten');
-            $table->string('kecamatan');
-            $table->string('pemerintah');
-            $table->string('dinas');
+            $table->string('email')->unique();
+            $table->timestamp('email_verified_at')->nullable();
+            $table->string('password');
+            $table->string('nama')->nullable();
+            $table->string('kepsek')->nullable();
+            $table->string('alamat_lengkap')->nullable();
+            $table->string('provinsi')->nullable();
+            $table->string('kabupaten')->nullable();
+            $table->string('kecamatan')->nullable();
+            $table->string('pemerintah')->nullable();
+            $table->string('dinas')->nullable();
+            $table->uuid('role_id')->nullable();
             $table->timestamps();
+
+            // relasi
+            $table->foreign('role_id')->references('id')->on('roles');
         });
     }
 

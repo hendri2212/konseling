@@ -20,5 +20,11 @@ class RoleSeeder extends Seeder
         $role->role = 'admin';
         $role->description = 'Akses full terhadap fitur service';
         $role->save();
+
+        $role = new Role;
+        $role->id = '303b91e8-cb19-4b76-9c23-ec823c2b9ed2';
+        $role->role = 'sekolah.starter';
+        $role->description = 'Role ini untuk sekolah yang baru mendaftar dan belum berlangganan';
+        $role->save();
     }
 }

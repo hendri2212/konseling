@@ -24,12 +24,12 @@
 </template>
 
 <script>
-import { UserAccount } from "./UserAccount";
+// import { UserAccount } from "./UserAccount";
 
 export default {
   name: 'TheHeader',
   components: {
-    UserAccount
+    // UserAccount
   }
 }
 </script>

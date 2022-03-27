@@ -15,18 +15,16 @@ class CreateGuruTable extends Migration
     {
         Schema::create('guru', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('nip')->nullable()->unique();
-            $table->string('nama')->nullable();
-            $table->string('email')->unique();
+            $table->string('nama');
+            $table->string('nip');
             $table->string('password');
             $table->string('status')->nullable();
-            $table->uuid('sekolah_id')->nullable();
-            $table->uuid('role_id')->nullable();
-            $table->timestamp('email_verified_at')->nullable();
+            $table->uuid('sekolah_id');
             $table->timestamps();
             //relasi
             $table->foreign('sekolah_id')->references('id')->on('sekolah');
-            $table->foreign('role_id')->references('id')->on('roles');
+            //unique
+            $table->unique(['nip', 'sekolah_id']);
         });
     }
 

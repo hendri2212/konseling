@@ -52,6 +52,11 @@ return [
             'provider' => 'admin',
         ],
     
+        'sekolah' => [
+            'driver' => 'sanctum',
+            'provider' => 'sekolah',
+        ],
+
         'guru' => [
             'driver' => 'sanctum',
             'provider' => 'guru',
@@ -91,6 +96,11 @@ return [
             'model' => App\Models\AdminUser::class,
         ],
     
+        'sekolah' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\SekolahUser::class,
+        ],
+
         'guru' => [
             'driver' => 'eloquent',
             'model' => App\Models\GuruUser::class,
