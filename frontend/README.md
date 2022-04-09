@@ -1,7 +1,12 @@
 # vue-konseling
 
+
+## CoreUI
 coreui docs: https://coreui.io/vue/docs/3.1/introduction/
+
 release: https://github.com/coreui/coreui-vue/releases/tag/3.2.9
+
+template: https://github.com/coreui/coreui-free-vue-admin-template/releases/tag/3.1.4
 
 ## Project setup
 ```
