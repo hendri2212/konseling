@@ -38,15 +38,28 @@ export default [
       },
       {
         _name: 'CSidebarNavItem',
-        name: 'Kelola Soal AKPD',
-        to: '/akpd/soal',
-        icon: 'cil-pencil'
-      },
-      {
-        _name: 'CSidebarNavItem',
         name: 'Jawaban Peserta Didik',
         to: '/akpd/jawaban',
         icon: 'cil-pencil'
+      },
+      {
+        _name: 'CSidebarNavDropdown',
+        name: 'Kelola Soal AKPD',
+        icon: 'cil-pencil',
+        items: [
+          {
+            name: 'Soal AKPD',
+            to: '/akpd/soal'
+          },
+          {
+            name: 'Bidang Soal',
+            to: '/akpd/soal/bidang'
+          },
+          {
+            name: 'Kompetensi Soal',
+            to: '/akpd/soal/kompetensi'
+          },
+        ]
       },
       // hasil analisis
       {
