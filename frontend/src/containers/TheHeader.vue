@@ -12,9 +12,32 @@
       class="m-3 d-md-down-none"
       @click="$store.commit('toggleSidebarDesktop')"
     /> -->
+    
+    <CHeaderBrand class="mx-auto d-lg-none" to="/">
+      <CIcon name="logo" height="48" alt="Logo"/>
+    </CHeaderBrand>
 
-    <CHeaderNav class="mr-4">
+    <CHeaderNav class="d-md-down-none mr-auto">
+      <CHeaderNavItem class="px-3">
+        <CHeaderNavLink to="/dashboard">
+          Dashboard
+        </CHeaderNavLink>
+      </CHeaderNavItem>
+      <CHeaderNavItem class="px-3">
+        <CHeaderNavLink to="/users" exact>
+          Users
+        </CHeaderNavLink>
+      </CHeaderNavItem>
+      <CHeaderNavItem class="px-3">
+        <CHeaderNavLink>
+          Settings
+        </CHeaderNavLink>
+      </CHeaderNavItem>
+    </CHeaderNav>
+
+    <CHeaderNav in-header>
         <!-- <UserAccount /> -->
+        <TheHeaderDropdownAccnt/>
     </CHeaderNav>
 
     <CSubheader class="px-3">
@@ -24,11 +47,13 @@
 </template>
 
 <script>
+import TheHeaderDropdownAccnt from '@/components/TheHeaderDropdownAccnt.vue'
 // import { UserAccount } from "./UserAccount";
 
 export default {
   name: 'TheHeader',
   components: {
+    TheHeaderDropdownAccnt
     // UserAccount
   }
 }

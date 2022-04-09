@@ -1,7 +1,8 @@
 <template>
   <CSidebar 
     fixed
-    show="responsive"
+    :minimize="minimize"
+    :show="show"
   >
     <CSidebarBrand class="d-md-down-none" to="/">
       <CIcon 
