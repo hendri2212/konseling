@@ -1,25 +1,26 @@
 # vue-konseling
 
-coreui : https://coreui.io/vue/docs/3.1/introduction/
+coreui docs: https://coreui.io/vue/docs/3.1/introduction/
+release: https://github.com/coreui/coreui-vue/releases/tag/3.2.9
 
 ## Project setup
 ```
-yarn install
+npm install
 ```
 
 ### Compiles and hot-reloads for development
 ```
-yarn serve
+npm run serve
 ```
 
 ### Compiles and minifies for production
 ```
-yarn build
+npm run build
 ```
 
 ### Lints and fixes files
 ```
-yarn lint
+npm run lint
 ```
 
 ### Customize configuration
