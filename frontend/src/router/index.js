@@ -10,6 +10,7 @@ const IdentitasSekolahPage = () => import('@/views/IdentitasSekolah/IdentitasSek
 const KelasPage = () => import('@/views/Kelas/KelasPage')
 const SoalPage = () => import('@/views/SoalAkpd/SoalPage')
 const SoalBidangPage = () => import('@/views/SoalBidangAkpd/SoalBidangPage')
+const SoalKompetensiPage = () => import('@/views/SoalKompetensiAkpd/SoalKompetensiPage')
 const JawabanPage = () => import('@/views/JawabanPeserta/JawabanPage')
 
 Vue.use(VueRouter)
@@ -57,7 +58,7 @@ function configRoutes() {
         {
           path: '/akpd/soal/kompetensi',
           name: 'Kompetensi Soal AKPD',
-          component: DashboardPage
+          component: SoalKompetensiPage
         },
         {
           path: '/akpd/jawaban',
