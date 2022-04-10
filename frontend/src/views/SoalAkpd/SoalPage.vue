@@ -147,7 +147,7 @@ const fields = [
 ];
 
 export default {
-  name: "KelasPage",
+  name: "SoalPage",
   components: {
     SoalModal,
   },
