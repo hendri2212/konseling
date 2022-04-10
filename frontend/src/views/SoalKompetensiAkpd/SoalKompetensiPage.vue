@@ -88,7 +88,7 @@ const items = [
 // fields
 const fields = [
   { key: "no", _style: "width:1%" },
-  { key: "SKKPD" },
+  { key: "skkpd", label: "SKKPD" },
   { key: "pengenalan" },
   { key: "akomodasi" },
   { key: "tindakan" },

@@ -1,8 +1,8 @@
 <template>
   <CModal title="Add Edit Soal" color="primary" size="lg" :show.sync="showModal">
     <CRow>
-      <CCol sm="6">
-        <CInput
+      <CCol sm="12">
+        <CTextarea
           label="Soal"
           type="text"
           placeholder="Masukkan Soal"
@@ -45,14 +45,14 @@
         <CSelect
           label="Nama Bidang"
           v-model="data.nama_bidang"
-          :options="nama_bidang"
+          :options="[{ label: '- Pilih Bidang -' }, ...nama_bidang]"
         />
       </CCol>
       <CCol sm="6">
         <CSelect
           label="Kompetensi"
           v-model="data.kompetensi"
-          :options="kompetensi"
+          :options="[{ label: '- Pilih Kompetensi -' }, ...kompetensi]"
         />
       </CCol>
     </CRow>
