@@ -23,51 +23,13 @@
           sorter
           pagination
         >
-          <template #show_details="{ item, index }">
-            <td class="py-2">
-              <CButton
-                color="primary"
-                variant="outline"
-                square
-                size="sm"
-                @click="toggleDetails(item, index)"
-              >
-                {{ Boolean(item._toggled) ? "Hide" : "Show" }}
+          <template #actions="{ item }">
+            <div class="py-2 d-flex justify-content-center">
+              <CButton size="sm" color="info" @click="$refs.addModal.setModal(true, item)"> Edit </CButton>
+              <CButton size="sm" color="danger" class="ml-1" @click="(deleteData.id = item.id), (deleteData.modal = true)">
+                Delete
               </CButton>
-            </td>
-          </template>
-          <template #details="{ item }">
-            <CCollapse
-              :show="Boolean(item._toggled)"
-              :duration="collapseDuration"
-            >
-              <CCardBody>
-                <CMedia :aside-image-props="{ height: 102 }">
-                  <table>
-                    <thead>
-                      <th>Bidang</th>
-                      <th>SKKPD</th>
-                      <th>Pengenalan</th>
-                      <th>Akomodasi</th>
-                      <th>Tindakan</th>
-                    </thead>
-                    <tbody>
-                      <td>{{ item.nama_bidang }}</td>
-                      <td>{{ item.SKKPD }}</td>
-                      <td>{{ item.pengenalan }}</td>
-                      <td>{{ item.akomodasi }}</td>
-                      <td>{{ item.tindakan }}</td>
-                      <td>
-                        <CButton size="sm" color="info" @click="$refs.addModal.setModal(true, item)"> Edit </CButton>
-                        <CButton size="sm" color="danger" class="ml-1" @click="(deleteData.id = item.id), (deleteData.modal = true)">
-                          Delete
-                        </CButton>
-                      </td>
-                    </tbody>
-                  </table>
-                </CMedia>
-              </CCardBody>
-            </CCollapse>
+            </div>
           </template>
         </CDataTable>
 
@@ -95,11 +57,8 @@ const items = [
     materi: "materi 1",
     tujuan_layanan: "tujuan layanan 1",
     komponen_layanan: "komponen layanan 1",
-    nama_bidang: "Nama Bidang 1",
-    SKKPD: "SKKPD 1",
-    pengenalan: "Pengenalan 1",
-    akomodasi: "Akomodasi 1",
-    tindakan: "Tindakan 1",
+    nama_bidang: "Bidang 1",
+    kompetensi: "Kompetensi 1",
   },
   {
     no: 2,
@@ -108,11 +67,8 @@ const items = [
     materi: "materi 2",
     tujuan_layanan: "tujuan layanan 2",
     komponen_layanan: "komponen layanan 2",
-    nama_bidang: "Nama Bidang 2",
-    SKKPD: "SKKPD 2",
-    pengenalan: "Pengenalan 2",
-    akomodasi: "Akomodasi 2",
-    tindakan: "Tindakan 2",
+    nama_bidang: "Bidang 2",
+    kompetensi: "Kompetensi 2",
   },
   {
     no: 3,
@@ -121,11 +77,8 @@ const items = [
     materi: "materi 3",
     tujuan_layanan: "tujuan layanan 3",
     komponen_layanan: "komponen layanan 3",
-    nama_bidang: "Nama Bidang 3",
-    SKKPD: "SKKPD 3",
-    pengenalan: "Pengenalan 3",
-    akomodasi: "Akomodasi 3",
-    tindakan: "Tindakan 3",
+    nama_bidang: "Bidang 3",
+    kompetensi: "Kompetensi 3",
   },
 ];
 
@@ -137,10 +90,11 @@ const fields = [
   "materi",
   "tujuan_layanan",
   "komponen_layanan",
+  "nama_bidang",
+  "kompetensi",
   {
-    key: "show_details",
+    key: "actions",
     label: "",
-    _style: "width:1%",
     sorter: false,
     filter: false
   },

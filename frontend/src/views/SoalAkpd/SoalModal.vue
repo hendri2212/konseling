@@ -42,43 +42,17 @@
         />
       </CCol>
       <CCol sm="6">
-        <CInput
+        <CSelect
           label="Nama Bidang"
-          type="text"
-          placeholder="Masukkan Nama Bidang"
           v-model="data.nama_bidang"
+          :options="nama_bidang"
         />
       </CCol>
       <CCol sm="6">
-        <CInput
-          label="SKKPD"
-          type="text"
-          placeholder="Masukkan SKKPD"
-          v-model="data.SKKPD"
-        />
-      </CCol>
-      <CCol sm="6">
-        <CInput
-          label="Pengenalan"
-          type="text"
-          placeholder="Masukkan Pengenalan"
-          v-model="data.pengenalan"
-        />
-      </CCol>
-      <CCol sm="6">
-        <CInput
-          label="Akomodasi"
-          type="text"
-          placeholder="Masukkan Akomodasi"
-          v-model="data.akomodasi"
-        />
-      </CCol>
-      <CCol sm="6">
-        <CInput
-          label="Tindakan"
-          type="text"
-          placeholder="Masukkan Tindakan"
-          v-model="data.tindakan"
+        <CSelect
+          label="Kompetensi"
+          v-model="data.kompetensi"
+          :options="kompetensi"
         />
       </CCol>
     </CRow>
@@ -91,10 +65,25 @@
 </template>
 
 <script>
+
+const nama_bidang = [
+  "bidang 1",
+  "bidang 2",
+  "bidang 3",
+]
+
+const kompetensi = [
+  "kompetensi 1",
+  "kompetensi 2",
+  "kompetensi 3",
+]
+
 export default {
   name: 'SoalModal',
   data() {
     return {
+      nama_bidang,
+      kompetensi,
       data: {
         id: null,
         soal: null,
@@ -102,11 +91,8 @@ export default {
         materi: null,
         tujuan_layanan: null,
         komponen_layanan: null,
-        nama_bidang: null,
-        SKKPD: null,
-        pengenalan: null,
-        akomodasi: null,
-        tindakan: null,
+        nama_bidang,
+        kompetensi,
       },
       insertModal: true,
       showModal: false,
@@ -127,10 +113,7 @@ export default {
         this.data.tujuan_layanan = null;
         this.data.komponen_layanan = null;
         this.data.nama_bidang = null;
-        this.data.SKKPD = null;
-        this.data.pengenalan = null;
-        this.data.akomodasi = null;
-        this.data.tindakan = null;
+        this.data.kompetensi = null;
       }
     },
     save() {
