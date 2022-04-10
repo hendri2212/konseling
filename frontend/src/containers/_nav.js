@@ -17,19 +17,19 @@ export default [
         _name: 'CSidebarNavItem',
         name: 'Identitas Sekolah',
         to: '/bio/identitas-sekolah',
-        icon: 'cil-drop'
+        icon: 'cil-institution'
       },
       {
         _name: 'CSidebarNavItem',
         name: 'Kelas',
         to: '/bio/kelas',
-        icon: 'cil-pencil'
+        icon: 'cil-school'
       },
       {
         _name: 'CSidebarNavItem',
         name: 'Data Peserta Didik',
         to: '/bio/peserta-didik',
-        icon: 'cil-pencil'
+        icon: 'cil-people'
       },
       // angket kebutuhan peserta didik
       {
@@ -45,7 +45,7 @@ export default [
       {
         _name: 'CSidebarNavDropdown',
         name: 'Kelola Soal AKPD',
-        icon: 'cil-pencil',
+        icon: 'cil-notes',
         items: [
           {
             name: 'Soal AKPD',
@@ -70,13 +70,13 @@ export default [
         _name: 'CSidebarNavItem',
         name: 'Analisis Profil Kelas',
         to: '/analisis/profil-kelas',
-        icon: 'cil-pencil'
+        icon: 'cil-chart'
       },
       {
         _name: 'CSidebarNavItem',
         name: 'Analisis Profil Konseling',
         to: '/analisis/profil-konseling',
-        icon: 'cil-pencil'
+        icon: 'cil-chart-line'
       },
     ]
   }
