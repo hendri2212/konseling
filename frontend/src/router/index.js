@@ -13,10 +13,15 @@ const SoalBidangPage = () => import('@/views/SoalBidangAkpd/SoalBidangPage')
 const SoalKompetensiPage = () => import('@/views/SoalKompetensiAkpd/SoalKompetensiPage')
 const JawabanPage = () => import('@/views/JawabanPeserta/JawabanPage')
 
+
+// Views - Pages
+const Login = () => import('@/views/pages/Login')
+
+
 Vue.use(VueRouter)
 
 export default new VueRouter({
-  mode: 'hash', // https://router.vuejs.org/api/#mode
+  mode: 'history', // https://router.vuejs.org/api/#mode
   linkActiveClass: 'active',
   scrollBehavior: () => ({ y: 0 }),
   routes: configRoutes()
@@ -24,6 +29,13 @@ export default new VueRouter({
 
 function configRoutes() {
   return [
+    // Login
+    {
+      path: '/login',
+      name: 'Login',
+      component: Login
+    },
+    // Dashboard
     {
       path: '/',
       redirect: '/dashboard',
@@ -66,6 +78,6 @@ function configRoutes() {
           component: JawabanPage
         },
       ]
-    },
+    }
   ]
 }
