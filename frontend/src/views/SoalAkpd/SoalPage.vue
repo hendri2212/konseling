@@ -45,11 +45,13 @@
   </div>
 </template>
 
+<!-- Axios -->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
 import SoalModal from "./SoalModal.vue";
 
 // data items
-const items = [
+const itemsx = [
   {
     no: 1,
     soal: "Soal 1",
@@ -79,19 +81,22 @@ const items = [
     komponen_layanan: "komponen layanan 3",
     nama_bidang: "Bidang 3",
     kompetensi: "Kompetensi 3",
-  },
+  }
 ];
 
 // fields
 const fields = [
-  { key: "no", _style: "width:1%" },
+  // { key: "no", _style: "width:1%" },
+  { key: "id", _style: "width:1%" },
   "soal",
   "rumusan_kebutuhan",
   "materi",
   "tujuan_layanan",
   "komponen_layanan",
-  "nama_bidang",
-  "kompetensi",
+  // "nama_bidang",
+  "bidang_id",
+  // "kompetensi",
+  "kompetensi_id",
   {
     key: "actions",
     label: "",
@@ -107,9 +112,10 @@ export default {
   },
   data() {
     return {
-      items: items.map((item, id) => {
-        return { ...item, id };
-      }),
+      // items: items.map((item, id) => {
+      //   return { ...item, id };
+      // }),
+      items: [],
       fields,
       details: [],
       collapseDuration: 0,
@@ -118,6 +124,14 @@ export default {
         modal: false,
       },
     };
+  },
+  created() {
+    axios
+    // .get(this.$store.state.url + 'soal')
+    .get('http://127.0.0.1:8000/api/soal')
+    .then(response => {
+      this.items = response.data.data
+    })
   },
   methods: {
     toggleDetails(item) {
