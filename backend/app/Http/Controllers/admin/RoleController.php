@@ -11,6 +11,7 @@ use App\Repositories\ResponseRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 class RoleController extends Controller
 {
@@ -76,7 +77,14 @@ class RoleController extends Controller
      */
     public function show($id)
     {
-        //
+        try {
+            $role = Role::with('permission')->find($id);
+            $data = new RoleResource($role); 
+            return $this->responseRepository->ResponseSuccess($data);  
+        } catch (\Exception $e) {
+            return $e->getMessage();
+            return $this->responseRepository->ResponseError(null, 'Internal Server Error !', JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**
@@ -86,9 +94,38 @@ class RoleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(RoleRequest $request, $id)
     {
-        //
+        try {
+            DB::beginTransaction();
+            $role = Role::find($id);
+            $role->role = $request->role;
+            $role->description = $request->description;
+            $role->save();
+
+            DB::table("role_permissions")->where("role_id", $id)->whereNotIn("permission_id", $request->permission)->delete();
+
+            for ($i=0; $i<count($request->permission); $i++) {
+                $check = RolePermission::where([
+                    "role_id" => $id,
+                    "permission_id" => $request->permission[$i]
+                ])->first();
+                if (!$check) {
+                    $role_permission = new RolePermission;
+                    $role_permission->id = Str::uuid();
+                    $role_permission->role_id = $role->id;
+                    $role_permission->permission_id = $request->permission[$i];
+                    $role_permission->save();
+                }
+            }
+
+            DB::commit();
+
+            return $this->responseRepository->ResponseSuccess(null, "Success updated role", JsonResponse::HTTP_OK);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->responseRepository->ResponseError($e);
+        }
     }
 
     /**

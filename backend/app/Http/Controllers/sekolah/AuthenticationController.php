@@ -26,7 +26,7 @@ class AuthenticationController extends Controller
         try {
 
             $user = SekolahUser::where('email', $request->email)->first();
-            $tokenName = 'guru-token';
+            $tokenName = 'sekolah-token';
         
             $user = new SekolahUser;
             $user->id = Str::uuid();
@@ -73,7 +73,8 @@ class AuthenticationController extends Controller
     }
 
     public function me() {
-        return auth()->user()->role->permission->append('permission_merge')->pluck('permission_merge');
+        return $this->responseRepository->ResponseSuccess(auth()->user());
+        // return auth()->user()->role->permission->append('permission_merge')->pluck('permission_merge');
     }
 
     

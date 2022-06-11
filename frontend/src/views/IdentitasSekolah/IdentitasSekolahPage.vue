@@ -24,20 +24,44 @@
 </template>
 
 <script>
-const items = [
-        {head: 'pemerintah', body: 'Lorem Ipsum'},
-        {head: 'dinas', body: 'Lorem Ipsum'},
-        {head: 'nama sekolah', body: 'SMK Negeri 1 Kotabaru'},
-        {head: 'alamat', body: 'Lorem Ipsum'},
-        {head: 'nama kepala sekolah', body: 'Lorem Ipsum'},
-    ];
+// const items = [
+//         {head: 'pemerintah', body: 'Lorem Ipsum'},
+//         {head: 'dinas', body: 'Lorem Ipsum'},
+//         {head: 'nama sekolah', body: 'SMK Negeri 1 Kotabaru'},
+//         {head: 'alamat', body: 'Lorem Ipsum'},
+//         {head: 'nama kepala sekolah', body: 'Lorem Ipsum'},
+//     ];
 
 export default {
   name: 'IdentitasSekolah',
   data() {
     return {
-      items
+      me:null
     };
+  },
+  computed:{
+    items(){
+      var items = []
+      if(this.me != null){
+        items.push(
+          {head: 'pemerintah', body:this.me.pemerintah !=null ? this.me.pemerintah : "(Belum diisi)"},
+          {head: 'dinas', body: this.me.dinas !=null ?  this.me.dinas : "(Belum diisi)"},
+          {head: 'nama sekolah', body: this.me.nama !=null ?  this.me.nama : "(Belum diisi)"},
+          {head: 'alamat', body: this.me.alamat_lengkap !=null ?  this.me.alamat_lengkap : "(Belum diisi)"},
+          {head: 'nama kepala sekolah', body: this.me.kepsek !=null ?  this.me.kepsek : "(Belum diisi)"},
+        )
+      }
+      return items
+    }
+  },
+  created(){
+    this.axios.get('/sekolah/me', {
+      headers: {
+        Authorization: "Bearer " + this.$store.state.auth.token
+      }
+    }).then(response => {
+      this.me = response.data.data
+    })
   },
   filters: {
     capitalize: function (value) {

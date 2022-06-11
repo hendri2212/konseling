@@ -21,7 +21,7 @@ class CreateKelasTable extends Migration
             $table->timestamps();
             // relasi
             $table->foreign('sekolah_id')->references('id')->on('sekolah');
-            $table->foreign('guru_id')->references('id')->on('kelas');
+            $table->foreign('guru_id')->references('id')->on('guru');
 
             //unique
             $table->unique(['nama', 'sekolah_id']);

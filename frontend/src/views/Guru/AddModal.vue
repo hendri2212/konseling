@@ -1,21 +1,27 @@
 <template>
-  <CModal title="Add Edit Kelas" color="primary" :show.sync="showModal">
+  <CModal :title="insertModal ? 'Add Guru' : 'Edit Guru'" color="primary" :show.sync="showModal">
     <CRow>
       <CCol sm="12">
         <CInput
-          label="Kelas"
-          placeholder="Masukkan Kelas"
-          v-model="data.kelas"
+          label="NIP"
+          placeholder="Masukkan NIP"
+          v-model="data.nip"
         />
       </CCol>
       <CCol sm="12">
-        <div role="group" class="form-group">
-          <label for="uid-vcqehbyou6" class=""> Guru </label>
-          <v-select 
-          :options="guru"
-          @search="onSearch">
-          </v-select>
-        </div>
+        <CInput
+          label="Nama"
+          placeholder="Masukkan Nama"
+          v-model="data.nama"
+        />
+      </CCol>
+      <CCol sm="12">
+        <CInput
+          label="Password"
+          type="password"
+          placeholder="Masukkan Password"
+          v-model="data.password"
+        />
       </CCol>
       <!-- <CCol sm="12">
         <CInput
@@ -41,9 +47,9 @@ export default {
     return {
       data: {
         id: null,
-        kelas: null,
-        guru_id: null,
-        year: null,
+        nip: null,
+        nama: null,
+        password: null,
       },
       insertModal: true,
       showModal: false,
@@ -86,16 +92,11 @@ export default {
         this.data = data;
       } else {
         this.insertModal = true;
-        this.data.id = null;
-        this.data.kelas = null;
-        this.data.year = null;
       }
     },
     save() {
       if (this.insertModal) {
-        this.axios.post("sekolah/kelas", {
-          nama: this.data.kelas
-        }, {
+        this.axios.post("sekolah/guru", this.data, {
           headers: {
             Authorization: "Bearer " + this.$store.state.auth.token
           }
@@ -106,12 +107,15 @@ export default {
             text:response.data.message,
           })
         }).catch(e => {
-          console.log(e)
-          // this.$swal({
-          //   icon: 'warning',
-          //   title: 'Terjadi Kesalahan',
-          //   text:e.response.data.message,
-          // })
+          // var error = ""
+          // for (var key in e.response.data.errors) {
+          //     error += key + ": " + e.response.data.errors[key] + "<b"
+          // }
+          this.$swal({
+            icon: 'warning',
+            title: 'Terjadi Kesalahan',
+            text:e.response.data.errors,
+          })
         })
       } else {
         console.log("edit");

@@ -6,8 +6,8 @@ use App\Http\Controllers\admin\ServiceController;
 use App\Http\Controllers\guru\AuthenticationController as GuruAuthenticationController;
 use App\Http\Controllers\sekolah\AuthenticationController as SekolahAuthenticationController;
 use App\Http\Controllers\sekolah\KelasController as Sekolah_KelasController;
-use App\Http\Controllers\guru\KelasController as GuruKelasController;
 use App\Http\Controllers\guru\UjianController;
+use App\Http\Controllers\sekolah\GuruController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -36,15 +36,19 @@ Route::middleware('api')->group(function() {
         Route::post('register', [SekolahAuthenticationController::class, 'register']);
         
         Route::middleware('auth:sekolah')->group(function() {
+            Route::get('me', [SekolahAuthenticationController::class, 'me']);
+            Route::resource('kelas', Sekolah_KelasController::class);
+            Route::get('guru/search', [GuruController::class, 'search']);
+            Route::resource('guru', GuruController::class);
             // Route::get('ability', [GuruAuthenticationController::class, 'me']);
-            // Route::get('me', [GuruKelasController::class, 'me']);
-            Route::resource('kelas', Sekolah_KelasController::class)->middleware('ability:kelas.*');
             // Route::resource('ujian', UjianController::class);
         });
     });
 
     Route::prefix('guru')->group(function() {
         Route::post('login', [GuruAuthenticationController::class, 'login']);
+        Route::resource('ujian', UjianConctroller::class);
+        // Route::resource('guru', GuruController::class);
         // Route::post('register', [GuruAuthenticationController::class, 'register']);
         
         // Route::middleware('auth:guru')->group(function() {

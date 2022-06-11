@@ -21,6 +21,12 @@ export default [
       },
       {
         _name: 'CSidebarNavItem',
+        name: 'Guru',
+        to: '/bio/guru',
+        icon: 'cil-school'
+      },
+      {
+        _name: 'CSidebarNavItem',
         name: 'Kelas',
         to: '/bio/kelas',
         icon: 'cil-school'

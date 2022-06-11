@@ -4,7 +4,7 @@ namespace App\Http\Controllers\guru;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\guru\KelasRequest;
-use App\Http\Resources\guru\KelasResource;
+use App\Http\Resources\KelasResource;
 use App\Models\Kelas;
 use App\Repositories\ResponseRepository;
 use Illuminate\Http\JsonResponse;

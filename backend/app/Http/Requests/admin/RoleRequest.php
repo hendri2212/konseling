@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\admin;
 
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class RoleRequest extends FormRequest
@@ -24,9 +25,12 @@ class RoleRequest extends FormRequest
     public function rules()
     {
         return [
-            'role' => 'required|unique:roles',
+            'role' => [
+                'required',
+                Rule::unique('roles')->ignore($this->role, 'role'),
+            ],
             'description' => 'required',
-            'permission' => 'required|array',
+            'permission' => 'array',
             'permission.*' => 'exists:permissions,id'
         ];
     }
@@ -37,7 +41,6 @@ class RoleRequest extends FormRequest
             'role.required' => 'Nama role wajib diisi',
             'role.unique' => 'Nama role sudah digunakan',
             'description.required' => 'Deskripsi wajib diisi',
-            'permission.required' => 'Permission wajib diisi',
             'permission.array' => 'Permission harus berupa array',
             'permission.*.unique' => 'Permission tidak ditemukan'
         ];

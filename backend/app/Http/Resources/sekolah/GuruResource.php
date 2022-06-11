@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\sekolah;
 
-use App\Http\Resources\KelasResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class UjianResource extends JsonResource
+class GuruResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -18,9 +17,7 @@ class UjianResource extends JsonResource
         return [
             'id' => $this->id,
             'nama' => $this->nama,
-            'tanggal' => $this->tanggal,
-            // 'siswa' => $this->append('jawaban_siswa')->jawaban_siswa
-            // 'kelas' => KelasResource::collection($this->kelas)
+            'nip' => $this->nip
         ];
     }
 }

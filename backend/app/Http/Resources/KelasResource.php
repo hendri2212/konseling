@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources\guru;
+namespace App\Http\Resources;
 
 use App\Http\Resources\SiswaResource;
 use Illuminate\Http\Resources\Json\JsonResource;

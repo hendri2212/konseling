@@ -4,14 +4,10 @@ namespace App\Http\Controllers\guru;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
-use App\Http\Requests\RegisterRequest;
 use App\Models\GuruUser;
 use App\Repositories\ResponseRepository;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 class AuthenticationController extends Controller
 {
@@ -22,37 +18,37 @@ class AuthenticationController extends Controller
         $this->responseRepository = $rr;
     }
 
-    public function register(RegisterRequest $request) {
-        try {
+    // public function register(RegisterRequest $request) {
+    //     try {
 
-            $user = GuruUser::where('email', $request->email)->first();
-            $tokenName = 'guru-token';
+    //         $user = GuruUser::where('email', $request->email)->first();
+    //         $tokenName = 'guru-token';
         
-            $user = new GuruUser;
-            $user->id = Str::uuid();
-            $user->nama = $request->nama;
-            $user->email = $request->email;
-            $user->password = Hash::make($request->password);
-            $user->save();
+    //         $user = new GuruUser;
+    //         $user->id = Str::uuid();
+    //         $user->nama = $request->nama;
+    //         $user->email = $request->email;
+    //         $user->password = Hash::make($request->password);
+    //         $user->save();
 
-            // event(new Registered($user));
+    //         // event(new Registered($user));
 
-            $abilities = $user->role->permission->append('permission_merge')->pluck('permission_merge');
-            $token = $user->createToken($tokenName, $abilities);
-            $data = [
-                'token' => $token->plainTextToken
-            ];
+    //         $abilities = $user->role->permission->append('permission_merge')->pluck('permission_merge');
+    //         $token = $user->createToken($tokenName, $abilities);
+    //         $data = [
+    //             'token' => $token->plainTextToken
+    //         ];
 
-            return $this->responseRepository->ResponseSuccess($data, 'Registered Successfully !');
-        } catch (\Exception $e) {
-            return $e->getMessage();
-            return $this->responseRepository->ResponseError(null, 'Internal Server Error !', Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
+    //         return $this->responseRepository->ResponseSuccess($data, 'Registered Successfully !');
+    //     } catch (\Exception $e) {
+    //         return $e->getMessage();
+    //         return $this->responseRepository->ResponseError(null, 'Internal Server Error !', Response::HTTP_INTERNAL_SERVER_ERROR);
+    //     }
+    // }
 
     public function login(LoginRequest $request) {
         try {
-            $user = GuruUser::where('email', $request->email)->first();
+            $user = GuruUser::where('nip', $request->nip)->first();
             $tokenName = 'guru-token';
 
             $abilities = $user->role->permission->append('permission_merge')->pluck('permission_merge');
@@ -63,7 +59,7 @@ class AuthenticationController extends Controller
                     'token' => $token->plainTextToken
                 ];
             }else{
-                return $this->responseRepository->ResponseError(null, 'Invalid Email and Password !', Response::HTTP_UNAUTHORIZED);
+                return $this->responseRepository->ResponseError(null, 'Invalid NIP and Password !', Response::HTTP_UNAUTHORIZED);
             }
 
             return $this->responseRepository->ResponseSuccess($data, 'Logged In Successfully !');

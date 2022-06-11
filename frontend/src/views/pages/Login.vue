@@ -6,12 +6,14 @@
           <CCardGroup>
             <CCard class="p-4">
               <CCardBody>
-                <CForm>
+                <CForm @submit.prevent="login">
                   <h1>Login</h1>
                   <p class="text-muted">Sign In to your account</p>
                   <CInput
+                    type="email"
                     placeholder="Email"
                     autocomplete="email"
+                    v-model="email"
                   >
                     <template #prepend-content><CIcon name="cil-user"/></template>
                   </CInput>
@@ -19,12 +21,13 @@
                     placeholder="Password"
                     type="password"
                     autocomplete="curent-password"
+                    v-model="password"
                   >
                     <template #prepend-content><CIcon name="cil-lock-locked"/></template>
                   </CInput>
                   <CRow>
                     <CCol col="6" class="text-left">
-                      <CButton color="primary" class="px-4">Login</CButton>
+                      <CButton type="submit" color="primary" class="px-4">Login</CButton>
                     </CCol>
                     <CCol col="6" class="text-right">
                       <CButton color="link" class="px-0">Forgot password?</CButton>
@@ -60,7 +63,32 @@
 </template>
 
 <script>
+
 export default {
-  name: 'Login'
+  name: 'Login',
+  data(){
+    return {
+      email:"",
+      password:""
+    }
+  },
+  methods: {
+    login(){
+      this.axios.post("/sekolah/login", {
+        email:this.email,
+        password:this.password
+      }).then(response => {
+        localStorage.setItem("SCHOOL_TOKEN", response.data.data.token)
+        this.$store.commit('auth/authenticated', {token:response.data.data.token})
+        this.$router.push({name:"DashboardPage"})
+      }).catch(e => {
+        this.$swal({
+          icon: 'error',
+          title: 'Oops...',
+          text: e.response.data.message,
+        })
+      })
+    }
+  }
 }
 </script>

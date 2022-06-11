@@ -2,11 +2,11 @@
   <div>
     <CCard accent-color="primary">
       <CCardHeader>
-        Kelas
+        Guru
 
         <div class="card-header-actions">
           <CButton color="primary" @click="$refs.addModal.setModal(true)"
-            >Tambah Kelas</CButton
+            >Tambah Guru</CButton
           >
           <AddModal ref="addModal"></AddModal>
         </div>
@@ -45,11 +45,11 @@
           </template>
         </CDataTable>
 
-        <CModal title="Hapus Kelas" color="danger" :show.sync="deleteData.modal">
+        <CModal title="Hapus Guru" color="danger" :show.sync="deleteData.modal">
           {{ deleteData.id }} delete Permanent?
           <template #footer>
             <CButton color="primary" variant="outline" @click="deleteData.modal = false">Close</CButton>
-            <CButton @click="deleteKelas">Yes</CButton>
+            <CButton @click="deleteGuru">Yes</CButton>
           </template>
         </CModal>
       </CCardBody>
@@ -64,8 +64,9 @@ import AddModal from "./AddModal.vue";
 // fields
 const fields = [
   { key: "no", _style: "width:1%" },
-  { key: "kelas" },
-  { key: "year" },
+  { key: "NIP" },
+  { key: "Nama" },
+  { key: "Status" },
   {
     key: "show_details",
     label: "",
@@ -76,7 +77,7 @@ const fields = [
 ];
 
 export default {
-  name: "KelasPage",
+  name: "GuruPage",
   components: {
     AddModal,
   },
@@ -93,7 +94,7 @@ export default {
     };
   },
   created(){
-    this.axios.get('sekolah/kelas', {
+    this.axios.get('sekolah/guru', {
       headers: {
         Authorization: "Bearer " + this.$store.state.auth.token
       }
@@ -102,7 +103,7 @@ export default {
     })
   },
   methods: {
-    deleteKelas() {
+    deleteGuru() {
       console.log(this.deleteData.id);
       // di sini fungsi axios
 

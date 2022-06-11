@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\sekolah;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\guru\KelasRequest;
-use App\Http\Resources\guru\KelasResource;
+use App\Http\Requests\sekolah\KelasRequest;
+use App\Http\Resources\KelasResource;
 use App\Models\Kelas;
 use App\Repositories\ResponseRepository;
 use Illuminate\Http\JsonResponse;
@@ -28,7 +28,7 @@ class KelasController extends Controller
     public function index()
     {
         try {
-            $kelas = Kelas::where('guru_id', auth()->id())->paginate(10);
+            $kelas = Kelas::where('sekolah_id', auth()->id())->paginate(10);
             $data = KelasResource::collection($kelas);
             return $this->responseRepository->ResponseSuccess($data);
         } catch (\Exception $e) {
@@ -47,7 +47,7 @@ class KelasController extends Controller
         try {
             $is_duplicate = Kelas::where([
                 'nama' => $request->nama,
-                'guru_id' => auth()->id()
+                'sekolah_id' => auth()->id()
             ])->first();
             if ($is_duplicate) {
                 return $this->responseRepository->ResponseError([
@@ -57,7 +57,8 @@ class KelasController extends Controller
             $kelas = new Kelas;
             $kelas->id = Str::uuid();
             $kelas->nama = $request->nama;
-            $kelas->guru_id = auth()->id();
+            $kelas->sekolah_id = auth()->id();
+            $kelas->guru_id = $request->guru_id;
             $kelas->save();
             return $this->responseRepository->ResponseSuccess(null, "Success membuat kelas baru", JsonResponse::HTTP_CREATED);
         } catch (\Exception $e) {
@@ -76,7 +77,7 @@ class KelasController extends Controller
     {
         try {
             $data = new KelasResource(Kelas::where([
-                'guru_id' => auth()->id(),
+                'sekolah_id' => auth()->id(),
                 'id' => $id
             ])->first());
             return $this->responseRepository->ResponseSuccess($data);
@@ -92,12 +93,12 @@ class KelasController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(KelasRequest $request, $id)
     {
         try {
             $is_duplicate = Kelas::where([
                 'nama' => $request->nama,
-                'guru_id' => auth()->id(),
+                'sekolah_id' => auth()->id(),
             ])->first();
             if ($is_duplicate) {
                 if ($is_duplicate->id == $id) {
@@ -111,6 +112,7 @@ class KelasController extends Controller
             }
             $kelas = Kelas::find($id);
             $kelas->nama = $request->nama;
+            $kelas->guru_id = $request->guru_id;
             $kelas->save();
             return $this->responseRepository->ResponseSuccess(null, "Success memrubah data kelas", JsonResponse::HTTP_OK);
         } catch (\Exception $e) {

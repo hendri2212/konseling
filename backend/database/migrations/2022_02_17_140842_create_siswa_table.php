@@ -20,10 +20,12 @@ class CreateSiswaTable extends Migration
             $table->string('email')->unique();
             $table->string('password');
             $table->string('tahun_masuk');
+            $table->uuid('sekolah_id');
             $table->uuid('kelas_id');
             $table->timestamp('email_verified_at')->nullable();
             $table->timestamps();
             //relasi
+            $table->foreign('sekolah_id')->references('id')->on('sekolah');
             $table->foreign('kelas_id')->references('id')->on('kelas');
         });
     }

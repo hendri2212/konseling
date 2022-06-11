@@ -13,4 +13,12 @@ class Soal extends Model
     protected $keyType = 'string';
     public $incrementing = false;
 
+    public function bidang() {
+        return $this->hasOne(Bidang::class, 'id', 'bidang_id');
+    }
+
+    public function kompetensi() {
+        return $this->hasOne(Kompetensi::class, 'id', 'kompetensi_id');
+    }
+
 }
