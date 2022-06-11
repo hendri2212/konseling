@@ -70,12 +70,14 @@ const nama_bidang = [
   "bidang 1",
   "bidang 2",
   "bidang 3",
+  "1"
 ]
 
 const kompetensi = [
   "kompetensi 1",
   "kompetensi 2",
   "kompetensi 3",
+  "1"
 ]
 
 export default {

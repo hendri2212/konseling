@@ -11,6 +11,9 @@ use App\Http\Controllers\sekolah\GuruController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\guru\VerifyEmailController;
+use App\Http\Controllers\SoalController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes

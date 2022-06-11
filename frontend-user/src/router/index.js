@@ -6,9 +6,15 @@ Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/',
-    name: 'home',
-    component: Home
+    path      : '',
+    redirect  : { name: 'Soal', params: { id: 1 } },
+    name      : 'home',
+    component : Home,
+  },
+  {
+    path      : '/akpd/:id',
+    name      : 'Soal',
+    component : Home,
   },
   {
     path: '/about',
