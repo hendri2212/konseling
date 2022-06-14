@@ -107,6 +107,14 @@ export default {
     }
   },
   created() {
+    this.axios.get('/siswa/list-soal', {
+      headers: {
+        Authorization: "Bearer " + this.$store.state.auth.token,
+      }
+    }).then(response => {
+      this.$store.commit('soal/setNumbers', response.data.data)
+      // this.numbers = response.data.data
+    })
     this.getSoal()
   },
   methods: {
