@@ -9,10 +9,22 @@
                 <CForm @submit.prevent="login">
                   <h1>Login</h1>
                   <p class="text-muted">Sign In to your account</p>
+                  <CInputRadio inline type="radio" name="type" value="sekolah" label="Sekolah" @input="type = $event.target.value" :checked="true"/>
+                  <CInputRadio inline type="radio" name="type" value="guru" label="Guru" @input="type = $event.target.value"/>
                   <CInput
+                    v-if="type=='sekolah'"
                     type="email"
                     placeholder="Email"
                     autocomplete="email"
+                    v-model="email"
+                  >
+                    <template #prepend-content><CIcon name="cil-user"/></template>
+                  </CInput>
+                  <CInput
+                    v-else
+                    type="text"
+                    placeholder="NIP"
+                    autocomplete="NIP"
                     v-model="email"
                   >
                     <template #prepend-content><CIcon name="cil-user"/></template>
@@ -63,23 +75,24 @@
 </template>
 
 <script>
-
 export default {
   name: 'Login',
   data(){
     return {
       email:"",
-      password:""
+      password:"",
+      type:"sekolah"
     }
   },
   methods: {
     login(){
-      this.axios.post("/sekolah/login", {
+      this.axios.post("/login", {
         email:this.email,
-        password:this.password
+        password:this.password,
+        type: this.type
       }).then(response => {
-        localStorage.setItem("SCHOOL_TOKEN", response.data.data.token)
-        this.$store.commit('auth/authenticated', {token:response.data.data.token})
+        localStorage.setItem("ADMIN_PAGE_TOKEN", response.data.data.token)
+        this.$store.dispatch('auth/authenticated', {token:response.data.data.token, as:response.data.data.as})
         this.$router.push({name:"DashboardPage"})
       }).catch(e => {
         this.$swal({

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\sekolah;
+namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class LoginRequest extends FormRequest
+class LoginSekolahDanGuruRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,8 +24,9 @@ class LoginRequest extends FormRequest
     public function rules()
     {
         return [
-            'email' => 'required|email',
-            'password' => 'required'
+            'email' => 'required',
+            'password' => 'required',
+            'type' => 'required|in:guru,sekolah'
         ];
     }
 
@@ -33,8 +34,9 @@ class LoginRequest extends FormRequest
     {
         return [
             'email.required' => 'Email wajib diisi',
-            'email.email' => 'Email tidak valid',
-            'password.required' => 'Password wajib diisi'
+            'password.required' => 'Password wajib diisi',
+            'type.required' => 'Jenis login wajib diisi',
+            'type.in' => 'Jenis login tidak tidak diketahui'
         ];
     }
 }

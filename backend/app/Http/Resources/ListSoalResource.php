@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class SoalResource extends JsonResource
+class ListSoalResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -15,10 +15,8 @@ class SoalResource extends JsonResource
     public function toArray($request)
     {
         return [
-            "id" => $this->id,
-            "soal" => $this->soal,
-            "jawaban" => $this->jawaban,
-            "terjawab" => $this->jawaban != null ? true : false,
+            'num' => $this->num,
+            'isAnswered' => $this->jawaban != null ? true : false,
         ];
     }
 }

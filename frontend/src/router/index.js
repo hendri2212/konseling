@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import store from '@/store/index'
 
 // Containers
 const TheContainer = () => import('@/containers/TheContainer')
@@ -13,6 +14,7 @@ const SoalPage = () => import('@/views/SoalAkpd/SoalPage')
 const SoalBidangPage = () => import('@/views/SoalBidangAkpd/SoalBidangPage')
 const SoalKompetensiPage = () => import('@/views/SoalKompetensiAkpd/SoalKompetensiPage')
 const JawabanPage = () => import('@/views/JawabanPeserta/JawabanPage')
+const Ujian = () => import('@/views/Ujian/UjianPage')
 
 
 // Views - Pages
@@ -21,20 +23,16 @@ const Login = () => import('@/views/pages/Login')
 
 Vue.use(VueRouter)
 
-export default new VueRouter({
-  mode: 'history', // https://router.vuejs.org/api/#mode
-  linkActiveClass: 'active',
-  scrollBehavior: () => ({ y: 0 }),
-  routes: configRoutes()
-})
-
 function configRoutes() {
   return [
     // Login
     {
       path: '/login',
       name: 'Login',
-      component: Login
+      component: Login,
+      meta: {
+        requiredNotLogin: true
+      }
     },
     // Dashboard
     {
@@ -46,44 +44,92 @@ function configRoutes() {
         {
           path: 'dashboard',
           name: 'DashboardPage',
-          component: DashboardPage
+          component: DashboardPage,
+          meta: {
+            requiredLogin:true
+          },
         },
         {
           path: '/bio/identitas-sekolah',
           name: 'Identitas Sekolah',
-          component: IdentitasSekolahPage
+          component: IdentitasSekolahPage,
+          meta: {
+            requiredLogin:true
+          },
         },
         {
           path: '/bio/guru',
           name: 'Guru',
-          component: GuruPage
+          component: GuruPage,
+          meta: {
+            requiredLogin:true
+          },
         },
         {
           path: '/bio/kelas',
           name: 'Kelas',
-          component: KelasPage
+          component: KelasPage,
+          meta: {
+            requiredLogin:true
+          },
         },
         {
           path: '/akpd/soal',
           name: 'Soal AKPD',
           component: SoalPage,
+          meta: {
+            requiredLogin:true
+          },
         },
         {
           path: '/akpd/soal/bidang',
           name: 'Bidang Soal AKPD',
-          component: SoalBidangPage
+          component: SoalBidangPage,
+          meta: {
+            requiredLogin:true
+          },
         },
         {
           path: '/akpd/soal/kompetensi',
           name: 'Kompetensi Soal AKPD',
-          component: SoalKompetensiPage
+          component: SoalKompetensiPage,
+          meta: {
+            requiredLogin:true
+          },
         },
         {
           path: '/akpd/jawaban',
           name: 'Jawaban Peserta Didik',
-          component: JawabanPage
+          component: JawabanPage,
+          meta: {
+            requiredLogin:true
+          },
+        },
+        {
+          path: '/ujian',
+          name: 'Ujian',
+          component: Ujian,
+          meta: {
+            requiredLogin:true
+          },
         },
       ]
     }
   ]
 }
+
+const router = new VueRouter({
+  mode: 'history',
+  linkActiveClass: 'active',
+  scrollBehavior: () => ({ y: 0 }),
+  routes: configRoutes(),
+})
+router.beforeEach((to, from, next) => {
+  if (!store.getters['auth/isAuthenticated'] && to.meta.requiredLogin) {
+    next({ name: 'Login' })
+  }else if(store.getters['auth/isAuthenticated'] && to.meta.requiredNotLogin){
+    next({name: 'Home'})
+  }
+  next()
+})
+export default router

@@ -44,6 +44,12 @@ export default [
       },
       {
         _name: 'CSidebarNavItem',
+        name: 'Ujian',
+        to: '/ujian',
+        icon: 'cil-pencil'
+      },
+      {
+        _name: 'CSidebarNavItem',
         name: 'Jawaban Peserta Didik',
         to: '/akpd/jawaban',
         icon: 'cil-pencil'

@@ -21,4 +21,8 @@ class Soal extends Model
         return $this->hasOne(Kompetensi::class, 'id', 'kompetensi_id');
     }
 
+    public function jawaban() {
+        return $this->hasOne(Jawaban::class, "soal_id", "id");
+    }
+
 }

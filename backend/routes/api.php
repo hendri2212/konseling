@@ -1,8 +1,9 @@
 <?php
 
-use App\Http\Controllers\admin\AuthenticationController;
+use App\Http\Controllers\admin\AuthenticationController as AdminAuthenticationController;
 use App\Http\Controllers\admin\RoleController;
 use App\Http\Controllers\admin\ServiceController;
+use App\Http\Controllers\AuthenticationController;
 use App\Http\Controllers\guru\AuthenticationController as GuruAuthenticationController;
 use App\Http\Controllers\sekolah\AuthenticationController as SekolahAuthenticationController;
 use App\Http\Controllers\sekolah\KelasController as Sekolah_KelasController;
@@ -12,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\guru\VerifyEmailController;
+use App\Http\Controllers\siswa\AuthenticationController as SiswaAuthenticationController;
 use App\Http\Controllers\SoalController;
 
 /*
@@ -34,12 +36,11 @@ Route::middleware('api')->group(function() {
     ->middleware(['signed', 'throttle:6,1'])
     ->name('verification.verify');
     
+    Route::post('login', [AuthenticationController::class, 'login']);
+    Route::middleware('auth:sekolah,guru')->get('me', [AuthenticationController::class, 'me']);
     Route::prefix('sekolah')->group(function() {
-        Route::post('login', [SekolahAuthenticationController::class, 'login']);
         Route::post('register', [SekolahAuthenticationController::class, 'register']);
-        
         Route::middleware('auth:sekolah')->group(function() {
-            Route::get('me', [SekolahAuthenticationController::class, 'me']);
             Route::resource('kelas', Sekolah_KelasController::class);
             Route::get('guru/search', [GuruController::class, 'search']);
             Route::resource('guru', GuruController::class);
@@ -50,20 +51,21 @@ Route::middleware('api')->group(function() {
 
     Route::prefix('guru')->group(function() {
         Route::post('login', [GuruAuthenticationController::class, 'login']);
-        Route::resource('ujian', UjianConctroller::class);
         // Route::resource('guru', GuruController::class);
         // Route::post('register', [GuruAuthenticationController::class, 'register']);
         
-        // Route::middleware('auth:guru')->group(function() {
-        //     // Route::get('ability', [GuruAuthenticationController::class, 'me']);
-        //     Route::get('me', [GuruKelasController::class, 'me']);
-        //     Route::resource('kelas', GuruKelasController::class)->middleware('ability:kelas.*');
-        //     Route::resource('ujian', UjianController::class);
-        // });
+        Route::middleware('auth:guru')->group(function() {
+            // Route::get('ability', [GuruAuthenticationController::class, 'me']);
+            // Route::get('me', [GuruKelasController::class, 'me']);
+            // Route::resource('kelas', GuruKelasController::class)->middleware('ability:kelas.*');
+            Route::patch('ujian/{id}/open', [UjianController::class, 'open']);
+            Route::patch('ujian/{id}/close', [UjianController::class, 'close']);
+            Route::resource('ujian', UjianController::class);
+        });
     });
     
     
-    Route::post('admin/login', [AuthenticationController::class, 'login']);
+    Route::post('admin/login', [AdminAuthenticationController::class, 'login']);
     Route::middleware('auth:admin')->group(function() {
         Route::resource('service', ServiceController::class)->middleware('ability:service.*');
         Route::get('service/{service_id}/permission', [ServiceController::class, 'getPermission'])->middleware('ability:service.*, service.permission.list');
@@ -71,8 +73,15 @@ Route::middleware('api')->group(function() {
         Route::resource('role', RoleController::class)->middleware('ability:role.*');
     });
 
-
-    Route::resource('soal', SoalController::class);
+    Route::prefix('siswa')->group(function() {
+        Route::post('login', [SiswaAuthenticationController::class, 'login']);
+        
+        Route::middleware('auth:siswa')->group(function() {
+            Route::get('list-soal', [SoalController::class, 'listSoal']);
+            Route::post('soal/jawab', [SoalController::class, 'jawab']);
+            Route::resource('soal', SoalController::class);
+        });
+    });
 
 
 

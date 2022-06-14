@@ -3,7 +3,7 @@
     <CToggler
       in-header
       class="m-3 d-lg-none"
-      @click="$store.commit('toggleSidebarMobile')"
+      @click="$store.commit('sidebar/toggleSidebarMobile')"
     />
 
     <!-- <CToggler

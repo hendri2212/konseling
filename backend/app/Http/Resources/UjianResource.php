@@ -20,7 +20,8 @@ class UjianResource extends JsonResource
             'nama' => $this->nama,
             'tanggal' => $this->tanggal,
             // 'siswa' => $this->append('jawaban_siswa')->jawaban_siswa
-            // 'kelas' => KelasResource::collection($this->kelas)
+            'kelas' => new KelasResource($this->kelas),
+            'status' => $this->status,
         ];
     }
 }

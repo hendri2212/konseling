@@ -50,32 +50,5 @@ class AuthenticationController extends Controller
         }
     }
 
-    public function login(LoginRequest $request) {
-        try {
-            $user = SekolahUser::where('email', $request->email)->first();
-            $tokenName = 'sekolah-token';
-
-            $abilities =  $user->append('abilities')->abilities;
-
-            if ($user && Hash::check($request->password, $user->password)) {
-                $token = $user->createToken($tokenName, $abilities);
-                $data = [
-                    'token' => $token->plainTextToken
-                ];
-            }else{
-                return $this->responseRepository->ResponseError(null, 'Invalid Email and Password !', Response::HTTP_UNAUTHORIZED);
-            }
-
-            return $this->responseRepository->ResponseSuccess($data, 'Logged In Successfully !');
-        } catch (\Exception $e) {
-            return $this->responseRepository->ResponseError(null, 'Internal Server Error !', Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    public function me() {
-        return $this->responseRepository->ResponseSuccess(auth()->user());
-        // return auth()->user()->role->permission->append('permission_merge')->pluck('permission_merge');
-    }
-
     
 }

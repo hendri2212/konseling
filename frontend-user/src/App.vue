@@ -4,9 +4,29 @@
       <router-link to="/">Home</router-link> |
       <router-link to="/about">About</router-link>
     </nav> -->
-    <router-view/>
+    <router-view :numbers="numbers"></router-view>
   </div>
 </template>
+<script>
+export default {
+  name:"App",
+  computed:{
+      numbers(){
+        return this.$store.state.soal.numbers
+      }
+  },
+  created(){
+    this.axios.get('/siswa/list-soal', {
+      headers: {
+        Authorization: "Bearer " + this.$store.state.auth.token,
+      }
+    }).then(response => {
+      this.$store.commit('soal/setNumbers', response.data.data)
+      // this.numbers = response.data.data
+    })
+  }
+}
+</script>
 
 <style lang="scss">
 // #app {

@@ -30,25 +30,25 @@
             <p class="fs-6" v-else v-for="(data, index) in soal" :key="index">{{ data.soal }}</p>
           </span>          
 
-          <div class="answer-section">
-            <div class="list-group">
+          <div class="answer-section" v-if="soal!=null">
+            <div class="list-group" v-for="(data, index) in soal" :key="'jawaban ' + index">
               <label class="list-group-item">
-                <input class="form-check-input me-1" type="radio" value="1" name="jawaban" id="jawabYa">
+                <input @click="jawab(data.id, 1)" :checked="data.jawaban != null ? data.jawaban.jawaban == 1 ? true : false : false" class="form-check-input me-1" type="radio" value="1" name="jawaban" id="jawabYa">
                 Ya
               </label>
               <label class="list-group-item">
-                <input class="form-check-input me-1" type="radio" value="2" name="jawaban" id="jawabTidak">
+                <input @click="jawab(data.id, 0)" :checked="data.jawaban != null ? data.jawaban.jawaban == 0 ? true : false : false" class="form-check-input me-1" type="radio" value="2" name="jawaban" id="jawabTidak">
                 Tidak
               </label>
             </div>
           </div>
 
-          <div class="btn-controller py-4 d-flex justify-content-between">
-            <button class="btn btn-warning" v-if="this.$route.params.id==1" disabled>Kembali</button>
-            <a v-else :href="parseInt(this.$route.params.id)-1" class="btn btn-warning">Kembali</a>
-
-            <button class="btn btn-primary" v-if="this.$route.params.id==3" disabled>End</button>
-            <a v-else :href="parseInt(this.$route.params.id)+1" class="btn btn-primary">Selanjutnya</a>
+          <div class="btn-controller py-4 d-flex justify-content-between" v-if="numbers.length != 0">
+            <button class="btn btn-warning" v-if="this.$route.params.id==1 || loading" disabled>Kembali</button>
+            <router-link @click.native="getSoal" class="btn btn-warning" v-else :to="{name:'Soal', params:{id:parseInt(this.$route.params.id)-1}}">Kembali</router-link>
+            <button class="btn btn-primary" v-if="this.$route.params.id==maxNumber" disabled>End</button>
+            <button class="btn btn-primary" v-else-if="this.$route.params.id!=maxNumber && loading" disabled>Selanjutnya</button>
+            <router-link @click.native="getSoal" class="btn btn-primary" v-else :to="{name:'Soal', params:{id:parseInt(this.$route.params.id)+1}}">Selanjutnya</router-link>
           </div>
           <div class="btn-controller py-4 d-flex justify-content-center">
             <a class="btn btn-success text-light" data-bs-toggle="offcanvas" href="#offcanvasSoal" role="button" aria-controls="offcanvasExample">
@@ -61,15 +61,15 @@
       <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasSoal" aria-labelledby="offcanvasSoalLabel">
         <div class="offcanvas-header">
           <h5 class="offcanvas-title" id="offcanvasSoalLabel">Daftar Soal</h5>
-          <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+          <button type="button" class="btn-close text-reset" id="tomboloffcanvasSoal" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body">
-          <div class="soal row row-cols-5">
-            <div v-for="(number, index) in numbers" :key="index" class="col text-center px-1 pb-1">
+          <div class="soal row row-cols-5 justify-content-center">
+            <div v-for="(number, index) in numbers" :key="index" class="col-3 text-center px-1 pb-1">
               <!-- <a href="#" data-bs-dismiss="offcanvas" :class="['btn', number.isAnswered ? answeredClass : defaultClass /*, activePage */ ]">{{ number.num }}</a> -->
               
               <!-- <router-link @click.native="$router.go()" :to="{ name: 'Soal', params: { id: number.num } }" data-bs-dismiss="offcanvas" :class="['btn', number.isAnswered ? answeredClass : defaultClass /*, activePage */ ]">{{ number.num }}</router-link> -->
-              <router-link @click.native="$router.go()" :to="{ name: 'Soal', params: { id: number.num } }" :class="['btn', number.isAnswered ? answeredClass : defaultClass /*, activePage */ ]">{{ number.num }}</router-link>
+              <router-link @click.native="changePage" :to="{ name: 'Soal', params: { id: number.num } }" style="min-width:100%;" :class="['btn', number.num == $route.params.id ? currentClass : number.isAnswered ? answeredClass : defaultClass /*, activePage */ ]">{{ number.num }}</router-link>
             </div>
             <div class="col-12 py-4 text-center">
               <button type="button" class="btn btn-outline-danger">Akhiri Ujian</button>
@@ -80,52 +80,65 @@
     </div>
   </div>
 </template>
-
-<!-- Axios -->
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
 // @ is an alias to /src
 // import HelloWorld from '@/components/HelloWorld.vue'
-
-const numbers = [
-  { num: 1, isAnswered: false },
-  { num: 2, isAnswered: true },
-  { num: 3, isAnswered: true },
-  { num: 4, isAnswered: false },
-  { num: 5, isAnswered: false }
-]
 
 export default {
   name: 'Home',
   data() {
     return {
-      numbers,
       answeredClass: 'btn-success text-light',
+      currentClass: 'btn-primary text-light',
       defaultClass: 'btn-outline-primary',
       // activePage: isSoal === isSoalActive ? 'active' : ''
       // count: 20,
       // timer: '',
-      soal: null
+      soal: null,
+      loading:false,
+    }
+  },
+  props:{
+    numbers:Array,
+  },
+  computed: {
+    maxNumber(){
+      return this.numbers.length
     }
   },
   created() {
-    axios
-    // .get(this.$store.state.url + 'soal')
-    .get('http://127.0.0.1:8000/api/soal?page=' + this.$route.params.id)
-    .then(response => {
-      this.soal = response.data.data
-    })
-    // console.log(this.$router.currentRoute.meta.next)
-    // console.log(this.$router.options.routes)
+    this.getSoal()
   },
-  // methods: {
-  //   reload() {
-  //     this.$router.push(this.$route.params.id)
-  //     this.$router.go(this.$route.params.id)
-  //     console.log(this.$route.params.id)
-  //     console.log(this.$router.currentRoute.name)
-  //   }
-  // }
+  methods: {
+    getSoal(){
+      this.soal = null
+      this.axios.get('/siswa/soal?page=' + this.$route.params.id, {
+        headers: {
+          Authorization: "Bearer " + this.$store.state.auth.token,
+        }
+      }).then(response => {
+        this.soal = response.data.data
+      })
+    },
+    async changePage(){
+      await this.getSoal()
+      document.getElementById("tomboloffcanvasSoal").click()
+    },
+    jawab(id, j){
+      this.loading = true
+      this.axios.post('/siswa/soal/jawab', {
+        id: id,
+        jawaban: j,
+      }, {
+        headers: {
+          Authorization: "Bearer " + this.$store.state.auth.token,
+        }
+      }).then(() => {
+        this.$store.commit('soal/setAnswered', parseInt(this.$route.params.id)-1)
+        this.loading = false
+      })
+    }
+  }
   // watch: {
   //   count: {
   //     handler(value) {

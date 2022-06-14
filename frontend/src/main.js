@@ -4,7 +4,7 @@ import router from './router'
 import store from './store/index'
 import CoreuiVue from '@coreui/vue'
 // import { iconsSet as icons } from './assets/icons/icons.js'
-import * as icons from '@coreui/icons'
+// import * as icons from '@coreui/icons'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 import VueSweetalert2 from 'vue-sweetalert2';
@@ -22,6 +22,6 @@ Vue.use(VueAxios, axios)
 new Vue({
   router,
   store,
-  icons,
+  // icons,
   render: h => h(App)
 }).$mount('#app')
