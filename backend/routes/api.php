@@ -3,10 +3,11 @@
 use App\Http\Controllers\admin\AuthenticationController as AdminAuthenticationController;
 use App\Http\Controllers\admin\RoleController;
 use App\Http\Controllers\admin\ServiceController;
+use App\Http\Controllers\AnalisisProfileKelasController;
 use App\Http\Controllers\AuthenticationController;
 use App\Http\Controllers\guru\AuthenticationController as GuruAuthenticationController;
 use App\Http\Controllers\sekolah\AuthenticationController as SekolahAuthenticationController;
-use App\Http\Controllers\sekolah\KelasController as Sekolah_KelasController;
+use App\Http\Controllers\KelasController;
 use App\Http\Controllers\guru\UjianController;
 use App\Http\Controllers\sekolah\GuruController;
 use Illuminate\Http\Request;
@@ -41,7 +42,7 @@ Route::middleware('api')->group(function() {
     Route::prefix('sekolah')->group(function() {
         Route::post('register', [SekolahAuthenticationController::class, 'register']);
         Route::middleware('auth:sekolah')->group(function() {
-            Route::resource('kelas', Sekolah_KelasController::class);
+            Route::resource('kelas', KelasController::class);
             Route::get('guru/search', [GuruController::class, 'search']);
             Route::resource('guru', GuruController::class);
             // Route::get('ability', [GuruAuthenticationController::class, 'me']);
@@ -55,11 +56,15 @@ Route::middleware('api')->group(function() {
         // Route::post('register', [GuruAuthenticationController::class, 'register']);
         
         Route::middleware('auth:guru')->group(function() {
+            Route::get('kelas', [KelasController::class, 'index']);
+            Route::get('analisis-profile-kelas/{id}', [AnalisisProfileKelasController::class, 'profile_kelas']);
+            Route::get('analisis-profile-konseling/{id}', [AnalisisProfileKelasController::class, 'profile_konseling']);
             // Route::get('ability', [GuruAuthenticationController::class, 'me']);
             // Route::get('me', [GuruKelasController::class, 'me']);
             // Route::resource('kelas', GuruKelasController::class)->middleware('ability:kelas.*');
             Route::patch('ujian/{id}/open', [UjianController::class, 'open']);
             Route::patch('ujian/{id}/close', [UjianController::class, 'close']);
+            Route::get('ujian/kelas/{id}', [UjianController::class, 'setiapKelas']);
             Route::resource('ujian', UjianController::class);
         });
     });

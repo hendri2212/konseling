@@ -2,10 +2,9 @@
 
 namespace App\Http\Resources;
 
-use App\Http\Resources\KelasResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class UjianResource extends JsonResource
+class OnlyUjianResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -19,8 +18,6 @@ class UjianResource extends JsonResource
             'id' => $this->id,
             'nama' => $this->nama,
             'tanggal' => $this->tanggal,
-            // 'siswa' => $this->append('jawaban_siswa')->jawaban_siswa
-            'kelas' => new OnlyKelasResource($this->kelas),
             'status' => $this->status,
         ];
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\sekolah;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\sekolah\KelasRequest;
@@ -9,6 +9,7 @@ use App\Models\Kelas;
 use App\Repositories\ResponseRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 class KelasController extends Controller
@@ -27,13 +28,18 @@ class KelasController extends Controller
      */
     public function index()
     {
-        try {
-            $kelas = Kelas::where('sekolah_id', auth()->id())->paginate(10);
+        // try {
+            if(Auth::guard('sekolah')->check()){
+                $kelas = Kelas::where('sekolah_id', auth()->id())->paginate(10);
+            }else{
+                $sekolah_id = auth()->user()->sekolah_id;
+                $kelas = Kelas::where('sekolah_id', $sekolah_id)->where('guru_id', auth()->id())->paginate(10);
+            }
             $data = KelasResource::collection($kelas);
             return $this->responseRepository->ResponseSuccess($data);
-        } catch (\Exception $e) {
-            return $this->responseRepository->ResponseError(null);
-        }
+        // } catch (\Exception $e) {
+        //     return $this->responseRepository->ResponseError(null);
+        // }
     }
 
     /**

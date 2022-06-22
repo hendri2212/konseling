@@ -14,6 +14,10 @@ const SoalPage = () => import('@/views/SoalAkpd/SoalPage')
 const SoalBidangPage = () => import('@/views/SoalBidangAkpd/SoalBidangPage')
 const SoalKompetensiPage = () => import('@/views/SoalKompetensiAkpd/SoalKompetensiPage')
 const JawabanPage = () => import('@/views/JawabanPeserta/JawabanPage')
+const ProfileKelasParent = () => import('@/views/ProfileKelas/Parent')
+const ProfileKelasPage = () => import('@/views/ProfileKelas/Page')
+const ProfileKelasPerKelasPage = () => import('@/views/ProfileKelas/PerKelasPage')
+const ProfileKelasPerUjianPage = () => import('@/views/ProfileKelas/PerUjianPage')
 const Ujian = () => import('@/views/Ujian/UjianPage')
 
 
@@ -104,6 +108,46 @@ function configRoutes() {
           meta: {
             requiredLogin:true
           },
+        },
+        {
+          path:'/analisis',
+          component: ProfileKelasParent,
+          children: [
+            {
+              path: '/',
+              name: 'Analisis Profile Kelas Home',
+              component: ProfileKelasPage,
+              meta: {
+                requiredLogin:true
+              },
+            },
+            {
+              path: 'kelas/:id',
+              name: 'Analisis Profile Kelas View',
+              component: ProfileKelasPerKelasPage,
+              meta: {
+                requiredLogin:true
+              },
+            },
+            {
+              path: 'ujian/:id/butir',
+              name: 'Analisis Profil Tiap Butir Soal',
+              component: ProfileKelasPerUjianPage,
+              meta: {
+                requiredLogin:true,
+                type:'butir',
+              },
+            },
+            {
+              path: 'ujian/:id/siswa',
+              name: 'Analisis Profile Tiap Siswa',
+              component: ProfileKelasPerUjianPage,
+              meta: {
+                requiredLogin:true,
+                type:'siswa',
+              },
+            },
+          ]
         },
         {
           path: '/ujian',

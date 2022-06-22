@@ -80,16 +80,16 @@ export default [
       },
       {
         _name: 'CSidebarNavItem',
-        name: 'Analisis Profil Kelas',
-        to: '/analisis/profil-kelas',
+        name: 'Analisis Profile',
+        to: '/analisis',
         icon: 'cil-chart'
       },
-      {
-        _name: 'CSidebarNavItem',
-        name: 'Analisis Profil Konseling',
-        to: '/analisis/profil-konseling',
-        icon: 'cil-chart-line'
-      },
+      // {
+      //   _name: 'CSidebarNavItem',
+      //   name: 'Analisis Profile Konseling',
+      //   to: '/analisis/profile-konseling',
+      //   icon: 'cil-chart-line'
+      // },
     ]
   }
 ]

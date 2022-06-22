@@ -15,7 +15,7 @@ class CreateJawabanTable extends Migration
     {
         Schema::create('jawaban', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('jawaban');
+            $table->integer('jawaban');
             $table->uuid('siswa_id');
             $table->uuid('ujian_id');
             $table->uuid('soal_id');

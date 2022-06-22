@@ -18,7 +18,6 @@
 
     <div class="home container-sm px-4">
       <div class="row justify-content-center">
-
         <div class="col-lg-9 p-md-3 py-3">
           <div class="btn-controller d-flex justify-content-between">
             <h5>Soal No. {{ this.$route.params.id }}</h5>

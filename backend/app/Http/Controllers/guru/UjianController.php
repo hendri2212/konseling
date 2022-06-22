@@ -4,6 +4,7 @@ namespace App\Http\Controllers\guru;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\guru\UjianRequest;
+use App\Http\Resources\OnlyUjianResource;
 use App\Http\Resources\UjianResource;
 use App\Models\Kelas;
 use App\Models\Ujian;
@@ -32,6 +33,18 @@ class UjianController extends Controller
             $kelas_id = Kelas::where('guru_id', auth()->id())->get()->pluck('id');
             $ujian = Ujian::whereIn('kelas_id', $kelas_id)->get();
             $data = UjianResource::collection($ujian);
+            return $this->responseRepository->ResponseSuccess($data);
+        // } catch (\Exception $e) {
+        //     return $this->responseRepository->ResponseError(null);
+        // }
+    }
+
+    public function setiapKelas($id)
+    {
+        // try {
+            $kelas_id = [$id];
+            $ujian = Ujian::whereIn('kelas_id', $kelas_id)->get();
+            $data = OnlyUjianResource::collection($ujian);
             return $this->responseRepository->ResponseSuccess($data);
         // } catch (\Exception $e) {
         //     return $this->responseRepository->ResponseError(null);
