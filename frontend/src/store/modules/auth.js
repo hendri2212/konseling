@@ -19,6 +19,11 @@ const state = {
       commit('setToken', user.token)
       commit('setAs', user.as)
     },
+    logout({ commit }) {
+      window.localStorage.removeItem(nameLocalStorage)
+      commit('setToken', null)
+      commit('setAs', null)
+    },
     logedAs ({ commit }, as){
       commit('setAs', as)
     }

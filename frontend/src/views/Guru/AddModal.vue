@@ -2,129 +2,150 @@
   <CModal :title="insertModal ? 'Add Guru' : 'Edit Guru'" color="primary" :show.sync="showModal">
     <CRow>
       <CCol sm="12">
-        <CInput
-          label="NIP"
-          placeholder="Masukkan NIP"
-          v-model="data.nip"
-        />
+        <CInput required label="NIP" placeholder="Masukkan NIP" v-model="nip" />
       </CCol>
       <CCol sm="12">
-        <CInput
-          label="Nama"
-          placeholder="Masukkan Nama"
-          v-model="data.nama"
-        />
+        <CInput required label="Nama" placeholder="Masukkan Nama" v-model="nama" />
       </CCol>
       <CCol sm="12">
-        <CInput
-          label="Password"
-          type="password"
-          placeholder="Masukkan Password"
-          v-model="data.password"
-        />
+        <CInput :required="insertModal" label="Password" type="password" placeholder="Masukkan Password"
+          v-model="password" />
       </CCol>
-      <!-- <CCol sm="12">
-        <CInput
-          type="number"
-          label="Tahun"
-          placeholder="Masukkan Tahun"
-          v-model="data.year"
-        />
-      </CCol> -->
     </CRow>
-
+    <Loading ref="loading"></Loading>
     <template #footer>
-      <CButton color="secondary" @click="showModal = false">Close</CButton>
-      <CButton color="primary" @click="save">Save</CButton>
+      <div class="d-flex justify-content-between w-100">
+        <CButton class="text-danger" @click="reset()">Reset</CButton>
+        <div>
+          <CButton class="mr-2 px-4" color="secondary" @click="showModal = false">Close</CButton>
+          <CButton class="px-5" color="primary" @click="save">Save</CButton>
+        </div>
+      </div>
     </template>
   </CModal>
 </template>
 
 <script>
+import Loading from '../../components/Loading.vue'
 export default {
   name: "AddModal",
+  components: {
+    Loading,
+  },
   data() {
     return {
-      data: {
-        id: null,
-        nip: null,
-        nama: null,
-        password: null,
-      },
+      id: '',
+      nip: '',
+      nama: '',
+      password: '',
       insertModal: true,
       showModal: false,
-      dataGuru:[]
+      dataGuru: []
     };
   },
-  computed:{
-    guru(){
+  computed: {
+    guru() {
       return this.dataGuru.map((guru) => {
-        return { 
+        return {
           label: guru.nama,
           id: guru.id
         };
       })
     }
   },
-  created(){
-    this.axios.get('sekolah/guru', {
-      headers: {
-        Authorization: "Bearer " + this.$store.state.auth.token
+  created() {
+    this.$watch(
+      () => this.showModal,
+      (n) => {
+        if (!n && !this.insertModal) {
+          this.reset()
+        }
       }
-    }).then(response => {
-      this.dataGuru = response.data.data
-    })
+    )
   },
   methods: {
-    onSearch(query){
+    reset() {
+      this.id = ""
+      this.nip = ""
+      this.nama = ""
+      this.password = ""
+    },
+    onSearch(query) {
       this.axios.get(`sekolah/guru/search?search=${query}`, {
         headers: {
           Authorization: "Bearer " + this.$store.state.auth.token
         }
       }).then(response => {
-        this.dataGuru = response.data.data
+        this.dataGuru = response.data
       })
     },
-    setModal(stat, data = null) {
+    setModal(stat, data = '') {
       this.showModal = stat;
-      if (data != null) {
+      if (data != '') {
         this.insertModal = false;
-        this.data = data;
+        this.id = data.id
+        this.nip = data.nip
+        this.nama = data.nama
       } else {
         this.insertModal = true;
       }
     },
-    save() {
-      if (this.insertModal) {
-        this.axios.post("sekolah/guru", this.data, {
-          headers: {
-            Authorization: "Bearer " + this.$store.state.auth.token
-          }
-        }).then(response => {
-          this.$swal({
+    async save() {
+      this.$refs.loading.show()
+      try {
+        if (this.insertModal) {
+          const { data } = await this.axios.post("sekolah/guru", this.data, {
+            headers: {
+              Authorization: "Bearer " + this.$store.state.auth.token
+            }
+          })
+          this.reset()
+          await this.$swal({
             icon: 'success',
             title: 'Berhasil!',
-            text:response.data.message,
+            text: data.message,
           })
-        }).catch(e => {
-          // var error = ""
-          // for (var key in e.response.data.errors) {
-          //     error += key + ": " + e.response.data.errors[key] + "<b"
-          // }
-          this.$swal({
-            icon: 'warning',
-            title: 'Terjadi Kesalahan',
-            text:e.response.data.errors,
+        } else {
+          let payload = {}
+          payload.nip = this.nip
+          payload.nama = this.nama
+          if (this.password?.trim().length >= 1) {
+            payload.password = this.password
+          }
+          const { data } = await this.axios.put(`sekolah/guru/${this.id}`, payload, {
+            headers: {
+              Authorization: "Bearer " + this.$store.state.auth.token
+            }
           })
+          await this.$swal({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: data.message,
+          })
+        }
+      } catch (e) {
+        var icon = 'error'
+        var title = 'Terjadi Kesalahan'
+        var text = 'Terjadi Kesalahan di aplikasi'
+        if (e.response.status == 422) {
+          text = ''
+          icon = 'warning'
+          for (var key in e.response.errors) {
+            text += e.response.errors[key] + "<br>"
+          }
+        }
+        await this.$swal({
+          icon: icon,
+          title: title,
+          html: text,
         })
-      } else {
-        console.log("edit");
-        console.log(this.data);
       }
+      this.$refs.loading.hide()
     },
   },
 };
 </script>
 
 <style>
+
 </style>

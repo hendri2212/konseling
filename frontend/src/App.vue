@@ -7,9 +7,6 @@
 <script>
 export default {
   name: 'App',
-  components: {
-
-  },
   created(){
     let headers = {
       headers: {
@@ -18,7 +15,9 @@ export default {
     }
     this.axios.get('me', headers).then(response => {
       this.$store.dispatch('auth/logedAs', response.data.data.as)
-    })
+    }).catch(() => {
+      this.$store.dispatch('auth/logout')
+    }) 
   }
 }
 </script>

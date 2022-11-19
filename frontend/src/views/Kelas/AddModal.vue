@@ -61,13 +61,13 @@ export default {
     }
   },
   created(){
-    this.axios.get('sekolah/guru', {
-      headers: {
-        Authorization: "Bearer " + this.$store.state.auth.token
-      }
-    }).then(response => {
-      this.dataGuru = response.data.data
-    })
+    // this.axios.get('sekolah/guru', {
+    //   headers: {
+    //     Authorization: "Bearer " + this.$store.state.auth.token
+    //   }
+    // }).then(response => {
+    //   this.dataGuru = response.data.data
+    // })
   },
   methods: {
     onSearch(query){
