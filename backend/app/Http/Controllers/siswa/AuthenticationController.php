@@ -19,6 +19,11 @@ class AuthenticationController extends Controller
         $this->responseRepository = $rr;
     }
 
+    public function peserta()
+    {
+        return SiswaUser::all();
+    }
+
     public function login(Request $request) {
         try {
             $user = SiswaUser::where('email', $request->email)->first();
@@ -40,7 +45,7 @@ class AuthenticationController extends Controller
     }
 
     public function me() {
-        $user = auth()->user();
+        $user = auth()->user()->with('Kelas')->first();
         return $this->responseRepository->ResponseSuccess($user);
         // return auth()->user()->role->permission->append('permission_merge')->pluck('permission_merge');
     }

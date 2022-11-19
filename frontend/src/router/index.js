@@ -70,6 +70,11 @@ function configRoutes() {
           },
         },
         {
+          path: '/bio/peserta-didik',
+          name: 'Peserta Didik',
+          component: () => import('../views/Siswa/SiswaPage.vue')
+        },
+        {
           path: '/bio/kelas',
           name: 'Kelas',
           component: KelasPage,

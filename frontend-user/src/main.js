@@ -19,7 +19,8 @@ var offcanvasElementList = [].slice.call(document.querySelectorAll('.offcanvas')
 offcanvasElementList.map(function (offcanvasEl) {
   return new bootstrap.Offcanvas(offcanvasEl)
 })
-axios.defaults.baseURL = "http://127.0.0.1:8000/api";
+// axios.defaults.baseURL = "http://127.0.0.1:8000/api";
+axios.defaults.baseURL = "http://api.akukonselor.com/api";
 Vue.use(VueAxios, axios)
 Vue.config.productionTip = false
 new Vue({

@@ -11,8 +11,8 @@
     </nav> -->
     <div class="text-center p-2 bg-light">
       <div>
-        <div class="fw-bold">Muhammad Pazrin Andreanor</div>
-        <div>X RPL</div>
+        <div class="fw-bold text-uppercase">{{ me.nama }}</div>
+        <div>{{ me.kelas.nama }}</div>
       </div>
     </div>
 
@@ -82,6 +82,7 @@
 <script>
 // @ is an alias to /src
 // import HelloWorld from '@/components/HelloWorld.vue'
+import auth from '../store/modules/auth'
 
 export default {
   name: 'Home',
@@ -95,6 +96,12 @@ export default {
       // timer: '',
       soal: null,
       loading:false,
+      me: {
+        nama: '',
+        kelas: {
+          nama: ''
+        }
+      }
     }
   },
   props:{
@@ -106,6 +113,24 @@ export default {
     }
   },
   created() {
+    // if (this.$store.state.auth.token == null OR this.$store.state.auth.token) {
+    if (auth.getters.isAuthenticated) {
+      this.axios.get('/siswa/me', {
+        headers: {
+          Authorization: "Bearer " + this.$store.state.auth.token,
+        }
+      }).then(response => {
+        this.me = response.data.data
+      }).catch(response => {
+        if (response.response.status == 401) {
+          localStorage.removeItem('STUDENT_TOKEN')
+          this.$router.push({name: 'login'})
+        }
+      })
+    } else {
+      console.log('belum login')
+    }
+
     this.axios.get('/siswa/list-soal', {
       headers: {
         Authorization: "Bearer " + this.$store.state.auth.token,

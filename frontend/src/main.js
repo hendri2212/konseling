@@ -17,6 +17,7 @@ import 'vue-select/dist/vue-select.css';
 Vue.component('v-select', vSelect)
 
 axios.defaults.baseURL = "http://127.0.0.1:8000/api";
+// axios.defaults.baseURL = "http://api.akukonselor.com/api";
 
 Vue.use(VueAxios, axios)
 new Vue({
