@@ -63,9 +63,8 @@ import AddModal from "./AddModal.vue";
 
 // fields
 const fields = [
-  { key: "no", _style: "width:1%" },
-  { key: "kelas" },
-  { key: "year" },
+  { label : 'No', key : "id", _style: "width:1%" },
+  { label : 'Kelas', key : "nama" },
   {
     key: "show_details",
     label: "",
@@ -93,7 +92,8 @@ export default {
     };
   },
   created(){
-    this.axios.get('sekolah/kelas', {
+    // this.axios.get('sekolah/kelas', {
+    this.axios.get('guru/kelas', {
       headers: {
         Authorization: "Bearer " + this.$store.state.auth.token
       }

@@ -3,7 +3,6 @@
         <CCard accent-color="primary">
             <CCardHeader>
                 Analisis Profil Kelas
-
                 <div class="card-header-actions">
                     <CButton :color="'primary'">
                         <router-link class="text-decoration-none text-white" :to='`/analisis/ujian/${$route.params.id}/siswa`'>Lihat Analisis Setiap Siswa</router-link>
@@ -51,34 +50,35 @@
                         }]">
 
                         </CChartDoughnut>
-
-                        <table class="table table-bordered mt-3">
-                            <thead>
-                                <tr>
-                                    <th colspan="2" style="background-color:rgb(255, 99, 132); color:white;">PRIBADI</th>
-                                    <th colspan="2" style="background-color:rgb(54, 162, 235); color:white;">SOSIAL</th>
-                                    <th colspan="2" style="background-color:rgb(255, 205, 86); color:white;">BELAJAR</th>
-                                    <th colspan="2" style="background-color:rgb(190, 180, 40); color:white;">KARIR</th>
-                                </tr>
-                                <tr>
-                                    <th>RES</th>
-                                    <th>%</th>
-                                    <th>RES</th>
-                                    <th>%</th>
-                                    <th>RES</th>
-                                    <th>%</th>
-                                    <th>RES</th>
-                                    <th>%</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td v-for="n in 8" :key="'res'+n">
-                                        {{n%2!=0 ? data[(n-1)%4] : prosentase[(n-1)%4]}}
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <div class="table-responsive">
+                            <table class="table table-bordered mt-3">
+                                <thead>
+                                    <tr>
+                                        <th colspan="2" style="background-color:rgb(255, 99, 132); color:white;">PRIBADI</th>
+                                        <th colspan="2" style="background-color:rgb(54, 162, 235); color:white;">SOSIAL</th>
+                                        <th colspan="2" style="background-color:rgb(255, 205, 86); color:white;">BELAJAR</th>
+                                        <th colspan="2" style="background-color:rgb(190, 180, 40); color:white;">KARIR</th>
+                                    </tr>
+                                    <tr>
+                                        <th>RES</th>
+                                        <th>%</th>
+                                        <th>RES</th>
+                                        <th>%</th>
+                                        <th>RES</th>
+                                        <th>%</th>
+                                        <th>RES</th>
+                                        <th>%</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td v-for="n in 8" :key="'res'+n">
+                                            {{n%2!=0 ? data[(n-1)%4] : prosentase[(n-1)%4]}}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </CCardBody>
                 </CCard>
             </CCol>

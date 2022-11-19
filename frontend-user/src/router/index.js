@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Login from '../views/Login.vue'
 import Home from '../views/Home.vue'
+import store from '@/store/index'
 
 Vue.use(VueRouter)
 
@@ -16,11 +17,17 @@ const routes = [
     redirect  : { name: 'Soal', params: { id: 1 } },
     name      : 'home',
     component : Home,
+    meta: {
+      requiredLogin:true
+    }
   },
   {
     path      : '/akpd/:id',
     name      : 'Soal',
     component : Home,
+    meta: {
+      requiredLogin:true
+    }
   },
   {
     path: '/about',
@@ -36,6 +43,15 @@ const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes
+})
+
+router.beforeEach((to, from, next) => {
+  if (!store.getters['auth/isAuthenticated'] && to.meta.requiredLogin) {
+    next({ name: 'login' })
+  }else if(store.getters['auth/isAuthenticated'] && to.meta.requiredNotLogin){
+    next({name: 'home'})
+  }
+  next()
 })
 
 export default router
