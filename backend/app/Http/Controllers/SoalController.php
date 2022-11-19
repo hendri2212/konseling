@@ -72,6 +72,7 @@ class SoalController extends Controller
 
     public function jawab(Request $request)
     {
+        // return "tes";
         $validator = Validator::make($request->all(), [
             'id' => "required",
             'jawaban' => "required",
