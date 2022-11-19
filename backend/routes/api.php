@@ -61,6 +61,7 @@ Route::middleware('api')->group(function() {
             Route::get('analisis-profile-konseling/{id}', [AnalisisProfileKelasController::class, 'profile_konseling']);
             // Route::get('ability', [GuruAuthenticationController::class, 'me']);
             // Route::get('me', [GuruKelasController::class, 'me']);
+            Route::get('me', [GuruController::class, 'me']);
             // Route::resource('kelas', GuruKelasController::class)->middleware('ability:kelas.*');
             Route::patch('ujian/{id}/open', [UjianController::class, 'open']);
             Route::patch('ujian/{id}/close', [UjianController::class, 'close']);
@@ -81,7 +82,9 @@ Route::middleware('api')->group(function() {
     Route::prefix('siswa')->group(function() {
         Route::post('login', [SiswaAuthenticationController::class, 'login']);
         
+        Route::get('peserta', [SiswaAuthenticationController::class, 'peserta']);
         Route::middleware('auth:siswa')->group(function() {
+            Route::get('me', [SiswaAuthenticationController::class, 'me']);
             Route::get('list-soal', [SoalController::class, 'listSoal']);
             Route::post('soal/jawab', [SoalController::class, 'jawab']);
             Route::resource('soal', SoalController::class);
