@@ -23,12 +23,22 @@ class GuruController extends Controller
         $this->responseRepository = $rr;
     }
 
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $guru = GuruUser::where('sekolah_id', auth()->id())->paginate(10);
+            $max = 5;
+            $page = isset($request->page) ? ( (int)$request->page >= 1 ? (int)$request->page : 1 )  : 1;
+            $count_all_guru = GuruUser::where('sekolah_id', auth()->id())->count();
+            $guru = GuruUser::where('sekolah_id', auth()->id())->paginate($max);
             $data = GuruResource::collection($guru);
-            return $this->responseRepository->ResponseSuccess($data);
+            $pagination = [
+                'max_page' => ceil($count_all_guru / $max),
+                'next' => null
+            ];
+            if ($page < $pagination['max_page']) {
+                $pagination['next'] = route('guru.index', ['page' => $page+1]);
+            }
+            return $this->responseRepository->ResponseSuccess($data, "Successfull", JsonResponse::HTTP_OK, $pagination);
         } catch (\Exception $e) {
             return $this->responseRepository->ResponseError(null);
         }
@@ -40,12 +50,12 @@ class GuruController extends Controller
             $user = new GuruUser();
             $user->id = Str::uuid();
             $user->nama = $request->nama;
-            $user->nip = $request->nip;
+            $user->username = $request->username;
             $user->password = Hash::make($request->password);
             $user->sekolah_id = auth()->id();
             $user->save();
 
-            return $this->responseRepository->ResponseSuccess(null, "Success membuat data guru", JsonResponse::HTTP_CREATED);
+            return $this->responseRepository->ResponseSuccess(new GuruResource($user), "Success membuat data guru", JsonResponse::HTTP_CREATED);
         } catch (\Exception $e) {
             return $this->responseRepository->ResponseError("Error membuat data guru", 'Internal Server Error !', JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -60,13 +70,13 @@ class GuruController extends Controller
         try {
             $user = GuruUser::find($id);
             $user->nama = $request->nama;
-            $user->nip = $request->nip;
+            $user->username = $request->username;
             if ($request->has('password')) {
                 $user->password = Hash::make($request->password);
             }
             $user->save();
 
-            return $this->responseRepository->ResponseSuccess(null, "Success mengubah data guru", JsonResponse::HTTP_OK);
+            return $this->responseRepository->ResponseSuccess(new GuruResource($user), "Success mengubah data guru", JsonResponse::HTTP_OK);
         } catch (\Exception $e) {
             return $this->responseRepository->ResponseError("Error mengubah data guru", $e->getMessage() . "<br>In File: " . $e->getFile() . "<br>The exception was created on line: " . $e->getLine(), JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }

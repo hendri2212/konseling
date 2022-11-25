@@ -7,13 +7,14 @@ use App\Http\Controllers\AnalisisProfileKelasController;
 use App\Http\Controllers\AuthenticationController;
 use App\Http\Controllers\guru\AuthenticationController as GuruAuthenticationController;
 use App\Http\Controllers\sekolah\AuthenticationController as SekolahAuthenticationController;
-use App\Http\Controllers\KelasController;
 use App\Http\Controllers\guru\UjianController;
 use App\Http\Controllers\sekolah\GuruController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\guru\VerifyEmailController;
+use App\Http\Controllers\sekolah\KelasController as SekolahKelasController;
+use App\Http\Controllers\sekolah\ManageSiswaController;
 use App\Http\Controllers\siswa\AuthenticationController as SiswaAuthenticationController;
 use App\Http\Controllers\SoalController;
 
@@ -42,21 +43,18 @@ Route::middleware('api')->group(function() {
     Route::prefix('sekolah')->group(function() {
         Route::post('register', [SekolahAuthenticationController::class, 'register']);
         Route::middleware('auth:sekolah')->group(function() {
-            Route::resource('kelas', KelasController::class);
             Route::get('guru/search', [GuruController::class, 'search']);
             Route::resource('guru', GuruController::class);
-            // Route::get('ability', [GuruAuthenticationController::class, 'me']);
-            // Route::resource('ujian', UjianController::class);
+            Route::resource('kelas', SekolahKelasController::class);
+            Route::resource('siswa', ManageSiswaController::class);
         });
     });
 
     Route::prefix('guru')->group(function() {
         Route::post('login', [GuruAuthenticationController::class, 'login']);
-        // Route::resource('guru', GuruController::class);
-        // Route::post('register', [GuruAuthenticationController::class, 'register']);
         
         Route::middleware('auth:guru')->group(function() {
-            Route::get('kelas', [KelasController::class, 'index']);
+            // Route::get('kelas', [KelasController::class, 'index']);
             Route::get('analisis-profile-kelas/{id}', [AnalisisProfileKelasController::class, 'profile_kelas']);
             Route::get('analisis-profile-konseling/{id}', [AnalisisProfileKelasController::class, 'profile_konseling']);
             // Route::get('ability', [GuruAuthenticationController::class, 'me']);

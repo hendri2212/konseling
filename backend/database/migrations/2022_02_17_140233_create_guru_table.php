@@ -15,16 +15,14 @@ class CreateGuruTable extends Migration
     {
         Schema::create('guru', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('nama');
-            $table->string('nip');
+            $table->string('username')->unique();
             $table->string('password');
+            $table->string('nama');
             $table->string('status')->nullable();
             $table->uuid('sekolah_id');
             $table->timestamps();
             //relasi
-            $table->foreign('sekolah_id')->references('id')->on('sekolah');
-            //unique
-            $table->unique(['nip', 'sekolah_id']);
+            $table->foreign('sekolah_id')->references('id')->on('sekolah')->onDelete('cascade');
         });
     }
 

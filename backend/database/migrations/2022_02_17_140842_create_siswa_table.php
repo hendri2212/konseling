@@ -15,18 +15,16 @@ class CreateSiswaTable extends Migration
     {
         Schema::create('siswa', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('nisn')->unique();
-            $table->string('nama');
-            $table->string('email')->unique();
+            $table->string('username')->unique();
             $table->string('password');
-            $table->string('tahun_masuk');
+            $table->string('nama');
+            $table->uuid('kelas_id')->nullable();
             $table->uuid('sekolah_id');
-            $table->uuid('kelas_id');
             $table->timestamp('email_verified_at')->nullable();
             $table->timestamps();
             //relasi
-            $table->foreign('sekolah_id')->references('id')->on('sekolah');
-            $table->foreign('kelas_id')->references('id')->on('kelas');
+            $table->foreign('kelas_id')->references('id')->on('kelas')->onDelete('set null');
+            $table->foreign('sekolah_id')->references('id')->on('sekolah')->onDelete('cascade');
         });
     }
 

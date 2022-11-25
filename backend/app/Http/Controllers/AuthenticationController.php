@@ -59,7 +59,7 @@ class AuthenticationController extends Controller
                 $user = SekolahUser::where('email', $request->email)->first();
                 $tokenName = 'sekolah-token';
             }else{
-                $user = GuruUser::where('nip', $request->email)->first();
+                $user = GuruUser::where('username', $request->email)->first();
                 $tokenName = 'guru-token';
             }
             if ($user && Hash::check($request->password, $user->password)) {
@@ -73,7 +73,7 @@ class AuthenticationController extends Controller
                 if($request->type == 'sekolah'){
                     $username = "Email";
                 }else{
-                    $username = "Nip";
+                    $username = "Username";
                 }
                 return $this->responseRepository->ResponseError(null, "Invalid {$username} and Password !", Response::HTTP_UNAUTHORIZED);
             }

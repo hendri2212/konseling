@@ -35,13 +35,14 @@ class ResponseRepository
      * @param integer $status_code
      * @return Response
      */
-    public static function ResponseSuccess($data, $message = "Successfull", $status_code = JsonResponse::HTTP_OK)
+    public static function ResponseSuccess($data, $message = "Successfull", $status_code = JsonResponse::HTTP_OK, $pagination = [])
     {
         return response()->json([
             'status' => true,
             'message' => $message,
             'errors' => null,
             'data' => $data,
+            'pagination' => $pagination
         ], $status_code);
     }
 }

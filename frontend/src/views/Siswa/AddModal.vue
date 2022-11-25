@@ -1,34 +1,16 @@
 <template>
   <form @submit.prevent="save">
-    <CModal :title="insertModal ? 'Add Guru' : 'Edit Guru'" color="primary" :show.sync="showModal">
+    <CModal :title="insertModal ? 'Add Siswa' : 'Edit Siswa'" color="primary" :show.sync="showModal">
       <CRow>
         <CCol sm="12">
-          <CInput label="Nama Kelas" placeholder="Masukkan Kelas" v-model="nama" />
+          <CInput required label="Username" placeholder="Masukkan Username" v-model="username" />
         </CCol>
         <CCol sm="12">
-          <label> Guru </label>
-          <search-input ref="search_input_guru" :url="'sekolah/guru'" v-model="guru" placeholder="Cari ...">
-            <template v-slot="{ data }">
-              <span>{{ data.nama }}</span>
-            </template>
-          </search-input>
-          <div class="table-responsive no-min-height" v-if="guru != null">
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>Nama</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>{{ guru.nama }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <p class="text-danger text-center mt-2" v-else>
-            Belum ada data pemohon
-          </p>
+          <CInput :required="insertModal" label="Password" type="password" placeholder="Masukkan Password"
+            v-model="password" />
+        </CCol>
+        <CCol sm="12">
+          <CInput required label="Nama" placeholder="Masukkan Nama" v-model="nama" />
         </CCol>
       </CRow>
 
@@ -41,7 +23,6 @@
           </div>
         </div>
       </template>
-
       <Loading ref="loading"></Loading>
     </CModal>
   </form>
@@ -49,23 +30,22 @@
 
 <script>
 import Loading from '@/components/Loading.vue'
-import SearchInput from '@/components/SearchInput.vue'
 
 export default {
-  name: "AddModalKelas",
+  name: "AddModalSiswa",
   components: {
     Loading,
-    SearchInput,
   },
   data() {
     return {
       tmp: null,
       id: '',
+      username: '',
+      password: '',
       nama: '',
-      guru: null,
       insertModal: true,
       showModal: false,
-      dataKelas: []
+      dataSiswa: []
     };
   },
   created() {
@@ -81,31 +61,32 @@ export default {
   },
   methods: {
     reset() {
-      this.id = ""
-      this.nama = ""
-      this.guru = null
+      this.id = ''
+      this.username = ''
+      this.password = ''
+      this.nama = ''
       if (this.tmp != null) {
         this.id = this.tmp.id
+        this.username = this.tmp.username
         this.nama = this.tmp.nama
-        this.guru = this.tmp.guru
       }
     },
     onSearch(query) {
-      this.axios.get(`sekolah/kelas/search?search=${query}`, {
+      this.axios.get(`sekolah/siswa/search?search=${query}`, {
         headers: {
           Authorization: "Bearer " + this.$store.state.auth.token
         }
       }).then(response => {
-        this.dataKelas = response.data.data
+        this.dataSiswa = response.data.data
       })
     },
     setModal(stat, data = '') {
       this.showModal = stat;
       if (data != '') {
-        this.insertModal = false;
+        this.insertModal = false
         this.id = data.id
+        this.username = data.username
         this.nama = data.nama
-        this.guru = data.guru
         this.tmp = data
       } else {
         this.insertModal = true;
@@ -116,12 +97,13 @@ export default {
       try {
         if (this.insertModal) {
           let payload = {
+            username: this.username,
             nama: this.nama,
           }
-          if (this.guru != null) {
-            payload.guru_id = this.guru.id
+          if (this.password != null) {
+            payload.password = this.password
           }
-          const { data } = await this.axios.post("sekolah/kelas", payload, {
+          const { data } = await this.axios.post("sekolah/siswa", payload, {
             headers: {
               Authorization: "Bearer " + this.$store.state.auth.token
             }
@@ -135,20 +117,21 @@ export default {
           })
         } else {
           let payload = {
+            username: this.username,
             nama: this.nama
           }
-          if (this.guru != null) {
-            payload.guru_id = this.guru_id
+          if (this.password != '') {
+            payload.password = this.password
           }
-          const { data } = await this.axios.put(`sekolah/kelas/${this.id}`, payload, {
+          const { data } = await this.axios.put(`sekolah/siswa/${this.id}`, payload, {
             headers: {
               Authorization: "Bearer " + this.$store.state.auth.token
             }
           })
           this.tmp = {
             id: this.id,
+            username: this.username,
             nama: this.nama,
-            guru: this.guru,
           }
           this.$emit('saved')
           await this.$swal({

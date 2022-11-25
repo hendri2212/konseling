@@ -3,6 +3,7 @@
     fixed
     :minimize="minimize"
     :show="show"
+    @update:show="check"
   >
     <CSidebarBrand class="d-md-down-none" to="/">
       <CIcon 
@@ -42,6 +43,13 @@ export default {
     },
     minimize () {
       return this.$store.state.sidebar.sidebarMinimize 
+    }
+  },
+  methods: {
+    check(data) {
+      if (data == 'responsive') {
+        this.$store.commit('sidebar/toggleSidebarMobile')
+      }
     }
   }
 }

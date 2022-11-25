@@ -6,31 +6,33 @@
 
         <div class="card-header-actions">
           <CButton color="primary" @click="$refs.addModal.setModal(true)">Tambah Guru</CButton>
-          <AddModal ref="addModal"></AddModal>
+          <AddModal @saved="saved" ref="addModal"></AddModal>
         </div>
       </CCardHeader>
 
       <CCardBody>
-        <CDataTable :items="items" :fields="fields" column-filter table-filter items-per-page-select :items-per-page="5"
-          hover sorter pagination>
+        <CDataTable v-if="datatable" :items="items" :fields="fields" table-filter hover>
           <template #show_details="{ item, index }">
             <td class="py-2">
-              <CButton size="sm" color="info" @click="$refs.addModal.setModal(true, item)">
+              <CButton color="info" @click="$refs.addModal.setModal(true, item)">
                 Edit
               </CButton>
-              <CButton size="sm" color="danger" class="ml-1"
-                @click="(deleteData.index = index), (deleteData.modal = true)">
+              <CButton color="danger" class="ml-1"
+                @click="(deleteData.index = index), (deleteData.nama = item.nama), (deleteData.modal = true)">
                 Delete
               </CButton>
             </td>
           </template>
+          <template #under-table>
+            <CPagination :activePage.sync="pagination.active" :pages="pagination.max_page" align="center" />
+          </template>
         </CDataTable>
 
         <CModal title="Hapus Guru" color="danger" :show.sync="deleteData.modal">
-          <span v-if="deleteData.index != -1">Delete akun guru yang bernama {{ items[deleteData.index].nama }} ?</span>
+          <span>Delete akun guru yang bernama {{ deleteData.nama }} ?</span>
           <template #footer>
             <CButton color="primary" variant="outline" @click="deleteData.modal = false">Close</CButton>
-            <CButton @click="deleteGuru">Yes</CButton>
+            <CButton @click="remove">Yes</CButton>
           </template>
         </CModal>
       </CCardBody>
@@ -45,7 +47,7 @@ import Loading from '../../components/Loading.vue'
 
 // fields
 const fields = [
-  { key: "nip", label: 'NIP' },
+  { key: "username", label: 'Username' },
   { key: "nama", label: 'Nama' },
   { key: "nama", label: 'Status' },
   {
@@ -65,33 +67,52 @@ export default {
   },
   data() {
     return {
+      datatable: true,
+      pagination: {
+        max_page: 1,
+        active: 1,
+      },
       items: [],
       fields,
       details: [],
       collapseDuration: 0,
       deleteData: {
         index: -1,
+        nama: '',
         modal: false,
       },
     };
   },
   async mounted() {
-    this.$refs.loading.show()
-    try {
-      const { data } = await this.axios.get('sekolah/guru', {
-        headers: {
-          Authorization: "Bearer " + this.$store.state.auth.token
-        }
-      })
-      this.items = data.data
-    } catch (e) {
-      console.log(e)
-    } finally {
-      this.$refs.loading.hide()
-    }
+    this.getData()
   },
   methods: {
-    async deleteGuru() {
+    async getData() {
+      this.$refs.loading.show()
+      try {
+        const { data } = await this.axios.get('sekolah/guru', {
+          headers: {
+            Authorization: "Bearer " + this.$store.state.auth.token
+          }
+        })
+        this.items = data.data
+        this.pagination.max_page = data.pagination.max_page
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.$refs.loading.hide()
+      }
+    },
+    async forceRerender() {
+      this.datatable = false;
+      await this.$nextTick();
+      this.datatable = true;
+    },
+    async saved() {
+      this.getData()
+      this.forceRerender()
+    },
+    async remove() {
       if (this.deleteData.index == -1 || !this.items[this.deleteData.index]) {
         this.deleteData.modal = false
         return;
@@ -104,9 +125,6 @@ export default {
             Authorization: "Bearer " + this.$store.state.auth.token
           }
         })
-        // hapus data di frontend
-        this.items.splice(this.deleteData.index, 1);
-
         await this.$swal({
           icon: 'success',
           title: 'Berhasil!',
@@ -132,6 +150,7 @@ export default {
         this.deleteData.index = -1
         this.deleteData.modal = false
         this.$refs.loading.hide()
+        this.getData()
       }
     },
   },

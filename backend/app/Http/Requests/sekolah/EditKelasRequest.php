@@ -5,37 +5,23 @@ namespace App\Http\Requests\sekolah;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class KelasRequest extends FormRequest
+class EditKelasRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize()
-    {
-        return true;
-    }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
-    public function rules()
+    public function authorize()
     {
         return [
             'nama' => [
                 'required',
                 Rule::unique('kelas', 'nama')->where(function ($query) {
-                    return $query->where('sekolah_id', auth()->id());
+                    return $query->where('sekolah_id', auth()->id())->where('nama', '!=', $this->nama);
                 }),
             ],
             'guru_id' => 'sometimes|required|exists:guru,id'
         ];
     }
 
-    public function messages()
+    public function rules()
     {
         return [
             'nama.required' => 'Nama kelas wajib diisi',

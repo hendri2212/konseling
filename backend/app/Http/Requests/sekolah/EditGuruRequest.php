@@ -26,10 +26,10 @@ class EditGuruRequest extends FormRequest
     {
         return [
             'nama' => 'required',
-            'nip' => [
+            'username' => [
                 'required',
-                Rule::unique('guru', 'nip')->where(function ($query) {
-                    return $query->where('sekolah_id', auth()->id())->where('nip', '!=', $this->nip);
+                Rule::unique('guru', 'username')->where(function ($query) {
+                    return $query->where('username', '!=', $this->username);
                 }),
             ],
             'password' => 'sometimes|required|min:8'
@@ -40,8 +40,8 @@ class EditGuruRequest extends FormRequest
     {
         return [
             'nama.required' => 'Nama wajib diisi',
-            'nip.required' => 'NIP wajib diisi',
-            'nip.unique' => 'NIP ini sudah digunakan guru lain',
+            'username.required' => 'Username wajib diisi',
+            'username.unique' => 'Username ini sudah digunakan guru lain',
             'password.required' => 'Password wajib diisi',
             'password.min' => 'Password minimal 8 karakter',
         ];

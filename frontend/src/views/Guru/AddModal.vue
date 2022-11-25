@@ -1,41 +1,46 @@
 <template>
-  <CModal :title="insertModal ? 'Add Guru' : 'Edit Guru'" color="primary" :show.sync="showModal">
-    <CRow>
-      <CCol sm="12">
-        <CInput required label="NIP" placeholder="Masukkan NIP" v-model="nip" />
-      </CCol>
-      <CCol sm="12">
-        <CInput required label="Nama" placeholder="Masukkan Nama" v-model="nama" />
-      </CCol>
-      <CCol sm="12">
-        <CInput :required="insertModal" label="Password" type="password" placeholder="Masukkan Password"
-          v-model="password" />
-      </CCol>
-    </CRow>
-    <Loading ref="loading"></Loading>
-    <template #footer>
-      <div class="d-flex justify-content-between w-100">
-        <CButton class="text-danger" @click="reset()">Reset</CButton>
-        <div>
-          <CButton class="mr-2 px-4" color="secondary" @click="showModal = false">Close</CButton>
-          <CButton class="px-5" color="primary" @click="save">Save</CButton>
+  <form @submit.prevent="save">
+    <CModal :title="insertModal ? 'Add Guru' : 'Edit Guru'" color="primary" :show.sync="showModal">
+      <CRow>
+        <CCol sm="12">
+          <CInput required label="Username" placeholder="Masukkan Username" v-model="username" />
+        </CCol>
+        <CCol sm="12">
+          <CInput required label="Nama" placeholder="Masukkan Nama" v-model="nama" />
+        </CCol>
+        <CCol sm="12">
+          <CInput :required="insertModal" label="Password" type="password" placeholder="Masukkan Password"
+            v-model="password" />
+        </CCol>
+      </CRow>
+
+      <template #footer>
+        <div class="d-flex justify-content-between w-100">
+          <CButton class="text-danger" @click="reset()">Reset</CButton>
+          <div>
+            <CButton class="mr-2 px-4" color="secondary" @click="showModal = false">Close</CButton>
+            <CButton type="submit" class="px-5" color="primary">Save</CButton>
+          </div>
         </div>
-      </div>
-    </template>
-  </CModal>
+      </template>
+      <Loading ref="loading"></Loading>
+    </CModal>
+  </form>
 </template>
 
 <script>
 import Loading from '../../components/Loading.vue'
 export default {
-  name: "AddModal",
+  name: "AddModalGuru",
   components: {
     Loading,
   },
+  emits: ['saved'],
   data() {
     return {
+      tmp: null,
       id: '',
-      nip: '',
+      username: '',
       nama: '',
       password: '',
       insertModal: true,
@@ -43,21 +48,12 @@ export default {
       dataGuru: []
     };
   },
-  computed: {
-    guru() {
-      return this.dataGuru.map((guru) => {
-        return {
-          label: guru.nama,
-          id: guru.id
-        };
-      })
-    }
-  },
   created() {
     this.$watch(
       () => this.showModal,
       (n) => {
         if (!n && !this.insertModal) {
+          this.tmp = null
           this.reset()
         }
       }
@@ -66,9 +62,14 @@ export default {
   methods: {
     reset() {
       this.id = ""
-      this.nip = ""
+      this.username = ""
       this.nama = ""
       this.password = ""
+      if (this.tmp != null) {
+        this.id = this.tmp.id
+        this.username = this.tmp.username
+        this.nama = this.tmp.nama
+      }
     },
     onSearch(query) {
       this.axios.get(`sekolah/guru/search?search=${query}`, {
@@ -84,8 +85,9 @@ export default {
       if (data != '') {
         this.insertModal = false;
         this.id = data.id
-        this.nip = data.nip
+        this.username = data.username
         this.nama = data.nama
+        this.tmp = data
       } else {
         this.insertModal = true;
       }
@@ -94,12 +96,18 @@ export default {
       this.$refs.loading.show()
       try {
         if (this.insertModal) {
-          const { data } = await this.axios.post("sekolah/guru", this.data, {
+          let payload = {
+            username: this.username,
+            nama: this.nama,
+            password: this.password,
+          }
+          const { data } = await this.axios.post("sekolah/guru", payload, {
             headers: {
               Authorization: "Bearer " + this.$store.state.auth.token
             }
           })
           this.reset()
+          this.$emit('saved')
           await this.$swal({
             icon: 'success',
             title: 'Berhasil!',
@@ -107,7 +115,7 @@ export default {
           })
         } else {
           let payload = {}
-          payload.nip = this.nip
+          payload.username = this.username
           payload.nama = this.nama
           if (this.password?.trim().length >= 1) {
             payload.password = this.password
@@ -117,6 +125,12 @@ export default {
               Authorization: "Bearer " + this.$store.state.auth.token
             }
           })
+          this.tmp = {
+            id: this.id,
+            username: this.username,
+            nama: this.nama,
+          }
+          this.$emit('saved')
           await this.$swal({
             icon: 'success',
             title: 'Berhasil!',
@@ -130,8 +144,8 @@ export default {
         if (e.response.status == 422) {
           text = ''
           icon = 'warning'
-          for (var key in e.response.errors) {
-            text += e.response.errors[key] + "<br>"
+          for (var key in e.response.data.errors) {
+            text += e.response.data.errors[key] + "<br>"
           }
         }
         await this.$swal({

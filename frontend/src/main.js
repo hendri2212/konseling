@@ -3,8 +3,6 @@ import App from './App.vue'
 import router from './router'
 import store from './store/index'
 import CoreuiVue from '@coreui/vue'
-// import { iconsSet as icons } from './assets/icons/icons.js'
-// import * as icons from '@coreui/icons'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 import VueSweetalert2 from 'vue-sweetalert2';
@@ -20,9 +18,12 @@ axios.defaults.baseURL = "http://127.0.0.1:8000/api";
 // axios.defaults.baseURL = "http://api.akukonselor.com/api";
 
 Vue.use(VueAxios, axios)
+
+import { cilCog, cilTrash, cilGroup, cilArrowLeft, cilArrowRight, cilArrowTop, cilArrowBottom } from '@coreui/icons'
+
 new Vue({
   router,
   store,
-  // icons,
+  icons: { cilCog, cilTrash, cilGroup, cilArrowLeft, cilArrowRight, cilArrowTop, cilArrowBottom },
   render: h => h(App)
 }).$mount('#app')

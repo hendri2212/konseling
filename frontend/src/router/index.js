@@ -10,6 +10,7 @@ const DashboardPage = () => import('@/views/DashboardPage')
 const IdentitasSekolahPage = () => import('@/views/IdentitasSekolah/IdentitasSekolahPage')
 const GuruPage = () => import('@/views/Guru/GuruPage')
 const KelasPage = () => import('@/views/Kelas/KelasPage')
+const Assign = () => import('@/views/Kelas/Assign')
 const SoalPage = () => import('@/views/SoalAkpd/SoalPage')
 const SoalBidangPage = () => import('@/views/SoalBidangAkpd/SoalBidangPage')
 const SoalKompetensiPage = () => import('@/views/SoalKompetensiAkpd/SoalKompetensiPage')
@@ -78,6 +79,14 @@ function configRoutes() {
           path: '/bio/kelas',
           name: 'Kelas',
           component: KelasPage,
+          meta: {
+            requiredLogin:true
+          },
+        },
+        {
+          path: '/bio/kelas/assign',
+          name: 'AssignSiswa',
+          component: Assign,
           meta: {
             requiredLogin:true
           },

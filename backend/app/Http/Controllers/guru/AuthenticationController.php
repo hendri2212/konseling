@@ -8,6 +8,7 @@ use App\Models\GuruUser;
 use App\Repositories\ResponseRepository;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Request;
 
 class AuthenticationController extends Controller
 {
@@ -46,9 +47,9 @@ class AuthenticationController extends Controller
     //     }
     // }
 
-    public function login(LoginRequest $request) {
+    public function login(Request $request) {
         try {
-            $user = GuruUser::where('nip', $request->nip)->first();
+            $user = GuruUser::where('username', $request->username)->first();
             $tokenName = 'guru-token';
 
             $abilities = $user->role->permission->append('permission_merge')->pluck('permission_merge');
@@ -59,7 +60,7 @@ class AuthenticationController extends Controller
                     'token' => $token->plainTextToken
                 ];
             }else{
-                return $this->responseRepository->ResponseError(null, 'Invalid NIP and Password !', Response::HTTP_UNAUTHORIZED);
+                return $this->responseRepository->ResponseError(null, 'Invalid Username and Password !', Response::HTTP_UNAUTHORIZED);
             }
 
             return $this->responseRepository->ResponseSuccess($data, 'Logged In Successfully !');

@@ -23,8 +23,8 @@
                   <CInput
                     v-else
                     type="text"
-                    placeholder="NIP"
-                    autocomplete="NIP"
+                    placeholder="Username"
+                    autocomplete="Username"
                     v-model="email"
                   >
                     <template #prepend-content><CIcon name="cil-user"/></template>

@@ -27,15 +27,15 @@ export default [
       },
       {
         _name: 'CSidebarNavItem',
-        name: 'Kelas',
-        to: '/bio/kelas',
-        icon: 'cil-school'
-      },
-      {
-        _name: 'CSidebarNavItem',
         name: 'Data Peserta Didik',
         to: '/bio/peserta-didik',
         icon: 'cil-people'
+      },
+      {
+        _name: 'CSidebarNavItem',
+        name: 'Kelas',
+        to: '/bio/kelas',
+        icon: 'cil-school'
       },
       // angket kebutuhan peserta didik
       {

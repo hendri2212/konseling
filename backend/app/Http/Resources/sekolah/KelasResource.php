@@ -4,7 +4,7 @@ namespace App\Http\Resources\sekolah;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class GuruResource extends JsonResource
+class KelasResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -14,10 +14,13 @@ class GuruResource extends JsonResource
      */
     public function toArray($request)
     {
-        return [
+        $response = [
             'id' => $this->id,
             'nama' => $this->nama,
-            'username' => $this->username
         ];
+        if (isset($this->guru)) {
+            $response['guru'] = $this->guru;
+        }
+        return $response;
     }
 }
