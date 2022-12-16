@@ -17,7 +17,7 @@ export default {
       this.$store.dispatch('auth/logedAs', response.data.data.as)
     }).catch(() => {
       this.$store.dispatch('auth/logout')
-      if (this.$route.name != 'Login') {
+      if (this.$route.name != 'Login' && this.$route.name != 'AdminLogin') {
         this.$router.push({ name: 'Login' })
       }
     }) 

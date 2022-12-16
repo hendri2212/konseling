@@ -12,17 +12,17 @@ class AnalisisProfileKelasController extends Controller
 {
     public function profile_kelas($id){
         $allResponden = Soal::leftJoin('jawaban', 'jawaban.soal_id','=', 'soal.id')
-        ->where('jawaban.ujian_id', $id)
+        ->where('jawaban.angket_id', $id)
         ->select(DB::raw("sum(jawaban) responden"))
         ->first()->responden;
         $data_per_bidang = Soal::leftJoin('jawaban', 'jawaban.soal_id','=', 'soal.id')
         ->join('bidang', 'soal.bidang_id', '=', 'bidang.id')
-        ->where('jawaban.ujian_id', $id)
+        ->where('jawaban.angket_id', $id)
         ->groupBy('soal.bidang_id', 'bidang.nama')
         ->select(DB::raw("bidang.nama as bidang, sum(jawaban) responden, sum(jawaban)/$allResponden*100 prosentase"))
         ->get();
         $data = Soal::leftJoin('jawaban', 'jawaban.soal_id','=', 'soal.id')
-        ->where('jawaban.ujian_id', $id)
+        ->where('jawaban.angket_id', $id)
         ->groupBy('soal.id', 'soal')
         ->select(DB::raw("soal, sum(jawaban) responden, sum(jawaban)/$allResponden*100 prosentase"))
         ->get()->map(function($soal, $key) {
@@ -52,7 +52,7 @@ class AnalisisProfileKelasController extends Controller
 
     public function profile_konseling($id){
         $data = Jawaban::leftJoin('siswa', 'jawaban.siswa_id','=', 'siswa.id')
-        ->where('jawaban.ujian_id', $id)
+        ->where('jawaban.angket_id', $id)
         ->groupBy('siswa.id', 'siswa.nisn', 'siswa.nama')
         ->select(DB::raw("nisn, nama, sum(jawaban) jumlah, sum(jawaban)/50*100 prosentase"))
         ->get()->map(function($siswa, $key) {

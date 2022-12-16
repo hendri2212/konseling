@@ -17,12 +17,12 @@ class CreateJawabanTable extends Migration
             $table->uuid('id')->primary();
             $table->integer('jawaban');
             $table->uuid('siswa_id');
-            $table->uuid('ujian_id');
+            $table->uuid('angket_id');
             $table->uuid('soal_id');
             $table->timestamps();
             //relasi
             $table->foreign('siswa_id')->references('id')->on('siswa');
-            $table->foreign('ujian_id')->references('id')->on('ujian');
+            $table->foreign('angket_id')->references('id')->on('angket');
             $table->foreign('soal_id')->references('id')->on('soal');
         });
     }

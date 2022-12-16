@@ -13,12 +13,12 @@ class CreateServicesTable extends Migration
      */
     public function up()
     {
-        Schema::create('services', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->string('service')->unique();
-            $table->string('description')->nullable();
-            $table->timestamps();
-        });
+        // Schema::create('services', function (Blueprint $table) {
+        //     $table->uuid('id')->primary();
+        //     $table->string('service')->unique();
+        //     $table->string('description')->nullable();
+        //     $table->timestamps();
+        // });
     }
 
     /**

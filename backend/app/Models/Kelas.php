@@ -21,7 +21,7 @@ class Kelas extends Model
         return $this->hasMany(SiswaUser::class, 'kelas_id', 'id');
     }
 
-    public function ujian() {
-        return $this->hasMany(Ujian::class, 'kelas_id', 'id');
+    public function angket() {
+        return $this->hasMany(Angket::class, 'kelas_id', 'id');
     }
 }

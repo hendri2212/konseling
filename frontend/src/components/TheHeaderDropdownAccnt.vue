@@ -1,24 +1,16 @@
 <template>
-  <CDropdown
-    inNav
-    class="c-header-nav-items"
-    placement="bottom-end"
-    add-menu-classes="pt-0"
-  >
+  <CDropdown inNav class="c-header-nav-items" placement="bottom-end" add-menu-classes="pt-0">
     <template #toggler>
       <CHeaderNavLink>
         <div class="c-avatar">
-          <img
-            src="/img/avatars/1.jpg"
-            class="c-avatar-img "
-          />
+          <img src="/img/avatars/1.jpg" class="c-avatar-img " />
         </div>
       </CHeaderNavLink>
     </template>
     <CDropdownHeader tag="div" class="text-center" color="light">
       <strong>Account</strong>
     </CDropdownHeader>
-    <CDropdownItem>
+    <!-- <CDropdownItem>
       <CIcon name="cil-bell"/> Updates
       <CBadge color="info" class="mfs-auto">{{ itemsCount }}</CBadge>
     </CDropdownItem>
@@ -58,8 +50,8 @@
     <CDropdownDivider/>
     <CDropdownItem>
       <CIcon name="cil-shield-alt" /> Lock Account
-    </CDropdownItem>
-    <CDropdownItem>
+    </CDropdownItem> -->
+    <CDropdownItem @click="logout">
       <CIcon name="cil-lock-locked" /> Logout
     </CDropdownItem>
   </CDropdown>
@@ -68,16 +60,24 @@
 <script>
 export default {
   name: 'TheHeaderDropdownAccnt',
-  data () {
-    return { 
+  data() {
+    return {
       itemsCount: 42
+    }
+  },
+  methods: {
+    logout() {
+      this.$store.dispatch('auth/logout')
+      if (this.$route.name != 'Login') {
+        this.$router.push({ name: 'Login' })
+      }
     }
   }
 }
 </script>
 
 <style scoped>
-  .c-icon {
-    margin-right: 0.3rem;
-  }
+.c-icon {
+  margin-right: 0.3rem;
+}
 </style>

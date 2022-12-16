@@ -26,11 +26,22 @@ class ManageSiswaController extends Controller
     public function index(Request $request)
     {
         try {
-            $max = 5;
+            $max = 10;
+            if (isset($request->max)) {
+                $max = $request->max;
+            }
             $page = isset($request->page) ? ((int)$request->page >= 1 ? (int)$request->page : 1)  : 1;
             $count_all_guru = SiswaUser::where('sekolah_id', auth()->id())->count();
-            $guru = SiswaUser::where('sekolah_id', auth()->id())->paginate($max);
-            $data = SekolahSiswaResource::collection($guru);
+            $guru = SiswaUser::where('sekolah_id', auth()->id());
+
+            if (isset($request->punya_kelas)) {
+                if ($request->punya_kelas == 'false') {
+                    $guru->where('kelas_id', null);
+                } else {
+                    $guru->where('kelas_id', '!=', null);
+                }
+            }
+            $data = SekolahSiswaResource::collection($guru->paginate($max));
             $pagination = [
                 'max_page' => ceil($count_all_guru / $max),
                 'next' => null
@@ -40,7 +51,7 @@ class ManageSiswaController extends Controller
             }
             return $this->responseRepository->ResponseSuccess($data, "Successfull", JsonResponse::HTTP_OK, $pagination);
         } catch (\Exception $e) {
-            return $this->responseRepository->ResponseError(null);
+            return $this->responseRepository->ResponseError($e->getTrace());
         }
     }
 

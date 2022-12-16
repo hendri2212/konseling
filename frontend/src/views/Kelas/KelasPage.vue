@@ -11,26 +11,35 @@
       </CCardHeader>
 
       <CCardBody>
-        <CDataTable :responsive="false" v-if="datatable" :items="items" :fields="fields" table-filter hover>
+        <CDataTable :responsive="false" v-if="datatable" :items="items" :fields="fields" hover>
+          <template #nama_guru="{ item }">
+            <td>{{item.guru.nama}}</td>
+          </template>
           <template #actions="{ item, index }">
-            <CDropdown color="none" toggler-text="Dropdown Button" class="m-2">
-              <template #toggler-content>
-                <CIcon name="cil-cog" />
-              </template>
-              <CDropdownItem @click="$refs.addModal.setModal(true, item)">
-                <CIcon name="cil-cog" class="mr-1" />
-                Edit
-              </CDropdownItem>
-              <CDropdownItem
-                @click="(deleteData.index = index), (deleteData.nama = item.nama), (deleteData.modal = true)">
-                <CIcon name="cil-trash" class="mr-1" />
-                Delete
-              </CDropdownItem>
-              <CDropdownItem @click="$router.push({ name: 'AssignSiswa', query: { kelas: item.id } })">
-                <CIcon name="cil-group" class="mr-1" />
-                Assign
-              </CDropdownItem>
-            </CDropdown>
+            <td>
+              <CDropdown color="none" toggler-text="Dropdown Button" class="m-2">
+                <template #toggler-content>
+                  <CIcon name="cil-cog" />
+                </template>
+                <CDropdownItem @click="$refs.addModal.setModal(true, item)">
+                  <CIcon name="cil-cog" class="mr-1" />
+                  Edit
+                </CDropdownItem>
+                <CDropdownItem
+                  @click="(deleteData.index = index), (deleteData.nama = item.nama), (deleteData.modal = true)">
+                  <CIcon name="cil-trash" class="mr-1" />
+                  Delete
+                </CDropdownItem>
+                <CDropdownItem @click="$router.push({ name: 'AssignSiswa', query: { kelas: item.id } })">
+                  <CIcon name="cil-group" class="mr-1" />
+                  Assign
+                </CDropdownItem>
+              </CDropdown>
+            </td>
+          </template>
+          <template #under-table>
+            <CPagination :activePage.sync="pagination.active" @update:activePage="getData" :pages="pagination.max_page"
+              align="center" />
           </template>
         </CDataTable>
 
@@ -54,13 +63,9 @@ import Loading from '../../components/Loading.vue'
 // fields
 const fields = [
   { label: 'Nama Kelas', key: "nama" },
-  {
-    key: "actions",
-    label: "",
-    _style: "width: 20%",
-    sorter: false,
-    filter: false,
-  },
+  { label: 'Nama Guru', key: "nama_guru" },
+  { label: 'Jumlah Siswa', key: "jumlah_siswa" },
+  { label: "", key: "actions" },
 ];
 
 export default {
@@ -72,10 +77,12 @@ export default {
   data() {
     return {
       datatable: true,
+      pagination: {
+        max_page: 1,
+        active: 1,
+      },
       items: [],
       fields,
-      details: [],
-      collapseDuration: 0,
       deleteData: {
         index: -1,
         nama: '',
@@ -87,15 +94,17 @@ export default {
     this.getData()
   },
   methods: {
-    async getData() {
+    async getData(param = null) {
+      let page = param ?? 1;
       this.$refs.loading.show()
       try {
-        const { data } = await this.axios.get('sekolah/kelas', {
+        const { data } = await this.axios.get(`sekolah/kelas?page=${page}`, {
           headers: {
             Authorization: "Bearer " + this.$store.state.auth.token
           }
         })
         this.items = data.data
+        this.pagination.max_page = data.pagination.max_page
       } catch (e) {
         console.log(e)
       } finally {
@@ -108,7 +117,7 @@ export default {
       this.datatable = true;
     },
     async saved() {
-      await this.getData()
+      await this.getData(this.pagination.active)
       await this.forceRerender()
     },
     async remove() {
@@ -148,7 +157,7 @@ export default {
         this.deleteData.index = -1
         this.deleteData.modal = false
         this.$refs.loading.hide()
-        this.getData()
+        this.getData(this.pagination.active)
       }
     },
   },

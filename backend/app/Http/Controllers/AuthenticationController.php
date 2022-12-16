@@ -63,7 +63,7 @@ class AuthenticationController extends Controller
                 $tokenName = 'guru-token';
             }
             if ($user && Hash::check($request->password, $user->password)) {
-                $abilities =  $user->append('abilities')->abilities;
+                $abilities =  [];
                 $token = $user->createToken($tokenName, $abilities);
                 $data = [
                     'token' => $token->plainTextToken,
@@ -86,7 +86,15 @@ class AuthenticationController extends Controller
 
     public function me() {
         $user = auth()->user();
-        $user['as'] = Auth::guard('sekolah')->check() ? 'sekolah' : 'guru';
+
+        if (Auth::guard('admin')->check()) {
+            $user['as'] = 'admin';
+        } else if (Auth::guard('sekolah')->check()) {
+            $user['as'] = 'sekolah';
+        } else {
+            $user['as'] = 'guru';
+        }
+        
         return $this->responseRepository->ResponseSuccess($user);
         // return auth()->user()->role->permission->append('permission_merge')->pluck('permission_merge');
     }

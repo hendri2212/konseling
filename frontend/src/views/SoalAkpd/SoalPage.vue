@@ -7,152 +7,183 @@
         <div class="card-header-actions">
           <CButton color="primary" @click="$refs.addModal.setModal(true)">Tambah Soal</CButton>
 
-          <SoalModal ref="addModal"></SoalModal>
+          <AddModal @saved="saved" ref="addModal"></AddModal>
         </div>
       </CCardHeader>
 
       <CCardBody>
-        <CDataTable
-          :items="items"
-          :fields="fields"
-          column-filter
-          table-filter
-          items-per-page-select
-          :items-per-page="5"
-          hover
-          sorter
-          pagination
-        >
-          <template #actions="{ item }">
-            <div class="py-2 d-flex justify-content-center">
-              <CButton size="sm" color="info" @click="$refs.addModal.setModal(true, item)"> Edit </CButton>
-              <CButton size="sm" color="danger" class="ml-1" @click="(deleteData.id = item.id), (deleteData.modal = true)">
-                Delete
-              </CButton>
-            </div>
+        <CDataTable :responsive="true" v-if="datatable" :items="items" :fields="fields" hover>
+          <template #bidang_layanan="{ item }">
+            <td align="left" v-if="(item.rumusan_kebutuhan?.skkpd?.bidang != null)">
+              {{item.rumusan_kebutuhan.skkpd.bidang.nama}}
+            </td>
+            <td v-else class="text-danger">
+              Belum ada
+            </td>
+          </template>
+          <template #skkpd="{ item }">
+            <td align="left" v-if="(item.rumusan_kebutuhan?.skkpd != null)">
+              {{item.rumusan_kebutuhan.skkpd.nama}}
+            </td>
+            <td v-else class="text-danger">
+              Belum ada
+            </td>
+          </template>
+          <template #rumusan_kebutuhan="{ item }">
+            <td align="left" v-if="(item.rumusan_kebutuhan != null)">
+              {{item.rumusan_kebutuhan.nama}}
+            </td>
+            <td v-else class="text-danger">
+              Belum ada
+            </td>
+          </template>
+          <template #actions="{ item, index }">
+            <td align="right">
+              <CDropdown color="none" toggler-text="Dropdown Button" class="m-2">
+                <template #toggler-content>
+                  <CIcon name="cil-cog" />
+                </template>
+                <CDropdownItem @click="$refs.addModal.setModal(true, item)">
+                  <CIcon name="cil-cog" class="mr-1" />
+                  Edit
+                </CDropdownItem>
+                <CDropdownItem
+                  @click="(deleteData.index = index), (deleteData.soal = item.soal), (deleteData.modal = true)">
+                  <CIcon name="cil-trash" class="mr-1" />
+                  Delete
+                </CDropdownItem>
+              </CDropdown>
+            </td>
+          </template>
+          <template #under-table>
+            <CPagination :activePage.sync="pagination.active" @update:activePage="getData" :pages="pagination.max_page" align="center" />
           </template>
         </CDataTable>
 
-        <CModal title="Hapus Soal" color="danger" :show.sync="deleteData.modal">
-          {{ deleteData.id }} delete Permanent?
+        <CModal title="Hapus Butir Angket" color="danger" :show.sync="deleteData.modal">
+          <span>Hapus butir angket {{ deleteData.soal }} ?</span>
           <template #footer>
-            <CButton color="primary" variant="outline" @click="deleteData.modal = false">Close</CButton>
-            <CButton @click="deleteSoal">Yes</CButton>
+            <CButton color="primary" variant="outline" @click="deleteData.modal = false">Batal</CButton>
+            <CButton @click="remove">Oke</CButton>
           </template>
         </CModal>
       </CCardBody>
     </CCard>
+    <Loading ref="loading"></Loading>
   </div>
 </template>
 
 <!-- Axios -->
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
-import SoalModal from "./SoalModal.vue";
-
-// data items
-const itemsx = [
-  {
-    no: 1,
-    soal: "Soal 1",
-    rumusan_kebutuhan: "Rumusan Kebutuhan 1",
-    materi: "materi 1",
-    tujuan_layanan: "tujuan layanan 1",
-    komponen_layanan: "komponen layanan 1",
-    nama_bidang: "Bidang 1",
-    kompetensi: "Kompetensi 1",
-  },
-  {
-    no: 2,
-    soal: "Soal 2",
-    rumusan_kebutuhan: "Rumusan Kebutuhan 2",
-    materi: "materi 2",
-    tujuan_layanan: "tujuan layanan 2",
-    komponen_layanan: "komponen layanan 2",
-    nama_bidang: "Bidang 2",
-    kompetensi: "Kompetensi 2",
-  },
-  {
-    no: 3,
-    soal: "Soal 3",
-    rumusan_kebutuhan: "Rumusan Kebutuhan 3",
-    materi: "materi 3",
-    tujuan_layanan: "tujuan layanan 3",
-    komponen_layanan: "komponen layanan 3",
-    nama_bidang: "Bidang 3",
-    kompetensi: "Kompetensi 3",
-  }
-];
+import AddModal from "./AddModal.vue";
+import Loading from '@/components/Loading.vue'
 
 // fields
 const fields = [
-  // { key: "no", _style: "width:1%" },
-  { key: "id", _style: "width:1%" },
   "soal",
-  "rumusan_kebutuhan",
-  "materi",
-  "tujuan_layanan",
-  "komponen_layanan",
-  // "nama_bidang",
-  "bidang_id",
-  // "kompetensi",
-  "kompetensi_id",
-  {
-    key: "actions",
-    label: "",
-    sorter: false,
-    filter: false
-  },
-];
+  { label: "Bidang Layanan", key: "bidang_layanan" },
+  { label: "SKKPD", key: "skkpd" },
+  { label: "Rumusan Kebutuhan", key: "rumusan_kebutuhan" },
+  { label: "", key: "actions" },
+]
 
 export default {
-  name: "SoalPage",
+  name: 'SoalPage',
   components: {
-    SoalModal,
+    AddModal,
+    Loading,
   },
   data() {
     return {
-      // items: items.map((item, id) => {
-      //   return { ...item, id };
-      // }),
+      datatable: true,
+      pagination: {
+        max_page: 1,
+        active: 1,
+      },
       items: [],
       fields,
-      details: [],
-      collapseDuration: 0,
       deleteData: {
-        id: null,
+        index: -1,
+        soal: '',
         modal: false,
       },
-    };
+    }
   },
-  created() {
-    axios
-    // .get(this.$store.state.url + 'soal')
-    .get('http://127.0.0.1:8000/api/soal')
-    .then(response => {
-      this.items = response.data.data
-    })
+  async mounted() {
+    this.getData()
   },
   methods: {
-    toggleDetails(item) {
-      this.$set(this.items[item.id], "_toggled", !item._toggled);
-      this.collapseDuration = 300;
-      this.$nextTick(() => {
-        this.collapseDuration = 0;
-      });
+    async getData(param = null) {
+      let page = param ?? 1;
+      this.$refs.loading.show()
+      try {
+        const { data } = await this.axios.get(`admin/butir-angket-konseling?page=${page}`, {
+          headers: {
+            Authorization: "Bearer " + this.$store.state.auth.token
+          }
+        })
+        this.items = data.data
+        this.pagination.max_page = data.pagination.max_page
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.$refs.loading.hide()
+      }
     },
-    deleteSoal() {
-      console.log(this.deleteData.id);
-      // di sini fungsi axios
-
-      // hapus data di frontend
-      this.items.splice(this.deleteData.id, 1);
-
-      this.deleteData.modal = false;
+    async forceRerender() {
+      this.datatable = false;
+      await this.$nextTick();
+      this.datatable = true;
+    },
+    async saved() {
+      await this.getData(this.pagination.active)
+      await this.forceRerender()
+    },
+    async remove() {
+      if (this.deleteData.index == -1 || !this.items[this.deleteData.index]) {
+        this.deleteData.modal = false
+        return;
+      }
+      try {
+        // di sini fungsi axios
+        const { data } = await this.axios.delete(`admin/butir-angket-konseling/${this.items[this.deleteData.index].id}`, {
+          headers: {
+            Authorization: "Bearer " + this.$store.state.auth.token
+          }
+        })
+        await this.$swal({
+          icon: 'success',
+          title: 'Berhasil!',
+          text: data.message,
+        })
+      } catch (e) {
+        var icon = 'error'
+        var title = 'Terjadi Kesalahan'
+        var text = 'Terjadi Kesalahan di aplikasi'
+        if (e.response.status == 422) {
+          text = ''
+          icon = 'warning'
+          for (var key in e.response.errors) {
+            text += e.response.errors[key] + "<br>"
+          }
+        }
+        await this.$swal({
+          icon: icon,
+          title: title,
+          html: text,
+        })
+      } finally {
+        this.deleteData.index = -1
+        this.deleteData.modal = false
+        this.$refs.loading.hide()
+        this.getData(this.pagination.active)
+      }
     },
   },
-};
+}
 </script>
 
 <style>
+
 </style>

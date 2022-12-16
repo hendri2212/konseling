@@ -13,18 +13,18 @@ class CreatePermissionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('permissions', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->string('permission');
-            $table->uuid('service_id');
-            $table->timestamps();
+        // Schema::create('permissions', function (Blueprint $table) {
+        //     $table->uuid('id')->primary();
+        //     $table->string('permission');
+        //     $table->uuid('service_id');
+        //     $table->timestamps();
 
-            //relasi
-            $table->foreign('service_id')->references('id')->on('services');
+        //     //relasi
+        //     $table->foreign('service_id')->references('id')->on('services');
 
-            //unique
-            $table->unique(['permission', 'service_id']);
-        });
+        //     //unique
+        //     $table->unique(['permission', 'service_id']);
+        // });
     }
 
     /**

@@ -3,16 +3,12 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\LoginRequest;
+use App\Http\Requests\admin\LoginRequest as AdminLoginRequest;
 use App\Models\AdminUser;
-use App\Models\GuruUser;
 use App\Repositories\AuthRepository;
 use App\Repositories\ResponseRepository;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Throwable;
 
 class AuthenticationController extends Controller
 {
@@ -25,17 +21,18 @@ class AuthenticationController extends Controller
         $this->responseRepository = $rr;
         $this->authRepository = $ar;
     }
-    public function login(LoginRequest $request) {
+    public function login(AdminLoginRequest $request) {
         try {
-            $user = AdminUser::where('email', $request->email)->first();
+            $user = AdminUser::where('username', $request->username)->first();
             $tokenName = 'admin-token';
 
-            $abilities = $user->append('abilities')->abilities;
+            $abilities = [];
 
             if ($user && Hash::check($request->password, $user->password)) {
                 $token = $user->createToken($tokenName, $abilities);
                 $data = [
-                    'token' => $token->plainTextToken
+                    'token' => $token->plainTextToken,
+                    'as' => 'admin',
                 ];
             }else{
                 return $this->responseRepository->ResponseError(null, 'Invalid Email and Password !', Response::HTTP_UNAUTHORIZED);

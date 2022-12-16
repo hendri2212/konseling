@@ -13,13 +13,13 @@ class CreateRolesTable extends Migration
      */
     public function up()
     {
-        Schema::create('roles', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            // role : Owner, Viewer, Editor
-            $table->string('role')->unique();
-            $table->string('description');
-            $table->timestamps();
-        });
+        // Schema::create('roles', function (Blueprint $table) {
+        //     $table->uuid('id')->primary();
+        //     // role : Owner, Viewer, Editor
+        //     $table->string('role')->unique();
+        //     $table->string('description');
+        //     $table->timestamps();
+        // });
     }
 
     /**

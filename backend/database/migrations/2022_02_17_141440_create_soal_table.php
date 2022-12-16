@@ -16,17 +16,11 @@ class CreateSoalTable extends Migration
         Schema::create('soal', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->text('soal');
-            $table->text('rumusan_kebutuhan');
-            $table->text('materi');
-            $table->text('tujuan_layanan');
-            $table->text('komponen_layanan');
-            $table->text('strategi_layanan');
-            $table->uuid('bidang_id');
-            $table->uuid('kompetensi_id');
+            $table->uuid('rumusan_kebutuhan_id')->nullable();
+            $table->integer('order')->nullable();
             $table->timestamps();
             // relasi
-            $table->foreign('bidang_id')->references('id')->on('bidang');
-            $table->foreign('kompetensi_id')->references('id')->on('kompetensi');
+            $table->foreign('rumusan_kebutuhan_id')->references('id')->on('rumusan_kebutuhan')->cascade('set null');
         });
     }
 

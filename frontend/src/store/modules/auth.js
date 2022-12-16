@@ -33,6 +33,9 @@ const state = {
     isAuthenticated (state) {
       return state.token != null
     },
+    isAdmin (state) {
+      return state.as == 'admin'
+    },
     isSekolah (state) {
       return state.as == 'sekolah'
     },

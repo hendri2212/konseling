@@ -21,7 +21,7 @@
             >
                 <template #show_details="{item}">
                     <td class="py-2">
-                        <router-link class="btn btn-primary" :to='`/analisis/kelas/${item.id}`'>Lihat Ujian</router-link>
+                        <router-link class="btn btn-primary" :to='`/analisis/kelas/${item.id}`'>Lihat Angket</router-link>
                     </td>
                 </template>
             </CDataTable>

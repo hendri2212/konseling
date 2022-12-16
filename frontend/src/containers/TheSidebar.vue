@@ -23,7 +23,7 @@
       <CBadge color="success">Beta</CBadge>
     </CSidebarBrand>
 
-    <CRenderFunction flat :content-to-render="$options.nav"/>
+    <CRenderFunction flat :content-to-render="navComputed"/>
     <CSidebarMinimizer
       class="d-md-down-none"
       @click.native="$store.commit('sidebar/set', ['sidebarMinimize', !minimize])"
@@ -33,15 +33,30 @@
 
 <script>
 import nav from './_nav'
+import nav_guru from './_nav_guru'
+import nav_admin from './_nav_admin'
 
 export default {
   name: 'TheSidebar',
   nav,
+  nav_guru,
+  nav_admin,
   computed: {
-    show () {
+    navComputed() {
+      if (this.$store.getters['auth/isAdmin']) {
+        return this.$options.nav_admin
+      } else if (this.$store.getters['auth/isSekolah']) {
+        return this.$options.nav
+      } else if (this.$store.getters['auth/isGuru']) {
+        return this.$options.nav_guru
+      } else {
+        return []
+      }
+    },
+    show() {
       return this.$store.state.sidebar.sidebarShow 
     },
-    minimize () {
+    minimize() {
       return this.$store.state.sidebar.sidebarMinimize 
     }
   },

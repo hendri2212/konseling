@@ -5,7 +5,7 @@
 
             <div class="card-header-actions">
                 <CButton :color="'primary'">
-                    <router-link class="text-decoration-none text-white" :to='`/analisis/ujian/${$route.params.id}/butir`'>Lihat Analisis Setiap Soal</router-link>
+                    <router-link class="text-decoration-none text-white" :to='`/analisis/angket/${$route.params.id}/butir`'>Lihat Analisis Setiap Soal</router-link>
                 </CButton>
             </div>
         </CCardHeader>

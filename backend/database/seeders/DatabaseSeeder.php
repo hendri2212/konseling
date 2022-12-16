@@ -16,14 +16,14 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
         $this->call([
             
-            ServiceSeeder::class,
-            PermissionSeeder::class,
-            RoleSeeder::class,
-            RolePermissionSeeder::class,
+            // ServiceSeeder::class,
+            // PermissionSeeder::class,
+            // RoleSeeder::class,
+            // RolePermissionSeeder::class,
             UserSeeder::class,
             GuruSeeder::class,
             KelasSeeder::class,
-            UjianSeeder::class,
+            AngketSeeder::class,
             UserSiswaSeeder::class,
             BidangSeeder::class,
             KompetensiSeeder::class,

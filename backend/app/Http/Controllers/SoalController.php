@@ -6,7 +6,7 @@ use App\Http\Resources\ListSoalResource;
 use App\Http\Resources\SoalResource;
 use App\Models\Jawaban;
 use App\Models\Soal;
-use App\Models\Ujian;
+use App\Models\Angket;
 use App\Repositories\ResponseRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -32,10 +32,10 @@ class SoalController extends Controller
         try {
             $siswa_id = auth()->id();
             $kelas_id = auth()->user()->kelas_id;
-            $ujian = Ujian::where('kelas_id', $kelas_id)->where('status', 'open')->first();
-            if($ujian){
-                $soal = Soal::with(['jawaban' => function($q) use($siswa_id, $ujian) {
-                    return $q->where('siswa_id', $siswa_id)->where('ujian_id', $ujian->id);
+            $angket = Angket::where('kelas_id', $kelas_id)->where('status', 'open')->first();
+            if($angket){
+                $soal = Soal::with(['jawaban' => function($q) use($siswa_id, $angket) {
+                    return $q->where('siswa_id', $siswa_id)->where('angket_id', $angket->id);
                     
                 }])->get()->map(function($user, $key) {
                     $user->num = $key+1;
@@ -55,10 +55,10 @@ class SoalController extends Controller
         try {
             $siswa_id = auth()->id();
             $kelas_id = auth()->user()->kelas_id;
-            $ujian = Ujian::where('kelas_id', $kelas_id)->where('status', 'open')->first();
-            if($ujian){
-                $soal = Soal::with(['jawaban' => function($q) use($siswa_id, $ujian) {
-                    return $q->where('siswa_id', $siswa_id)->where('ujian_id', $ujian->id);
+            $angket = Angket::where('kelas_id', $kelas_id)->where('status', 'open')->first();
+            if($angket){
+                $soal = Soal::with(['jawaban' => function($q) use($siswa_id, $angket) {
+                    return $q->where('siswa_id', $siswa_id)->where('angket_id', $angket->id);
                     
                 }])->paginate(1);
                 $data = SoalResource::collection($soal);
@@ -83,10 +83,10 @@ class SoalController extends Controller
         $siswa_id = auth()->id();
         $kelas_id = auth()->user()->kelas_id;
         try {
-            $ujian = Ujian::where('kelas_id', $kelas_id)->where('status', 'open')->first();
-            if($ujian){
+            $angket = Angket::where('kelas_id', $kelas_id)->where('status', 'open')->first();
+            if($angket){
                 $check_jawaban = Jawaban::where('siswa_id', $siswa_id)
-                ->where('ujian_id', $ujian->id)
+                ->where('angket_id', $angket->id)
                 ->where('soal_id', $request->id)->first();
                 if($check_jawaban){
                     $check_jawaban->jawaban = $request->jawaban;
@@ -96,7 +96,7 @@ class SoalController extends Controller
                     $jawaban->id = Str::uuid();
                     $jawaban->jawaban = $request->jawaban;
                     $jawaban->siswa_id = $siswa_id;
-                    $jawaban->ujian_id = $ujian->id;
+                    $jawaban->angket_id = $angket->id;
                     $jawaban->soal_id = $request->id;
                     $jawaban->save();
                 }

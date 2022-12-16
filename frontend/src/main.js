@@ -19,11 +19,11 @@ axios.defaults.baseURL = "http://127.0.0.1:8000/api";
 
 Vue.use(VueAxios, axios)
 
-import { cilCog, cilTrash, cilGroup, cilArrowLeft, cilArrowRight, cilArrowTop, cilArrowBottom } from '@coreui/icons'
+import { cilCog, cilTrash, cilGroup, cilArrowLeft, cilArrowRight, cilArrowTop, cilArrowBottom, cilPencil, cilLockLocked } from '@coreui/icons'
 
 new Vue({
   router,
   store,
-  icons: { cilCog, cilTrash, cilGroup, cilArrowLeft, cilArrowRight, cilArrowTop, cilArrowBottom },
+  icons: { cilCog, cilTrash, cilGroup, cilArrowLeft, cilArrowRight, cilArrowTop, cilArrowBottom, cilPencil, cilLockLocked},
   render: h => h(App)
 }).$mount('#app')

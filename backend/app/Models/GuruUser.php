@@ -37,18 +37,18 @@ class GuruUser extends Authenticatable
         return $this->hasOne(Kelas::class, 'guru_id', 'id');
     }
 
-    public function role() {
-        return $this->hasOne(Role::class, 'id', 'role_id');
-    }
+    // public function role() {
+    //     return $this->hasOne(Role::class, 'id', 'role_id');
+    // }
 
-    public function getAbilitiesAttribute() {
-        if ($this->role_id == null) {
-            return [];
-        }
-        $abilities = RolePermission::select(DB::raw("concat(services.service, '.', permissions.permission) as abilities"))
-        ->join('permissions', 'permissions.id', '=', 'role_permissions.permission_id')
-        ->join('services', 'services.id', '=', 'permissions.service_id')
-        ->where('role_permissions.role_id', $this->role_id)->get()->pluck('abilities')->toArray();
-        return $abilities;
-    }
+    // public function getAbilitiesAttribute() {
+    //     if ($this->role_id == null) {
+    //         return [];
+    //     }
+    //     $abilities = RolePermission::select(DB::raw("concat(services.service, '.', permissions.permission) as abilities"))
+    //     ->join('permissions', 'permissions.id', '=', 'role_permissions.permission_id')
+    //     ->join('services', 'services.id', '=', 'permissions.service_id')
+    //     ->where('role_permissions.role_id', $this->role_id)->get()->pluck('abilities')->toArray();
+    //     return $abilities;
+    // }
 }

@@ -1,6 +1,6 @@
 <template>
   <form @submit.prevent="save">
-    <CModal :title="insertModal ? 'Add Siswa' : 'Edit Siswa'" color="primary" :show.sync="showModal">
+    <CModal :title="insertModal ? 'Add Siswa' : 'Edit Siswa'" color="primary" :centered="true" :show.sync="showModal">
       <CRow>
         <CCol sm="12">
           <CInput required label="Username" placeholder="Masukkan Username" v-model="username" />

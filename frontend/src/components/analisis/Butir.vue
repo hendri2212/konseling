@@ -5,7 +5,7 @@
                 Analisis Profil Kelas
                 <div class="card-header-actions">
                     <CButton :color="'primary'">
-                        <router-link class="text-decoration-none text-white" :to='`/analisis/ujian/${$route.params.id}/siswa`'>Lihat Analisis Setiap Siswa</router-link>
+                        <router-link class="text-decoration-none text-white" :to='`/analisis/angket/${$route.params.id}/siswa`'>Lihat Analisis Setiap Siswa</router-link>
                     </CButton>
                 </div>
             </CCardHeader>

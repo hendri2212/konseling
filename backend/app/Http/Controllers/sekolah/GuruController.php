@@ -26,7 +26,7 @@ class GuruController extends Controller
     public function index(Request $request)
     {
         try {
-            $max = 5;
+            $max = 10;
             $page = isset($request->page) ? ( (int)$request->page >= 1 ? (int)$request->page : 1 )  : 1;
             $count_all_guru = GuruUser::where('sekolah_id', auth()->id())->count();
             $guru = GuruUser::where('sekolah_id', auth()->id())->paginate($max);

@@ -1,6 +1,6 @@
 <template>
   <form @submit.prevent="save">
-    <CModal :title="insertModal ? 'Add Guru' : 'Edit Guru'" color="primary" :show.sync="showModal">
+    <CModal :title="insertModal ? 'Tambah Guru' : 'Edit Guru'" color="primary" :centered="true" :show.sync="showModal">
       <CRow>
         <CCol sm="12">
           <CInput label="Nama Kelas" placeholder="Masukkan Kelas" v-model="nama" />
@@ -27,7 +27,7 @@
             </table>
           </div>
           <p class="text-danger text-center mt-2" v-else>
-            Belum ada data pemohon
+            Belum memilih guru
           </p>
         </CCol>
       </CRow>
@@ -65,7 +65,6 @@ export default {
       guru: null,
       insertModal: true,
       showModal: false,
-      dataKelas: []
     };
   },
   created() {
@@ -89,15 +88,6 @@ export default {
         this.nama = this.tmp.nama
         this.guru = this.tmp.guru
       }
-    },
-    onSearch(query) {
-      this.axios.get(`sekolah/kelas/search?search=${query}`, {
-        headers: {
-          Authorization: "Bearer " + this.$store.state.auth.token
-        }
-      }).then(response => {
-        this.dataKelas = response.data.data
-      })
     },
     setModal(stat, data = '') {
       this.showModal = stat;
@@ -138,7 +128,7 @@ export default {
             nama: this.nama
           }
           if (this.guru != null) {
-            payload.guru_id = this.guru_id
+            payload.guru_id = this.guru.id
           }
           const { data } = await this.axios.put(`sekolah/kelas/${this.id}`, payload, {
             headers: {
@@ -179,7 +169,3 @@ export default {
   },
 };
 </script>
-
-<style>
-
-</style>

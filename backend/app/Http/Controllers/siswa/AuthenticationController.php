@@ -26,7 +26,7 @@ class AuthenticationController extends Controller
 
     public function login(Request $request) {
         try {
-            $user = SiswaUser::where('email', $request->email)->first();
+            $user = SiswaUser::where('username', $request->username)->first();
             $tokenName = 'siswa-token';
             if ($user && Hash::check($request->password, $user->password)) {
                 // $abilities =  $user->append('abilities')->abilities;
@@ -35,10 +35,10 @@ class AuthenticationController extends Controller
                     'token' => $token->plainTextToken,
                 ];
             }else{
-                return $this->responseRepository->ResponseError(null, "Invalid Email and Password !", Response::HTTP_UNAUTHORIZED);
+                return $this->responseRepository->ResponseError(null, "Username dan password salah !", Response::HTTP_UNAUTHORIZED);
             }
 
-            return $this->responseRepository->ResponseSuccess($data, 'Logged In Successfully !');
+            return $this->responseRepository->ResponseSuccess($data, 'Berhasil login !');
         } catch (\Exception $e) {
             return $this->responseRepository->ResponseError(null, 'Internal Server Error !', Response::HTTP_INTERNAL_SERVER_ERROR);
         }

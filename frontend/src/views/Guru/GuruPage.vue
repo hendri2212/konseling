@@ -74,8 +74,6 @@ export default {
       },
       items: [],
       fields,
-      details: [],
-      collapseDuration: 0,
       deleteData: {
         index: -1,
         nama: '',
