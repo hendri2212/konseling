@@ -1,83 +1,91 @@
 <template>
-  <div>
-    <!-- As a link -->
-    <!-- <nav class="navbar navbar-light bg-light">
-      <div class="container-fluid">
-        <a class="navbar-brand fs-6" href="#">
-          <div>Muhammad Pazrin Andreanor</div>
-          <div>X RPL</div>
-        </a>
-      </div>
-    </nav> -->
-    <div class="text-center p-2 bg-light">
-      <div>
-        <div class="fw-bold">LOGIN</div>
-        <!-- <div>X RPL</div> -->
-      </div>
-    </div>
-
-    <div class="home container-sm px-4">
-      <div class="row justify-content-center">
-        <div class="col-lg-9 p-md-3 py-3">
-          <form @submit.prevent="login">
+    <layout-authentication>
+        <h4 class="mb-2">Selamat Datang! 👋</h4>
+        <form id="formAuthentication" class="mb-3" method="POST" @submit.prevent="login">
             <div class="mb-3">
-              <label class="form-label">Username</label>
-              <input type="text" class="form-control" placeholder="Your username" v-model="username">
+                <label for="username" class="form-label">Username</label>
+                <input type="text" class="form-control" id="username" name="username"
+                    placeholder="Masukkan nama pengguna anda" autofocus v-model="username" />
+            </div>
+            <div class="mb-3 form-password-toggle">
+                <div class="d-flex justify-content-between">
+                    <label class="form-label" for="password">Password</label>
+                    <a href="auth-forgot-password-basic.html">
+                        <small>Lupa Password?</small>
+                    </a>
+                </div>
+                <div class="input-group input-group-merge">
+                    <input type="password" id="password" class="form-control" name="password"
+                        placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
+                        aria-describedby="password" v-model="password" />
+                    <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+                </div>
             </div>
             <div class="mb-3">
-              <label class="form-label">Password</label>
-              <input type="password" class="form-control" placeholder="Your password" v-model="password">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="ingat-saya" />
+                    <label class="form-check-label" for="ingat-saya"> Ingat Saya </label>
+                </div>
             </div>
-            <button type="submit" class="btn btn-primary w-100">Login</button>
-          </form>
-        </div>
-      </div>
-    </div>
-    <loading ref="loading"></loading>
-  </div>
+            <div class="mb-3">
+                <button class="btn btn-primary d-grid w-100" type="submit">Login</button>
+            </div>
+        </form>
+    </layout-authentication>
 </template>
-
 <script>
-import Loading from "@/components/Loading.vue"
+import axios from 'axios'
 import Swal from 'sweetalert2'
+import { mapActions } from 'pinia'
+import { useAuthStore } from '../stores/auth'
+import LayoutAuthentication from '../components/layout/LayoutAuthentication.vue'
 export default {
-  name: 'Login',
-  components: {
-    Loading,
-  },
-  data() {
-    return {
-      username: "",
-      password: ""
-    }
-  },
-  methods: {
-    async login() {
-      this.$refs.loading.show()
-      try {
-        const { data } = await this.axios.post('/siswa/login', {
-          username: this.username,
-          password: this.password,
-        })
-        this.$refs.loading.hide()
-        console.log(data)
-      } catch (e) {
-        this.$refs.loading.hide()
-        if (e.response) {
-          Swal.fire({
-            icon: 'error',
-            text: e.response.data.message,
-          })
+    name: "Login",
+    components: {
+        LayoutAuthentication,
+    },
+    data() {
+        return {
+            url: import.meta.env.VITE_API_URL,
+            username: "",
+            password: "",
         }
-      }
-      // localStorage.setItem(this.$store.state.auth.nameLocalStorage, response.data.data.token)
-      // this.$store.dispatch('auth/authenticated', { token: response.data.data.token })
-      // this.$router.push({ name: "home" })
+    },
+    methods: {
+        ...mapActions(useAuthStore, ['authenticated']),
+        async login() {
+            try {
+                if (this.username.trim() == "" || this.password.trim() == "") {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Upss...',
+                        text: "Username dan password wajib diisi",
+                    })
+                    return;
+                }
+
+                let payload = {
+                    username: this.username,
+                    password: this.password
+                }
+
+                const { data } = await axios.post(`${this.url}/login`, payload)
+                this.authenticated(data.data.token)
+                this.$router.push({ name: "Dashboard" })
+            } catch (e) {
+                if (e.name == "AxiosError") {
+                    let { message } = e.response.data
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Upss...',
+                        text: message,
+                    })
+                } else {
+                    console.log(e)
+                    console.log(`Client side error! : ${e}`)
+                }
+            }
+        },
     }
-  }
 }
 </script>
-
-<style lang="scss" scoped>
-
-</style>

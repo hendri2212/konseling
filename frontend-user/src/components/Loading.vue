@@ -12,7 +12,6 @@
     </div>
 </template>
 <script>
-import { Modal } from 'bootstrap'
 export default {
     data() {
         return {

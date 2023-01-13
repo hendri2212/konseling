@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\Route;
 
 // use App\Http\Controllers\guru\VerifyEmailController;
 use App\Http\Controllers\sekolah\ManageSiswaController;
+use App\Http\Controllers\siswa\AngketController as SiswaAngketController;
 use App\Http\Controllers\siswa\AuthenticationController as SiswaAuthenticationController;
 use App\Http\Controllers\SoalController;
 
@@ -39,34 +40,34 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::middleware('api')->group(function() {
+Route::middleware('api')->group(function () {
     // Route::get('/email/verify/{id}/{hash}', [VerifyEmailController::class, '__invoke'])
     // ->middleware(['signed', 'throttle:6,1'])
     // ->name('verification.verify');
 
     Route::middleware('auth:sekolah,guru,admin')->get('me', [AuthenticationController::class, 'me']);
-    
-    Route::prefix('admin')->group(function() {
-    
+
+    Route::prefix('admin')->group(function () {
+
         Route::post('login', [AdminAuthenticationController::class, 'login']);
-        Route::middleware('auth:admin')->group(function() {
+        Route::middleware('auth:admin')->group(function () {
             Route::get('komponen-layanan/materi', [MateriController::class, 'all'])->name('materi.all');
             Route::resource('komponen-layanan', KomponenLayananController::class);
-            Route::prefix('komponen-layanan/{id}/materi')->group(function() {
+            Route::prefix('komponen-layanan/{id}/materi')->group(function () {
                 Route::get('', [MateriController::class, 'index'])->name('materi.index');
                 Route::post('', [MateriController::class, 'store'])->name('materi.store');
                 Route::put('{id_materi}', [MateriController::class, 'update'])->name('materi.update');
                 Route::delete('{id_materi}', [MateriController::class, 'destroy'])->name('materi.destroy');
             });
             Route::resource('/bidang-layanan', BidangLayananController::class);
-            Route::prefix('bidang-layanan/{id}/skkpd')->group(function() {
+            Route::prefix('bidang-layanan/{id}/skkpd')->group(function () {
                 Route::get('', [SkkpdController::class, 'index'])->name('skkpd.index');
                 Route::post('', [SkkpdController::class, 'store'])->name('skkpd.store');
                 Route::get('{id_skkpd}', [SkkpdController::class, 'show'])->name('skkpd.show');
                 Route::put('{id_skkpd}', [SkkpdController::class, 'update'])->name('skkpd.update');
                 Route::delete('{id_skkpd}', [SkkpdController::class, 'destroy'])->name('skkpd.destroy');
 
-                Route::prefix('{id_skkpd}/rumusan-kebutuhan')->group(function() {
+                Route::prefix('{id_skkpd}/rumusan-kebutuhan')->group(function () {
                     Route::get('', [RumusanKebutuhanController::class, 'index'])->name('rumusan_kebutuhan.index');
                     Route::post('', [RumusanKebutuhanController::class, 'store'])->name('rumusan_kebutuhan.store');
                     Route::put('{id_rumusan_kebutuhan}', [RumusanKebutuhanController::class, 'update'])->name('rumusan_kebutuhan.update');
@@ -81,11 +82,11 @@ Route::middleware('api')->group(function() {
             // Route::resource('role', RoleController::class)->middleware('ability:role.*');
         });
     });
-    
+
     Route::post('login', [AuthenticationController::class, 'login']);
-    Route::prefix('sekolah')->group(function() {
+    Route::prefix('sekolah')->group(function () {
         Route::post('register', [SekolahAuthenticationController::class, 'register']);
-        Route::middleware('auth:sekolah')->group(function() {
+        Route::middleware('auth:sekolah')->group(function () {
             Route::get('guru/search', [GuruController::class, 'search']);
             Route::resource('guru', GuruController::class);
             Route::post('kelas/{id}/assign', [KelasController::class, 'assign']);
@@ -95,10 +96,10 @@ Route::middleware('api')->group(function() {
         });
     });
 
-    Route::prefix('guru')->group(function() {
+    Route::prefix('guru')->group(function () {
         Route::post('login', [GuruAuthenticationController::class, 'login']);
-        
-        Route::middleware('auth:guru')->group(function() {
+
+        Route::middleware('auth:guru')->group(function () {
             Route::get('me', [GuruController::class, 'me']);
             Route::get('kelas', [KelasController::class, 'index']);
             Route::resource('angket', AngketController::class);
@@ -110,19 +111,17 @@ Route::middleware('api')->group(function() {
         });
     });
 
-    Route::prefix('siswa')->group(function() {
+    Route::prefix('siswa')->group(function () {
         Route::post('login', [SiswaAuthenticationController::class, 'login']);
-        
+
         Route::get('peserta', [SiswaAuthenticationController::class, 'peserta']);
-        Route::middleware('auth:siswa')->group(function() {
+        Route::middleware('auth:siswa')->group(function () {
             Route::get('me', [SiswaAuthenticationController::class, 'me']);
-            Route::get('list-soal', [SoalController::class, 'listSoal']);
-            Route::post('soal/jawab', [SoalController::class, 'jawab']);
-            Route::resource('soal', SoalController::class);
+            Route::get('angket', [SiswaAngketController::class, 'index']);
+            Route::get('angket/{id}', [SiswaAngketController::class, 'show']);
+            // Route::get('list-soal', [SoalController::class, 'listSoal']);
+            // Route::post('soal/jawab', [SoalController::class, 'jawab']);
+            // Route::resource('soal', SoalController::class);
         });
     });
-
-
-
 });
-

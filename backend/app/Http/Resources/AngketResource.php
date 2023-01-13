@@ -18,7 +18,6 @@ class AngketResource extends JsonResource
             'id' => $this->id,
             'nama' => $this->nama,
             'tanggal' => $this->tanggal,
-            // 'siswa' => $this->append('jawaban_siswa')->jawaban_siswa
             'kelas' => new KelasResource($this->kelas),
             'status' => $this->status,
         ];

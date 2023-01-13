@@ -31,7 +31,7 @@ class SiswaUser extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function Kelas() {
+    public function kelas() {
         return $this->belongsTo(Kelas::class, 'kelas_id', 'id');
     }
 
