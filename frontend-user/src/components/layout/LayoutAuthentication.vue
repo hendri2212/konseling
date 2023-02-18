@@ -70,6 +70,9 @@
 <script>
 export default {
     name: "LayoutAuthentication",
+    props: {
+        authenticated: Function
+    },
     mounted() {
         if (!document.getElementById('main_script_for_template')) {
             let externalScript = document.createElement('script')

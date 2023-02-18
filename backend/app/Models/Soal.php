@@ -18,7 +18,7 @@ class Soal extends Model
     }
 
     public function jawaban() {
-        return $this->hasOne(Jawaban::class, "soal_id", "id");
+        return $this->hasOne(Jawaban::class, 'soal_id', 'id');
     }
 
 }

@@ -34,4 +34,8 @@ class Angket extends Model
     public function jawaban() {
         return $this->hasMany(Jawaban::class, 'angket_id', 'id');
     }
+
+    public function attempt() {
+        return $this->hasOne(AngketAttempt::class, 'angket_id', 'id');
+    }
 }

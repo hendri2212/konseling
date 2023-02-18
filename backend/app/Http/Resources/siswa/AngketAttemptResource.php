@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\siswa;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ListSoalResource extends JsonResource
+class AngketAttemptResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -15,8 +15,10 @@ class ListSoalResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'num' => $this->num,
-            'isAnswered' => $this->jawaban != null ? true : false,
+            'id' => $this->id,
+            'state' => $this->state,
+            'timestart' => $this->timestart,
+            'timefinish' => $this->timefinish
         ];
     }
 }

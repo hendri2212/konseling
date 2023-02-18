@@ -1,83 +1,87 @@
 <template>
-    <layout-default :error="error" :message="message">
-        <div class="content-wrapper">
-            <!-- Content -->
-
-            <div class="container-xxl flex-grow-1 container-p-y">
-                <div class="row">
-                    <div class="col-lg-12 mb-4">
-                        <div class="card">
-                            <div class="d-flex align-items-end row">
-                                <div class="col-sm-7">
-                                    <div class="card-body">
-                                        <h3 class="text-primary">{{ nama }}</h3>
-                                        <nav aria-label="breadcrumb">
-                                            <ol class="breadcrumb m-0">
-                                                <li class="breadcrumb-item">
-                                                    <router-link :to="{ name: 'Dashboard' }">Dashboard</router-link>
-                                                </li>
-                                                <li class="breadcrumb-item active">{{ nama }}</li>
-                                            </ol>
-                                        </nav>
-                                    </div>
-                                </div>
+    <div class="card">
+        <div class="d-flex align-items-end row">
+            <div class="col-sm-12">
+                <div class="card-body" v-if="attempt != ''">
+                    <div v-if="!attempt">
+                        <button @click="startattempt" class="btn btn-primary mb-3 px-5">
+                            Isi angket
+                            <!-- {{ 'ISI ANGKET' 'Lanjutkan pengisian angket yang terakhir' }} -->
+                        </button>
+                        <p class="m-0">Diizinkan mengisi angket</p>
+                    </div>
+                    <div v-else>
+                        <div class="card mb-5">
+                            <h5 class="card-header">Ringkasan pengisian angket sebelumnya</h5>
+                            <div class="table-responsive text-nowrap ">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Keadaan</th>
+                                            <th>Ulasan</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="table-border-bottom-0">
+                                        <tr v-if="attempt.state == 'inprogress'">
+                                            <td>Sedang diisi</td>
+                                            <td></td>
+                                        </tr>
+                                        <tr v-else>
+                                            <td>
+                                                Selesai mengerjakan <br>
+                                                <small class="d-blok">Diserahkan pada {{ v_moment(attempt.timefinish) }}</small>
+                                            </td>
+                                            <td>
+                                                <router-link :to="{ name: 'AttemptReview', query: { id: id } }">Ulasan</router-link>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-lg-12 mb-4">
-                        <div class="card">
-                            <div class="d-flex align-items-end row">
-                                <div class="col-sm-12">
-                                    <div class="card-body">
-                                        <button class="btn btn-primary mb-3">Isi Angket</button>
-                                        <p class="m-0">Diizinkan mengisi angket : 1</p>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="text-center" v-if="attempt.state == 'inprogress'">
+                            <button @click="startattempt" class="btn btn-primary mb-3 px-5">
+                                LANJUTKAN PENGISIAN ANGKET
+                            </button>
+                            <p class="m-0">Diizinkan mengisi angket</p>
+                        </div>
+                        <div class="text-center" v-else>
+                            <router-link :to="{ name: 'Dashboard' }" class="btn btn-primary mb-3">
+                                KEMBALI KE DASHBOARD
+                            </router-link>
+                            <p class="m-0">Tidak ada lagi percobaan yang diperbolehkan</p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </layout-default>
+    </div>
 </template>
 <script>
-import LayoutDefault from '../components/layout/LayoutDefault.vue';
 import axios from 'axios'
-import { mapState } from 'pinia'
-import { useAuthStore } from '@/stores/auth'
+import moment from 'moment'
 export default {
     name: "Angket",
-    components: {
-        LayoutDefault,
-    },
-    computed: {
-        ...mapState(useAuthStore, ['token'])
+    props: {
+        id: String,
+        token: String,
     },
     data() {
         return {
             error: false,
             message: "",
             url: import.meta.env.VITE_API_URL,
-            nama: "",
+            attempt: '',
         }
     },
     async mounted() {
-        if (this.$route.query.id.trim() == '') {
-            this.error = true
-            this.message = "ID angket tidak valid"
-            return;
-        }
-
         try {
-            const { data } = await axios.get(`${this.url}/angket/${this.$route.query.id.trim()}`, {
+            const { data } = await axios.get(`${this.url}/angket/${this.id}/status`, {
                 headers: {
                     Authorization: `Bearer ${this.token}`
                 }
             })
-            this.nama = data.data.nama
+            this.attempt = data.data
         } catch (e) {
             this.error = true
             if (e.name == "AxiosError") {
@@ -87,9 +91,30 @@ export default {
                 this.message = `Client side error! : ${e}`
             }
         }
-
-
-
+    },
+    methods: {
+        v_moment(time) {
+            return moment(time).locale('id').format('LLLL')
+        },
+        async startattempt() {
+            try {
+                const { data } = await axios.post(`${this.url}/angket/${this.id}/startattempt`, {}, {
+                    headers: {
+                        Authorization: `Bearer ${this.token}`
+                    }
+                })
+                this.attempt = data.data
+                this.$router.push({ name: 'Attempt', query: { id: this.id } })
+            } catch (e) {
+                this.error = true
+                if (e.name == "AxiosError") {
+                    let { message } = e.response.data
+                    this.message = message
+                } else {
+                    this.message = `Client side error! : ${e}`
+                }
+            }
+        }
     }
 }
 </script>

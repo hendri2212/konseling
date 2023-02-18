@@ -117,9 +117,16 @@ Route::middleware('api')->group(function () {
         Route::get('peserta', [SiswaAuthenticationController::class, 'peserta']);
         Route::middleware('auth:siswa')->group(function () {
             Route::get('me', [SiswaAuthenticationController::class, 'me']);
-            Route::get('angket', [SiswaAngketController::class, 'index']);
-            Route::get('angket/{id}', [SiswaAngketController::class, 'show']);
-            // Route::get('list-soal', [SoalController::class, 'listSoal']);
+            Route::prefix('angket')->group(function () {
+                Route::get('', [SiswaAngketController::class, 'index']);
+                Route::get('{id}', [SiswaAngketController::class, 'show']);
+                Route::get('{id}/status', [SiswaAngketController::class, 'status']);
+                Route::post('{id}/startattempt', [SiswaAngketController::class, 'startattempt']);
+                Route::get('{id}/attempt', [SiswaAngketController::class, 'attempt']);
+                Route::get('{id}/attempt/lists', [SiswaAngketController::class, 'lists']);
+                Route::post('{id}/attempt/{id_soal}/answer', [SiswaAngketController::class, 'answer']);
+                Route::post('{id}/finishattempt', [SiswaAngketController::class, 'finishattempt']);
+            });
             // Route::post('soal/jawab', [SoalController::class, 'jawab']);
             // Route::resource('soal', SoalController::class);
         });

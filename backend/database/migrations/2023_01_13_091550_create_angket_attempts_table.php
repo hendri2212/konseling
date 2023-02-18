@@ -18,8 +18,8 @@ class CreateAngketAttemptsTable extends Migration
             $table->uuid('angket_id');
             $table->uuid('siswa_id');
             $table->string('state')->default('inprogress');
-            $table->timestamp('timestart')->nullable();
-            $table->timestamp('timefinish')->nullable();
+            $table->timestamp('timestart')->useCurrent();
+            $table->datetime('timefinish')->nullable();
             $table->timestamps();
             //relasi
             $table->foreign('angket_id')->references('id')->on('angket')->onDelete('cascade');

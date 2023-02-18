@@ -18,6 +18,6 @@ class AngketAttempt extends Model
     /** @var string to identify the finished state. */
     const FINISHED    = 'finished';
     /** @var string to identify the abandoned state. */
-    const ABANDONED   = 'abandoned';
+    // const ABANDONED   = 'abandoned';
 
 }

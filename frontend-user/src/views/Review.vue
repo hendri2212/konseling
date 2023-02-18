@@ -18,7 +18,7 @@
                                 <div class="card shadow-none alert-info text-black border border-secondary mb-3">
                                     <div class="card-body py-2 pb-5">
                                         <p class="mb-3">{{ soal.soal }}</p>
-                                        <div class="answer" v-if="attempt != null">
+                                        <div class="answer">
                                             <div class="py-1">
                                                 <input :disabled="attempt_finished" :style="attempt_finished ? 'cursor: no-drop;' : ''" v-model="jawaban" type="radio" name="jawaban" value="1">
                                                 <label for="answertrue" class="ms-1" @click="jawaban = 1">Ya</label>
@@ -56,9 +56,8 @@
 import axios from 'axios'
 import { mapState, mapActions } from 'pinia'
 import { useLayoutStore } from '@/stores/layout'
-import { useAttemptStore } from '@/stores/attempt'
 export default {
-    name: "AttemptAngket",
+    name: "AttemptAngketReview",
     props: {
         id: String,
         token: String,
@@ -66,10 +65,10 @@ export default {
     computed: {
         ...mapState(useLayoutStore, ['all_expanded']),
         attempt_finished() {
-            if (this.attempt != null && this.attempt.state == 'finished') {
-                return true
+            if (this.attempt != null && this.attempt.state == 'onprogress') {
+                return false
             }
-            return false
+            return true
         }
     },
     data() {
@@ -94,37 +93,13 @@ export default {
         this.$watch(
             () => this.$route.query,
             () => {
-                window.removeEventListener("beforeunload", this.handlerBeforeUnload)
-                this.jawaban = ''
-                this.answered = false
                 this.getData()
-            },
-            { immediate: true }
-        )
-
-        this.$watch(
-            () => this.attempt_finished,
-            () => {
-                if (this.attempt_finished) {
-                    this.$router.push({ name: "AttemptReview", query: { id: this.$route.query.id, page: this.$route.query.page ?? 0 } })
-                }
             },
             { immediate: true }
         )
         await this.statusAttempt()
     },
-    beforeRouteLeave(to, from) {
-        if (this.jawaban != '') {
-            const answer = window.confirm('Changes you made may not be saved.')
-            if (!answer) return false
-        }
-    },
     methods: {
-        ...mapActions(useAttemptStore, ['set_jawaban', 'set_init', 'saveAnswer']),
-        handlerBeforeUnload(e) {
-            e.preventDefault()
-            e.returnValue = ''
-        },
         async statusAttempt() {
             try {
                 const { data } = await axios.get(`${this.url}/angket/${this.id}/status`, {
@@ -170,20 +145,8 @@ export default {
                 if (data.data.meta.next_number) {
                     this.btnnext.text = "Halaman selanjutnya"
                 } else {
-                    this.btnnext.text = "Selesaikan angket"
+                    this.btnnext.text = "Kembali kehalaman angket"
                 }
-
-                this.$watch(
-                    () => this.jawaban,
-                    () => {
-                        this.set_init(this.id, this.soal.id, this.jawaban ?? "")
-                        if (this.jawaban != '') {
-                            window.addEventListener("beforeunload", this.handlerBeforeUnload);
-                        }
-                    },
-                    { immediate: false }
-                )
-
                 this.loading = false
             } catch (e) {
                 this.error = true
@@ -196,18 +159,14 @@ export default {
             }
         },
         async submit(number) {
-            if (!this.attempt_finished) {
-                await this.saveAnswer()
-            }
             this.move(number)
         },
         move(number) {
             let id = this.$route.query.id ? this.$route.query.id : 0
             if (number) {
-                this.$router.push({ name: 'Attempt', query: { id: id, page: number - 1 } })
+                this.$router.push({ name: 'AttemptReview', query: { id: id, page: number - 1 } })
             } else {
-                this.jawaban = ''
-                this.$router.push({ name: 'AttemptSummary', query: { id: id } })
+                this.$router.push({ name: 'Angket', query: { id: id } })
             }
         }
     }
