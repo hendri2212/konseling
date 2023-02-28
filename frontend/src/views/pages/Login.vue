@@ -9,10 +9,10 @@
                 <CForm @submit.prevent="login">
                   <h1>Login</h1>
                   <p class="text-muted">Sign In to your account</p>
-                  <CInputRadio inline type="radio" name="type" value="sekolah" label="Sekolah" @input="type = $event.target.value" :checked="true"/>
-                  <CInputRadio inline type="radio" name="type" value="guru" label="Guru" @input="type = $event.target.value"/>
+                  <CInputRadio inline type="radio" name="type" value="schools" label="Sekolah" @input="type = $event.target.value" :checked="true"/>
+                  <CInputRadio inline type="radio" name="type" value="teachers" label="Guru" @input="type = $event.target.value"/>
                   <CInput
-                    v-if="type=='sekolah'"
+                    v-if="type=='schools'"
                     type="email"
                     placeholder="Email"
                     autocomplete="email"
@@ -23,8 +23,8 @@
                   <CInput
                     v-else
                     type="text"
-                    placeholder="Username"
-                    autocomplete="Username"
+                    placeholder="Email"
+                    autocomplete="Email"
                     v-model="email"
                   >
                     <template #prepend-content><CIcon name="cil-user"/></template>
@@ -81,7 +81,7 @@ export default {
     return {
       email:"",
       password:"",
-      type:"sekolah"
+      type:"schools"
     }
   },
   methods: {

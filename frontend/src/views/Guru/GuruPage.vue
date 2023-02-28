@@ -14,11 +14,11 @@
         <CDataTable v-if="datatable" :items="items" :fields="fields" table-filter hover>
           <template #show_details="{ item, index }">
             <td class="py-2">
-              <CButton color="info" @click="$refs.addModal.setModal(true, item)">
+              <CButton size="sm" color="info" @click="$refs.addModal.setModal(true, item)">
                 Edit
               </CButton>
-              <CButton color="danger" class="ml-1"
-                @click="(deleteData.index = index), (deleteData.nama = item.nama), (deleteData.modal = true)">
+              <CButton size="sm" color="danger" class="ml-1"
+                @click="(deleteData.index = index), (deleteData.name = item.name), (deleteData.modal = true)">
                 Delete
               </CButton>
             </td>
@@ -29,7 +29,7 @@
         </CDataTable>
 
         <CModal title="Hapus Guru" color="danger" :show.sync="deleteData.modal">
-          <span>Delete akun guru yang bernama {{ deleteData.nama }} ?</span>
+          <span>Delete akun guru yang bernama {{ deleteData.name }} ?</span>
           <template #footer>
             <CButton color="primary" variant="outline" @click="deleteData.modal = false">Close</CButton>
             <CButton @click="remove">Yes</CButton>
@@ -37,7 +37,7 @@
         </CModal>
       </CCardBody>
     </CCard>
-    <Loading ref="loading"></Loading>
+    <Loading :loading="loading"></Loading>
   </div>
 </template>
 
@@ -47,9 +47,9 @@ import Loading from '../../components/Loading.vue'
 
 // fields
 const fields = [
-  { key: "username", label: 'Username' },
-  { key: "nama", label: 'Nama' },
-  { key: "nama", label: 'Status' },
+  { key: "email", label: 'Email' },
+  { key: "name", label: 'Nama' },
+  { key: "name", label: 'Status' },
   {
     key: "show_details",
     label: "Action",
@@ -67,6 +67,7 @@ export default {
   },
   data() {
     return {
+      loading: true,
       datatable: true,
       pagination: {
         max_page: 1,
@@ -76,7 +77,7 @@ export default {
       fields,
       deleteData: {
         index: -1,
-        nama: '',
+        name: '',
         modal: false,
       },
     };
@@ -86,9 +87,9 @@ export default {
   },
   methods: {
     async getData() {
-      this.$refs.loading.show()
+      this.loading = true
       try {
-        const { data } = await this.axios.get('sekolah/guru', {
+        const { data } = await this.axios.get('teachers', {
           headers: {
             Authorization: "Bearer " + this.$store.state.auth.token
           }
@@ -98,7 +99,7 @@ export default {
       } catch (e) {
         console.log(e)
       } finally {
-        this.$refs.loading.hide()
+        this.loading = false
       }
     },
     async forceRerender() {
@@ -115,10 +116,9 @@ export default {
         this.deleteData.modal = false
         return;
       }
-      this.$refs.loading.show()
+      this.loading = true
       try {
-        // di sini fungsi axios
-        const { data } = await this.axios.delete(`sekolah/guru/${this.items[this.deleteData.index].id}`, {
+        const { data } = await this.axios.delete(`teachers/${this.items[this.deleteData.index].id}`, {
           headers: {
             Authorization: "Bearer " + this.$store.state.auth.token
           }
@@ -147,14 +147,10 @@ export default {
       } finally {
         this.deleteData.index = -1
         this.deleteData.modal = false
-        this.$refs.loading.hide()
+        this.loading = false
         this.getData()
       }
     },
   },
 };
 </script>
-
-<style>
-
-</style>

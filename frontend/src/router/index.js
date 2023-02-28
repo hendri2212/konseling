@@ -1,9 +1,8 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import store from '@/store/index'
+import axios from 'axios'
 
-// Containers
-const TheContainer = () => import('@/containers/TheContainer')
 
 // Views
 const DashboardPage = () => import('@/views/DashboardPage')
@@ -23,7 +22,10 @@ const ProfileKelasParent = () => import('@/views/ProfileKelas/Parent')
 const ProfileKelasPage = () => import('@/views/ProfileKelas/Page')
 const ProfileKelasPerKelasPage = () => import('@/views/ProfileKelas/PerKelasPage')
 const ProfileKelasPerAngketPage = () => import('@/views/ProfileKelas/PerAngketPage')
-const Angket = () => import('@/views/Angket/AngketPage')
+const AngketPage = () => import('@/views/Angket/AngketPage')
+const Angket = () => import('@/views/Angket/Angket')
+const SetelanAngket = () => import('@/components/Angket/Setelan')
+const HasilAngket = () => import('@/components/Angket/Hasil')
 
 
 // Views - Pages
@@ -56,194 +58,222 @@ function configRoutes() {
     // Dashboard
     {
       path: '/',
-      redirect: '/dashboard',
-      name: 'Home',
-      component: TheContainer,
+      alias: ['/dashboard', '/home'],
+      name: 'DashboardPage',
+      component: DashboardPage,
+      meta: {
+        requiredLogin: true
+      },
+    },
+    {
+      path: '/akpd/komponen-layanan',
+      name: 'KomponenLayanan',
+      component: KomponenLayananPage,
+      meta: {
+        label: 'Komponen Layanan',
+        requiredAdmin: true,
+        requiredLogin: true
+      },
+    },
+    {
+      path: '/akpd/komponen-layanan',
+      component: ParentPage,
+      meta: {
+        label: 'Komponen Layanan',
+        requiredAdmin: true,
+        requiredLogin: true
+      },
       children: [
         {
-          path: 'dashboard',
-          name: 'DashboardPage',
-          component: DashboardPage,
+          path: 'materi',
+          name: 'Materi',
           meta: {
-            requiredLogin: true
-          },
-        },
-        {
-          path: '/akpd/komponen-layanan',
-          name: 'KomponenLayanan',
-          component: KomponenLayananPage,
-          meta: {
-            label: 'Komponen Layanan',
             requiredAdmin: true,
             requiredLogin: true
           },
+          component: MateriPage,
+        },
+      ]
+    },
+    {
+      path: '/akpd/bidang-layanan',
+      name: 'BidangLayanan',
+      component: BidangLayananPage,
+      meta: {
+        label: "Bidang Layanan",
+        requredAdmin: true,
+        requiredLogin: true
+      },
+    },
+    {
+      path: '/akpd/bidang-layanan',
+      component: ParentPage,
+      meta: {
+        label: 'Bidang Layanan',
+        requiredAdmin: true,
+        requiredLogin: true
+      },
+      children: [
+        {
+          path: 'skkpd',
+          name: 'Skkpd',
+          component: SkkpdPage,
+          meta: {
+            label: "SKKPD",
+            requiredAdmin: true,
+            requiredLogin: true
+          }
         },
         {
-          path: '/akpd/komponen-layanan',
+          path: 'skkpd',
           component: ParentPage,
           meta: {
-            label: 'Komponen Layanan',
+            label: "SKKPD",
             requiredAdmin: true,
             requiredLogin: true
           },
           children: [
             {
-              path: 'materi',
-              name: 'Materi',
-              component: MateriPage,
-            },
-          ]
-        },
-        {
-          path: '/akpd/bidang-layanan',
-          name: 'BidangLayanan',
-          component: BidangLayananPage,
-          meta: {
-            label: "Bidang Layanan",
-            requredAdmin: true,
-            requiredLogin: true
-          },
-        },
-        {
-          path: '/akpd/bidang-layanan',
-          component: ParentPage,
-          meta: {
-            label: 'Bidang Layanan',
-            requiredAdmin: true,
-            requiredLogin: true
-          },
-          children: [
-            {
-              path: 'skkpd',
-              name: 'Skkpd',
-              component: SkkpdPage,
+              path: 'rumusan-kebutuhan',
+              name: 'RumusanKebutuhan',
+              component: RumusanKebutuhanPage,
               meta: {
-                label: "SKKPD"
+                label: "Rumusan Kebutuhan",
+                requiredAdmin: true,
+                requiredLogin: true
               }
             },
-            {
-              path: 'skkpd',
-              component: ParentPage,
-              meta: {
-                label: "SKKPD"
-              },
-              children: [
-                {
-                  path: 'rumusan-kebutuhan',
-                  name: 'RumusanKebutuhan',
-                  component: RumusanKebutuhanPage,
-                  meta: {
-                    label: "Rumusan Kebutuhan"
-                  }
-                },
-              ]
-            },
+          ]
+        },
 
-          ]
+      ]
+    },
+    {
+      path: '/akpd/butir-angket-konseling',
+      name: 'ButirAngket',
+      component: SoalPage,
+      meta: {
+        requiredLogin: true
+      },
+    },
+    {
+      path: '/bio/identitas-sekolah',
+      name: 'Identitas Sekolah',
+      component: IdentitasSekolahPage,
+      meta: {
+        requiredLogin: true
+      },
+    },
+    {
+      path: '/bio/guru',
+      name: 'Guru',
+      component: GuruPage,
+      meta: {
+        requiredLogin: true
+      },
+    },
+    {
+      path: '/bio/peserta-didik',
+      name: 'Peserta Didik',
+      component: () => import('../views/Siswa/SiswaPage.vue'),
+      meta: {
+        requiredLogin: true
+      },
+    },
+    {
+      path: '/bio/kelas',
+      name: 'Kelas',
+      component: KelasPage,
+      meta: {
+        requiredLogin: true
+      },
+    },
+    {
+      path: '/bio/kelas/assign',
+      name: 'AssignSiswa',
+      component: Assign,
+      meta: {
+        requiredLogin: true
+      },
+    },
+    {
+      path: '/akpd/jawaban',
+      name: 'Jawaban Peserta Didik',
+      component: JawabanPage,
+      meta: {
+        requiredLogin: true
+      },
+    },
+    {
+      path: '/analisis',
+      component: ProfileKelasParent,
+      meta: {
+        requiredLogin: true
+      },
+      children: [
+        {
+          path: '/',
+          name: 'Analisis Profile Kelas Home',
+          component: ProfileKelasPage,
         },
         {
-          path: '/akpd/butir-angket-konseling',
-          name: 'ButirAngket',
-          component: SoalPage,
+          path: 'kelas/:id',
+          name: 'Analisis Profile Kelas View',
+          component: ProfileKelasPerKelasPage,
+        },
+        {
+          path: 'angket/:id/butir',
+          name: 'Analisis Profil Tiap Butir Soal',
+          component: ProfileKelasPerAngketPage,
           meta: {
-            requiredLogin: true
+            type: 'butir',
           },
         },
         {
-          path: '/bio/identitas-sekolah',
-          name: 'Identitas Sekolah',
-          component: IdentitasSekolahPage,
+          path: 'angket/:id/siswa',
+          name: 'Analisis Profile Tiap Siswa',
+          component: ProfileKelasPerAngketPage,
           meta: {
-            requiredLogin: true
-          },
-        },
-        {
-          path: '/bio/guru',
-          name: 'Guru',
-          component: GuruPage,
-          meta: {
-            requiredLogin: true
-          },
-        },
-        {
-          path: '/bio/peserta-didik',
-          name: 'Peserta Didik',
-          component: () => import('../views/Siswa/SiswaPage.vue')
-        },
-        {
-          path: '/bio/kelas',
-          name: 'Kelas',
-          component: KelasPage,
-          meta: {
-            requiredLogin: true
-          },
-        },
-        {
-          path: '/bio/kelas/assign',
-          name: 'AssignSiswa',
-          component: Assign,
-          meta: {
-            requiredLogin: true
-          },
-        },
-        {
-          path: '/akpd/jawaban',
-          name: 'Jawaban Peserta Didik',
-          component: JawabanPage,
-          meta: {
-            requiredLogin: true
-          },
-        },
-        {
-          path: '/analisis',
-          component: ProfileKelasParent,
-          children: [
-            {
-              path: '/',
-              name: 'Analisis Profile Kelas Home',
-              component: ProfileKelasPage,
-              meta: {
-                requiredLogin: true
-              },
-            },
-            {
-              path: 'kelas/:id',
-              name: 'Analisis Profile Kelas View',
-              component: ProfileKelasPerKelasPage,
-              meta: {
-                requiredLogin: true
-              },
-            },
-            {
-              path: 'angket/:id/butir',
-              name: 'Analisis Profil Tiap Butir Soal',
-              component: ProfileKelasPerAngketPage,
-              meta: {
-                requiredLogin: true,
-                type: 'butir',
-              },
-            },
-            {
-              path: 'angket/:id/siswa',
-              name: 'Analisis Profile Tiap Siswa',
-              component: ProfileKelasPerAngketPage,
-              meta: {
-                requiredLogin: true,
-                type: 'siswa',
-              },
-            },
-          ]
-        },
-        {
-          path: '/angket',
-          name: 'Angket',
-          component: Angket,
-          meta: {
-            requiredLogin: true
+            type: 'siswa',
           },
         },
       ]
-    }
+    },
+    {
+      path: '/admin/angket',
+      name: "AngketPage",
+      component: AngketPage,
+      meta: {
+        requiredLogin: true
+      },
+    },
+    {
+      path: '/angket',
+      name: "Angket",
+      component: Angket,
+      redirect: { path: "/angket/setelan" },
+      meta: {
+        requiredLogin: true
+      },
+      children: [
+        {
+          path: 'setelan',
+          name: "Setelan",
+          component: SetelanAngket,
+          meta: {
+            requiredLogin: true
+          },
+        },
+        {
+          path: 'hasil',
+          name: "Hasil",
+          component: HasilAngket,
+          meta: {
+            requiredLogin: true
+          },
+        }
+      ]
+    },
   ]
 }
 
@@ -253,11 +283,27 @@ const router = new VueRouter({
   scrollBehavior: () => ({ y: 0 }),
   routes: configRoutes(),
 })
+
 router.beforeEach((to, from, next) => {
   if (!store.getters['auth/isAuthenticated'] && to.meta.requiredLogin) {
     next({ name: 'Login' })
-  } else if (store.getters['auth/isAuthenticated'] && to.meta.requiredNotLogin) {
-    next({ name: 'Home' })
+  } else if (store.getters['auth/isAuthenticated'] && to.meta.requiredLogin) {
+    let headers = {
+      headers: {
+        Authorization: "Bearer " + store.state.auth.token
+      }
+    }
+    axios.get('me', headers).then(response => {
+      store.dispatch('auth/logedAs', response.data.data.as)
+    }).catch(() => {
+      store.dispatch('auth/logout')
+      if (from.name == "Login") {
+        next({ name: 'Login' })
+      } else {
+        next({ name: 'AdminLogin' })
+      }
+    })
+
   }
   next()
 })

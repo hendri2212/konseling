@@ -7,12 +7,12 @@
         <main class="c-main">
           <CContainer fluid>
             <transition name="fade" mode="out-in">
-              <router-view :key="$route.path"></router-view>
+              <slot></slot>
             </transition>
           </CContainer>
         </main>
       </div>
-      <TheFooter />
+      <TheFooter  />
     </CWrapper>
   </div>
 </template>
@@ -33,5 +33,13 @@ export default {
 </script>
 
 <style>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
+}
 
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
 </style>

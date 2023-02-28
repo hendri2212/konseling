@@ -37,10 +37,10 @@ const state = {
       return state.as == 'admin'
     },
     isSekolah (state) {
-      return state.as == 'sekolah'
+      return state.as == 'schools'
     },
     isGuru (state) {
-      return state.as == 'guru'
+      return state.as == 'teachers'
     },
   }
   

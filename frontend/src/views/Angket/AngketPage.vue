@@ -12,8 +12,14 @@
 
       <CCardBody>
         <CDataTable :responsive="true" v-if="datatable" :items="items" :fields="fields" hover>
+          <template #nama="{ item }">
+            <td><router-link :to="{ name: 'Angket', query: { id:item.id } }">{{ item.nama }}</router-link></td>
+          </template>
           <template #kelas="{ item }">
             <td>{{ item.kelas.nama }}</td>
+          </template>
+          <template #tanggal="{ item }">
+            <td>{{ getDate(item.tanggal) }}</td>
           </template>
           <template #status="{ item }">
             <td>
@@ -23,8 +29,8 @@
             </td>
           </template>
           <template #actions="{ item, index }">
-            <td align="right">
-              <CDropdown color="none" toggler-text="Dropdown Button" class="m-2">
+            <td align="left">
+              <CDropdown color="secondary" toggler-text="Dropdown Button">
                 <template #toggler-content>
                   <CIcon name="cil-cog" />
                 </template>
@@ -63,12 +69,12 @@
         </CModal>
       </CCardBody>
     </CCard>
-    <Loading ref="loading"></Loading>
+    <Loading :loading="loading"></Loading>
   </div>
 </template>
 
 <script>
-import AddModal from './AddModal.vue';
+import AddModal from '../../components/Angket/AddModal.vue';
 import Loading from '@/components/Loading.vue'
 
 // fields
@@ -77,7 +83,7 @@ const fields = [
   { label: 'Kelas', key: 'kelas' },
   { label: 'Tanggal Angket', key: 'tanggal' },
   { label: 'Status', key: 'status' },
-  { label: '', key: 'actions' }
+  { label: 'Edit', key: 'actions' }
 ]
 
 export default {
@@ -88,6 +94,7 @@ export default {
   },
   data() {
     return {
+      loading: true,
       datatable: true,
       pagination: {
         max_page: 1,
@@ -102,15 +109,19 @@ export default {
       },
     };
   },
-  async mounted() {
+  async created() {
     this.getData()
   },
   methods: {
+    getDate(milis) {
+      let date = new Date(milis)
+      return `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
+    },
     async getData(param = null) {
-      let page = param ?? 1;
-      this.$refs.loading.show()
+      let page = param ?? 1
+      this.loading = true
       try {
-        const { data } = await this.axios.get(`guru/angket?page=${page}`, {
+        const { data } = await this.axios.get(`angket?page=${page}`, {
           headers: {
             Authorization: "Bearer " + this.$store.state.auth.token
           }
@@ -120,7 +131,7 @@ export default {
       } catch (e) {
         console.log(e)
       } finally {
-        this.$refs.loading.hide()
+        this.loading = false
       }
     },
     async forceRerender() {
@@ -139,7 +150,7 @@ export default {
       }
       try {
         // di sini fungsi axios
-        const { data } = await this.axios.delete(`guru/angket/${this.items[this.deleteData.index].id}`, {
+        const { data } = await this.axios.delete(`angket/${this.items[this.deleteData.index].id}`, {
           headers: {
             Authorization: "Bearer " + this.$store.state.auth.token
           }
@@ -168,12 +179,12 @@ export default {
       } finally {
         this.deleteData.index = -1
         this.deleteData.modal = false
-        this.$refs.loading.hide()
+        this.loading = false
         this.getData(this.pagination.active)
       }
     },
     bukaAngket(id) {
-      this.axios.patch(`guru/angket/${id}/open`, {}, {
+      this.axios.patch(`angket/${id}/open`, {}, {
         headers: {
           Authorization: 'Bearer ' + this.$store.state.auth.token
         }
@@ -204,7 +215,7 @@ export default {
       })
     },
     tutupAngket(id) {
-      this.axios.patch(`guru/angket/${id}/close`, {}, {
+      this.axios.patch(`angket/${id}/close`, {}, {
         headers: {
           Authorization: 'Bearer ' + this.$store.state.auth.token
         }

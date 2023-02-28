@@ -43,7 +43,7 @@ export default {
             nama: ""
         }
     },
-    async mounted() {
+    async created() {
         if (!this.$route.query.id) {
             this.error = true
             this.message = "Parameter yang dibutuhkan (id) tidak ada"

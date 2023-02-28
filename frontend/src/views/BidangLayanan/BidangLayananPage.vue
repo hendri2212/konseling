@@ -23,7 +23,7 @@
                   Edit
                 </CDropdownItem>
                 <CDropdownItem
-                  @click="(deleteData.index = index), (deleteData.nama = item.nama), (deleteData.modal = true)">
+                  @click="(deleteData.index = index), (deleteData.name = item.name), (deleteData.modal = true)">
                   <CIcon name="cil-trash" class="mr-1" />
                   Delete
                 </CDropdownItem>
@@ -40,7 +40,7 @@
         </CDataTable>
 
         <CModal title="Hapus Bidang Layanan" color="danger" :show.sync="deleteData.modal">
-          <span>Hapus bidang layanan {{ deleteData.nama }} ?</span>
+          <span>Hapus bidang layanan {{ deleteData.name }} ?</span>
           <template #footer>
             <CButton color="primary" variant="outline" @click="deleteData.modal = false">Batal</CButton>
             <CButton @click="remove">Oke</CButton>
@@ -48,7 +48,7 @@
         </CModal>
       </CCardBody>
     </CCard>
-    <Loading ref="loading"></Loading>
+    <Loading :loading="loading"></Loading>
   </div>
 </template>
 
@@ -58,7 +58,7 @@ import Loading from '../../components/Loading.vue'
 
 // fields
 const fields = [
-  { label: 'Bidang Layanan', key: "nama" },
+  { label: 'Bidang Layanan', key: "name" },
   { label: "", key: "actions" },
 ];
 
@@ -70,6 +70,7 @@ export default {
   },
   data() {
     return {
+      loading: true,
       datatable: true,
       pagination: {
         max_page: 1,
@@ -79,19 +80,19 @@ export default {
       fields,
       deleteData: {
         index: -1,
-        nama: '',
+        name: '',
         modal: false,
       },
     }
   },
-  async mounted() {
+  async created() {
     this.getData()
   },
   methods: {
     async getData() {
-      this.$refs.loading.show()
+      this.loading = true
       try {
-        const { data } = await this.axios.get('admin/bidang-layanan', {
+        const { data } = await this.axios.get('field-components', {
           headers: {
             Authorization: "Bearer " + this.$store.state.auth.token
           }
@@ -101,7 +102,7 @@ export default {
       } catch (e) {
         console.log(e)
       } finally {
-        this.$refs.loading.hide()
+        this.loading = false
       }
     },
     async forceRerender() {
@@ -120,7 +121,7 @@ export default {
       }
       try {
         // di sini fungsi axios
-        const { data } = await this.axios.delete(`admin/bidang-layanan/${this.items[this.deleteData.index].id}`, {
+        const { data } = await this.axios.delete(`field-components/${this.items[this.deleteData.index].id}`, {
           headers: {
             Authorization: "Bearer " + this.$store.state.auth.token
           }
@@ -149,7 +150,7 @@ export default {
       } finally {
         this.deleteData.index = -1
         this.deleteData.modal = false
-        this.$refs.loading.hide()
+        this.loading = false
         this.getData()
       }
     },

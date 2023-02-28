@@ -4,29 +4,29 @@
       :show.sync="showModal">
       <CRow>
         <CCol sm="12">
-          <CInput label="Rumusan Kebutuhan" placeholder="Masukkan rumusan kebutuhan" v-model="nama" />
+          <CInput label="Rumusan Kebutuhan" placeholder="Masukkan rumusan kebutuhan" v-model="name" />
         </CCol>
         <CCol sm="12">
-          <CInput label="Tujuan Layanan" placeholder="Masukkan tujuan layanan" v-model="tujuan_layanan" />
+          <CInput label="Tujuan Layanan" placeholder="Masukkan tujuan layanan" v-model="service_objective" />
         </CCol>
         <CCol sm="12">
           <label> Materi/Topik </label>
-          <search-input ref="search_input_materi" :url="'admin/komponen-layanan/materi'" v-model="materi"
+          <search-input ref="search_input_materi" :url="'topics'" v-model="topic"
             placeholder="Cari ...">
             <template v-slot="{ data }">
-              <span>{{ data.nama }}</span>
+              <span>{{ data.name }}</span>
             </template>
           </search-input>
-          <div class="table-responsive no-min-height" v-if="materi != null">
+          <div class="table-responsive no-min-height" v-if="topic != null">
             <table class="table">
               <thead>
                 <tr>
-                  <th>Nama</th>
+                  <th>name</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td>{{ materi.nama }}</td>
+                  <td>{{ topic.name }}</td>
                 </tr>
               </tbody>
             </table>
@@ -66,9 +66,9 @@ export default {
     return {
       tmp: null,
       id: '',
-      nama: '',
-      tujuan_layanan: '',
-      materi: null,
+      name: '',
+      service_objective: '',
+      topic: null,
       insertModal: true,
       showModal: false,
     };
@@ -87,14 +87,14 @@ export default {
   methods: {
     reset() {
       this.id = ""
-      this.nama = ""
-      this.tujuan_layanan = ""
-      this.materi = null
+      this.name = ""
+      this.service_objective = ""
+      this.topic = null
       if (this.tmp != null) {
         this.id = this.tmp.id
-        this.nama = this.tmp.nama
-        this.tujuan_layanan = this.tmp.tujuan_layanan
-        this.materi = this.tmp.materi
+        this.name = this.tmp.name
+        this.service_objective = this.tmp.service_objective
+        this.topic = this.tmp.topic
       }
     },
     setModal(stat, data = '') {
@@ -102,26 +102,26 @@ export default {
       if (data != '') {
         this.insertModal = false;
         this.id = data.id
-        this.nama = data.nama
-        this.tujuan_layanan = data.tujuan_layanan
-        this.materi = data.materi
+        this.name = data.name
+        this.service_objective = data.service_objective
+        this.topic = data.topic
         this.tmp = data
       } else {
         this.insertModal = true;
       }
     },
     async save() {
-      this.$refs.loading.show()
+      this.loading = true
       try {
         let payload = {
-          nama: this.nama,
-          tujuan_layanan: this.tujuan_layanan,
+          name: this.name,
+          service_objective: this.service_objective,
         }
-        if (this.materi != null) {
-          payload.materi_id = this.materi.id
+        if (this.topic != null) {
+          payload.topic_id = this.topic.id
         }
         if (this.insertModal) {
-          const { data } = await this.axios.post(`admin/bidang-layanan/${this.$route.query.bidang_layanan}/skkpd/${this.$route.query.skkpd}/rumusan-kebutuhan`, payload, {
+          const { data } = await this.axios.post(`field-components/${this.$route.query.bidang_layanan}/skkpd/${this.$route.query.skkpd}/requirements-formulation`, payload, {
             headers: {
               Authorization: "Bearer " + this.$store.state.auth.token
             }
@@ -134,16 +134,16 @@ export default {
             text: data.message,
           })
         } else {
-          const { data } = await this.axios.put(`admin/bidang-layanan/${this.$route.query.bidang_layanan}/skkpd/${this.$route.query.skkpd}/rumusan-kebutuhan/${this.id}`, payload, {
+          const { data } = await this.axios.put(`field-components/${this.$route.query.bidang_layanan}/skkpd/${this.$route.query.skkpd}/requirements-formulation/${this.id}`, payload, {
             headers: {
               Authorization: "Bearer " + this.$store.state.auth.token
             }
           })
           this.tmp = {
             id: this.id,
-            nama: this.nama,
-            tujuan_layanan: this.tujuan_layanan,
-            materi: this.materi,
+            name: this.name,
+            service_objective: this.service_objective,
+            topic: this.topic,
           }
           this.$emit('saved')
           await this.$swal({
@@ -169,7 +169,7 @@ export default {
           html: text,
         })
       }
-      this.$refs.loading.hide()
+      this.loading = false
     },
   },
 };

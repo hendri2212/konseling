@@ -7,7 +7,7 @@
         </CCol>
         <CCol sm="12">
           <label> Guru </label>
-          <search-input ref="search_input_guru" :url="'sekolah/guru'" v-model="guru" placeholder="Cari ...">
+          <search-input ref="search_input_guru" :url="'guru'" v-model="guru" placeholder="Cari ...">
             <template v-slot="{ data }">
               <span>{{ data.nama }}</span>
             </template>
@@ -42,7 +42,7 @@
         </div>
       </template>
 
-      <Loading ref="loading"></Loading>
+      <Loading :loading="loading"></Loading>
     </CModal>
   </form>
 </template>
@@ -59,6 +59,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       tmp: null,
       id: '',
       nama: '',
@@ -102,7 +103,7 @@ export default {
       }
     },
     async save() {
-      this.$refs.loading.show()
+      this.loading = true
       try {
         if (this.insertModal) {
           let payload = {
@@ -111,7 +112,7 @@ export default {
           if (this.guru != null) {
             payload.guru_id = this.guru.id
           }
-          const { data } = await this.axios.post("sekolah/kelas", payload, {
+          const { data } = await this.axios.post("kelas", payload, {
             headers: {
               Authorization: "Bearer " + this.$store.state.auth.token
             }
@@ -130,7 +131,7 @@ export default {
           if (this.guru != null) {
             payload.guru_id = this.guru.id
           }
-          const { data } = await this.axios.put(`sekolah/kelas/${this.id}`, payload, {
+          const { data } = await this.axios.put(`kelas/${this.id}`, payload, {
             headers: {
               Authorization: "Bearer " + this.$store.state.auth.token
             }
@@ -164,7 +165,7 @@ export default {
           html: text,
         })
       }
-      this.$refs.loading.hide()
+      this.loading = false
     },
   },
 };

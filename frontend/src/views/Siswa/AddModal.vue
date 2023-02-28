@@ -3,14 +3,14 @@
     <CModal :title="insertModal ? 'Add Siswa' : 'Edit Siswa'" color="primary" :centered="true" :show.sync="showModal">
       <CRow>
         <CCol sm="12">
-          <CInput required label="Username" placeholder="Masukkan Username" v-model="username" />
+          <CInput required label="Email" placeholder="Masukkan Email" v-model="email" />
         </CCol>
         <CCol sm="12">
           <CInput :required="insertModal" label="Password" type="password" placeholder="Masukkan Password"
             v-model="password" />
         </CCol>
         <CCol sm="12">
-          <CInput required label="Nama" placeholder="Masukkan Nama" v-model="nama" />
+          <CInput required label="Nama" placeholder="Masukkan Nama" v-model="name" />
         </CCol>
       </CRow>
 
@@ -23,7 +23,7 @@
           </div>
         </div>
       </template>
-      <Loading ref="loading"></Loading>
+      <Loading :loading="loading"></Loading>
     </CModal>
   </form>
 </template>
@@ -38,14 +38,14 @@ export default {
   },
   data() {
     return {
+      loading: false,
       tmp: null,
       id: '',
-      username: '',
+      email: '',
       password: '',
-      nama: '',
+      name: '',
       insertModal: true,
       showModal: false,
-      dataSiswa: []
     };
   },
   created() {
@@ -62,48 +62,39 @@ export default {
   methods: {
     reset() {
       this.id = ''
-      this.username = ''
+      this.email = ''
       this.password = ''
-      this.nama = ''
+      this.name = ''
       if (this.tmp != null) {
         this.id = this.tmp.id
-        this.username = this.tmp.username
-        this.nama = this.tmp.nama
+        this.email = this.tmp.email
+        this.name = this.tmp.name
       }
-    },
-    onSearch(query) {
-      this.axios.get(`sekolah/siswa/search?search=${query}`, {
-        headers: {
-          Authorization: "Bearer " + this.$store.state.auth.token
-        }
-      }).then(response => {
-        this.dataSiswa = response.data.data
-      })
     },
     setModal(stat, data = '') {
       this.showModal = stat;
       if (data != '') {
         this.insertModal = false
         this.id = data.id
-        this.username = data.username
-        this.nama = data.nama
+        this.email = data.email
+        this.name = data.name
         this.tmp = data
       } else {
         this.insertModal = true;
       }
     },
     async save() {
-      this.$refs.loading.show()
+      this.loading = true
       try {
         if (this.insertModal) {
           let payload = {
-            username: this.username,
-            nama: this.nama,
+            email: this.email,
+            name: this.name,
           }
           if (this.password != null) {
             payload.password = this.password
           }
-          const { data } = await this.axios.post("sekolah/siswa", payload, {
+          const { data } = await this.axios.post("siswa", payload, {
             headers: {
               Authorization: "Bearer " + this.$store.state.auth.token
             }
@@ -117,21 +108,21 @@ export default {
           })
         } else {
           let payload = {
-            username: this.username,
-            nama: this.nama
+            email: this.email,
+            name: this.name
           }
           if (this.password != '') {
             payload.password = this.password
           }
-          const { data } = await this.axios.put(`sekolah/siswa/${this.id}`, payload, {
+          const { data } = await this.axios.put(`siswa/${this.id}`, payload, {
             headers: {
               Authorization: "Bearer " + this.$store.state.auth.token
             }
           })
           this.tmp = {
             id: this.id,
-            username: this.username,
-            nama: this.nama,
+            email: this.email,
+            name: this.name,
           }
           this.$emit('saved')
           await this.$swal({
@@ -157,12 +148,8 @@ export default {
           html: text,
         })
       }
-      this.$refs.loading.hide()
+      this.loading = false
     },
   },
 };
 </script>
-
-<style>
-
-</style>

@@ -136,7 +136,7 @@ export default {
         }
     },
     created(){
-        this.axios.get(`guru/analisis-profile-kelas/${this.$route.params.id}`, {
+        this.axios.get(`analisis-profile-kelas/${this.$route.params.id}`, {
         headers: {
             Authorization: "Bearer " + this.$store.state.auth.token
         }

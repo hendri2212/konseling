@@ -3,44 +3,93 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\admin\LoginRequest as AdminLoginRequest;
-use App\Models\AdminUser;
-use App\Repositories\AuthRepository;
+use App\Http\Requests\admin\LoginRequest;
+use App\Models\Admin;
+use App\Models\Teacher;
+use App\Models\School;
 use App\Repositories\ResponseRepository;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class AuthenticationController extends Controller
 {
     private $responseRepository;
-    // private $authRepository;
-
-    public function __construct(ResponseRepository $rr, AuthRepository $ar)
+    
+    public function __construct(ResponseRepository $rr)
     {
-        // $this->middleware('auth:api', ['except' => ['login', 'register']]);
         $this->responseRepository = $rr;
-        $this->authRepository = $ar;
     }
-    public function login(AdminLoginRequest $request) {
+
+    // public function register(RegisterRequest $request) {
+    //     try {
+
+    //         $user = School::where('email', $request->email)->first();
+    //         $tokenName = 'schools-token';
+        
+    //         $user = new School;
+    //         $user->id = Str::uuid();
+    //         $user->name = $request->name;
+    //         $user->email = $request->email;
+    //         $user->password = Hash::make($request->password);
+    //         $user->save();
+
+    //         // event(new Registered($user));
+
+    //         $abilities = [];
+    //         $token = $user->createToken($tokenName, $abilities);
+    //         $data = [
+    //             'token' => $token->plainTextToken
+    //         ];
+
+    //         return $this->responseRepository->ResponseSuccess($data, 'Registered Successfully !');
+    //     } catch (\Exception $e) {
+    //         return $e->getMessage();
+    //         return $this->responseRepository->ResponseError(null, 'Internal Server Error !', 500);
+    //     }
+    // }
+
+    public function login(LoginRequest $request) {
         try {
-            $user = AdminUser::where('username', $request->username)->first();
-            $tokenName = 'admin-token';
-
-            $abilities = [];
-
+            if($request->type == "schools"){
+                $user = School::where("email", $request->email)->first();
+                $tokenName = "schools-token";
+            }else if($request->type == "teachers") {
+                $user = Teacher::where("email", $request->email)->first();
+                $tokenName = "teachers-token";
+            }else{
+                $user = Admin::where("email", $request->email)->first();
+                $tokenName = "admin-token";
+            }
             if ($user && Hash::check($request->password, $user->password)) {
+                $abilities =  [];
                 $token = $user->createToken($tokenName, $abilities);
                 $data = [
                     'token' => $token->plainTextToken,
-                    'as' => 'admin',
+                    'as' => $request->type
                 ];
             }else{
-                return $this->responseRepository->ResponseError(null, 'Invalid Email and Password !', Response::HTTP_UNAUTHORIZED);
+                return $this->responseRepository->ResponseError(null, "Invalid Email and Password !", 401);
             }
+
             return $this->responseRepository->ResponseSuccess($data, 'Logged In Successfully !');
         } catch (\Exception $e) {
-            return $this->responseRepository->ResponseError(null, 'Internal Server Error !', Response::HTTP_INTERNAL_SERVER_ERROR);
+            return $this->responseRepository->ResponseError(null, 'Internal Server Error !', 500);
         }
+    }
+
+    public function me() {
+        $user = auth()->user();
+
+        if (Auth::guard('admin')->check()) {
+            $user['as'] = 'admin';
+        } else if (Auth::guard('schools')->check()) {
+            $user['as'] = 'schools';
+        } else {
+            $user['as'] = 'teachers';
+        }
+        
+        return $this->responseRepository->ResponseSuccess($user);
     }
 
     

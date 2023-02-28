@@ -3,16 +3,16 @@
     <CModal :title="insertModal ? 'Tambah SKKPD' : 'Edit SKKPD'" :centered="true" color="primary" :show.sync="showModal">
       <CRow>
         <CCol sm="12">
-          <CInput label="SKKPD" placeholder="Masukkan SKKPD" v-model="nama" />
+          <CInput label="SKKPD" placeholder="Masukkan SKKPD" v-model="name" />
         </CCol>
         <CCol sm="12">
-          <CInput label="Pengenalan" placeholder="Masukkan pengenalan" v-model="pengenalan" />
+          <CInput label="Pengenalan" placeholder="Masukkan pengenalan" v-model="introduction" />
         </CCol>
         <CCol sm="12">
-          <CInput label="Akomodasi" placeholder="Masukkan akomodasi" v-model="akomodasi" />
+          <CInput label="Akomodasi" placeholder="Masukkan akomodasi" v-model="accommodation" />
         </CCol>
         <CCol sm="12">
-          <CInput label="Tindakan" placeholder="Masukkan tindakan" v-model="tindakan" />
+          <CInput label="Tindakan" placeholder="Masukkan tindakan" v-model="action" />
         </CCol>
       </CRow>
 
@@ -26,7 +26,7 @@
         </div>
       </template>
 
-      <Loading ref="loading"></Loading>
+      <Loading :loading="loading"></Loading>
     </CModal>
   </form>
 </template>
@@ -41,12 +41,13 @@ export default {
   },
   data() {
     return {
+      loading: false,
       tmp: null,
       id: '',
-      nama: '',
-      pengenalan: '',
-      akomodasi: '',
-      tindakan: '',
+      name: '',
+      introduction: '',
+      accommodation: '',
+      action: '',
       insertModal: true,
       showModal: false,
     };
@@ -65,16 +66,16 @@ export default {
   methods: {
     reset() {
       this.id = ""
-      this.nama = ""
-      this.pengenalan = ""
-      this.akomodasi = ""
-      this.tindakan = ""
+      this.name = ""
+      this.introduction = ""
+      this.accommodation = ""
+      this.action = ""
       if (this.tmp != null) {
         this.id = this.tmp.id
-        this.nama = this.tmp.nama
-        this.pengenalan = this.tmp.pengenalan
-        this.akomodasi = this.tmp.akomodasi
-        this.tindakan = this.tmp.tindakan
+        this.name = this.tmp.name
+        this.introduction = this.tmp.introduction
+        this.accommodation = this.tmp.accommodation
+        this.action = this.tmp.action
       }
     },
     setModal(stat, data = '') {
@@ -82,26 +83,26 @@ export default {
       if (data != '') {
         this.insertModal = false;
         this.id = data.id
-        this.nama = data.nama
-        this.pengenalan = data.pengenalan
-        this.akomodasi = data.akomodasi
-        this.tindakan = data.tindakan
+        this.name = data.name
+        this.introduction = data.introduction
+        this.accommodation = data.accommodation
+        this.action = data.action
         this.tmp = data
       } else {
         this.insertModal = true;
       }
     },
     async save() {
-      this.$refs.loading.show()
+      this.loading = true
       try {
         if (this.insertModal) {
           let payload = {
-            nama: this.nama,
-            pengenalan: this.pengenalan,
-            akomodasi: this.akomodasi,
-            tindakan: this.tindakan,
+            name: this.name,
+            introduction: this.introduction,
+            accommodation: this.accommodation,
+            action: this.action,
           }
-          const { data } = await this.axios.post(`admin/bidang-layanan/${this.$route.query.bidang_layanan}/skkpd`, payload, {
+          const { data } = await this.axios.post(`field-components/${this.$route.query.bidang_layanan}/skkpd`, payload, {
             headers: {
               Authorization: "Bearer " + this.$store.state.auth.token
             }
@@ -115,22 +116,22 @@ export default {
           })
         } else {
           let payload = {
-            nama: this.nama,
-            pengenalan: this.pengenalan,
-            akomodasi: this.akomodasi,
-            tindakan: this.tindakan,
+            name: this.name,
+            introduction: this.introduction,
+            accommodation: this.accommodation,
+            action: this.action,
           }
-          const { data } = await this.axios.put(`admin/bidang-layanan/${this.$route.query.bidang_layanan}/skkpd/${this.id}`, payload, {
+          const { data } = await this.axios.put(`field-components/${this.$route.query.bidang_layanan}/skkpd/${this.id}`, payload, {
             headers: {
               Authorization: "Bearer " + this.$store.state.auth.token
             }
           })
           this.tmp = {
             id: this.id,
-            nama: this.nama,
-            pengenalan: this.pengenalan,
-            akomodasi: this.akomodasi,
-            tindakan: this.tindakan,
+            name: this.name,
+            introduction: this.introduction,
+            accommodation: this.accommodation,
+            action: this.action,
           }
           this.$emit('saved')
           await this.$swal({
@@ -156,7 +157,7 @@ export default {
           html: text,
         })
       }
-      this.$refs.loading.hide()
+      this.loading = false
     },
   },
 };

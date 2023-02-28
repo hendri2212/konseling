@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\AdminUser;
-use App\Models\SekolahUser;
+use App\Models\Admin;
+use App\Models\School;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -16,19 +16,20 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        $admin = new AdminUser();
+        $admin = new Admin();
         $admin->id = '89be28f0-78dc-4fa2-8aee-279fd85fc1b9';
-        $admin->nama = 'admin';
-        $admin->username = 'admin';
+        $admin->name = 'admin';
+        $admin->email = 'admin';
         $admin->password = Hash::make('superuser*');
+        $admin->created_at = round(microtime(true) * 1000);
         $admin->save();
 
-        $sekolah = new SekolahUser();
-        $sekolah->id = '07087f31-ecfb-419b-aecf-c00d6f6f74cf';
-        $sekolah->nama = 'SMK';
-        $sekolah->email = 'sekolah@gmail.com';
-        $sekolah->password = Hash::make('12345678');
-        $sekolah->email_verified_at = date("Y-m-d H:i:s");
-        $sekolah->save();
+        $school = new School();
+        $school->id = '07087f31-ecfb-419b-aecf-c00d6f6f74cf';
+        $school->name = 'SMK';
+        $school->email = 'schools@gmail.com';
+        $school->password = Hash::make('12345678');
+        $school->created_at = round(microtime(true) * 1000);
+        $school->save();
     }
 }

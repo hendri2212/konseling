@@ -2,15 +2,15 @@
     <div>
         <CCard accent-color="primary">
             <CCardHeader>
-                <h1>Anggota Kelas '{{ kelas.nama }}'</h1>
+                <h1>Anggota Kelas '{{ class_data.name }}'</h1>
             </CCardHeader>
 
             <CCardBody>
                 <CRow>
                     <CCol sm="5">
                         <h3>Anggota kelas</h3>
-                        <select class="form-control" multiple="true" v-model="anggota_kelas_selected">
-                            <option v-for="p in anggota_kelas" :key="p.id" :value="p.value">{{ p.label }}</option>
+                        <select class="form-control" multiple="true" v-model="member_of_class_selected">
+                            <option v-for="p in member_of_class" :key="p.id" :value="p.value">{{ p.label }}</option>
                         </select>
                     </CCol>
                     <CCol sm="3" class="d-flex flex-column justify-content-center">
@@ -23,14 +23,14 @@
                     </CCol>
                     <CCol sm="4">
                         <h3>Semua siswa</h3>
-                        <select class="form-control" multiple="true" v-model="siswa_selected">
-                            <option v-for="p in siswa" :key="p.id" :value="p.value">{{ p.label }}</option>
+                        <select class="form-control" multiple="true" v-model="students_selected">
+                            <option v-for="p in students" :key="p.id" :value="p.value">{{ p.label }}</option>
                         </select>
                     </CCol>
                 </CRow>
             </CCardBody>
         </CCard>
-        <Loading ref="loading"></Loading>
+        <Loading :loading="loading"></Loading>
     </div>
 </template>
   
@@ -44,13 +44,14 @@ export default {
     },
     data() {
         return {
-            kelas: {
-                nama: '',
+            loading: true,
+            class_data: {
+                name: '',
             },
-            anggota_kelas: [],
-            anggota_kelas_selected: [],
-            siswa: [],
-            siswa_selected: [],
+            member_of_class: [],
+            member_of_class_selected: [],
+            students: [],
+            students_selected: [],
         }
     },
     async mounted() {
@@ -58,80 +59,80 @@ export default {
     },
     methods: {
         async getData() {
-            await this.$refs.loading.show()
+            this.loading = true
             try {
                 await this.getKelas()
                 await this.getSiswa()
             } catch (e) {
                 console.log(e)
             } finally {
-                await this.$refs.loading.hide()
+                this.loading = false
             }
         },
         async getKelas() {
-            const { data: kelas } = await this.axios.get(`sekolah/kelas/${this.$route.query.kelas}`, {
+            const { data: kelas } = await this.axios.get(`classes/${this.$route.query.kelas}`, {
                 headers: {
                     Authorization: "Bearer " + this.$store.state.auth.token
                 }
             })
-            this.kelas.nama = kelas.data.nama
-            this.anggota_kelas = kelas.data.siswa.map(p => {
+            this.class_data.name = kelas.data.name
+            this.member_of_class = kelas.data.students.map(p => {
                 return {
                     value: p.id,
-                    label: p.nama + " (" + p.username + ")"
+                    label: p.name + " (" + p.email + ")"
                 }
             })
         },
         async getSiswa() {
-            const { data: siswa } = await this.axios.get(`sekolah/siswa?punya_kelas=false`, {
+            const { data: siswa } = await this.axios.get(`students?punya_kelas=false`, {
                 headers: {
                     Authorization: "Bearer " + this.$store.state.auth.token
                 }
             })
-            this.siswa = siswa.data.map(p => {
+            this.students = siswa.data.map(p => {
                 return {
                     value: p.id,
-                    label: p.nama + " (" + p.username + ")"
+                    label: p.name + " (" + p.email + ")"
                 }
             })
         },
         async assign() {
-            if (this.siswa_selected.length > 0) {
+            if (this.students_selected.length > 0) {
                 try {
-                    await this.$refs.loading.show()
-                    await this.axios.post(`sekolah/kelas/${this.$route.query.kelas}/assign`, {
-                        siswa_id: this.siswa_selected,
+                    this.loading = true
+                    await this.axios.post(`classes/${this.$route.query.kelas}/assign`, {
+                        student_id: this.students_selected,
                     }, {
                         headers: {
                             Authorization: "Bearer " + this.$store.state.auth.token
                         }
                     })
-                    this.siswa_selected = []
+                    this.students_selected = []
                     await this.getData()
                 } catch (e) {
                     console.log(e)
                 } finally {
-                    await this.$refs.loading.hide()
+                    this.loading = false
                 }
             }
         },
         async hapus() {
-            if (this.anggota_kelas_selected.length > 0) {
+            if (this.member_of_class_selected.length > 0) {
                 try {
-                    await this.$refs.loading.show()
-                    await this.axios.post(`sekolah/kelas/${this.$route.query.kelas}/hapus`, {
-                        siswa_id: this.anggota_kelas_selected,
+                    this.loading = true
+                    await this.axios.post(`classes/${this.$route.query.kelas}/unassign`, {
+                        student_id: this.member_of_class_selected,
                     }, {
                         headers: {
                             Authorization: "Bearer " + this.$store.state.auth.token
                         }
                     })
-                    this.anggota_kelas_selected = []
+                    this.member_of_class_selected = []
                     await this.getData()
                 } catch (e) {
                     console.log(e)
                 } finally {
-                    await this.$refs.loading.hide()
+                    this.loading = false
                 }
             }
         }

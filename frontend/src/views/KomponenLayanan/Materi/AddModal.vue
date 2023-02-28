@@ -3,7 +3,7 @@
     <CModal :title="insertModal ? 'Tambah Materi' : 'Edit Materi'" :centered="true" color="primary" :show.sync="showModal">
       <CRow>
         <CCol sm="12">
-          <CInput label="Materi" placeholder="Masukkan Materi" v-model="nama" />
+          <CInput label="Materi" placeholder="Masukkan Materi" v-model="name" />
         </CCol>
       </CRow>
 
@@ -17,7 +17,7 @@
         </div>
       </template>
 
-      <Loading ref="loading"></Loading>
+      <Loading :loading="loading"></Loading>
     </CModal>
   </form>
 </template>
@@ -32,9 +32,10 @@ export default {
   },
   data() {
     return {
+      loading: false,
       tmp: null,
       id: '',
-      nama: '',
+      name: '',
       insertModal: true,
       showModal: false,
     };
@@ -53,10 +54,10 @@ export default {
   methods: {
     reset() {
       this.id = ""
-      this.nama = ""
+      this.name = ""
       if (this.tmp != null) {
         this.id = this.tmp.id
-        this.nama = this.tmp.nama
+        this.name = this.tmp.name
       }
     },
     setModal(stat, data = '') {
@@ -64,20 +65,20 @@ export default {
       if (data != '') {
         this.insertModal = false;
         this.id = data.id
-        this.nama = data.nama
+        this.name = data.name
         this.tmp = data
       } else {
         this.insertModal = true;
       }
     },
     async save() {
-      this.$refs.loading.show()
+      this.loading=true
       try {
         if (this.insertModal) {
           let payload = {
-            nama: this.nama,
+            name: this.name,
           }
-          const { data } = await this.axios.post(`admin/komponen-layanan/${this.$route.query.komponen_layanan}/materi`, payload, {
+          const { data } = await this.axios.post(`service-components/${this.$route.query.komponen_layanan}/topics`, payload, {
             headers: {
               Authorization: "Bearer " + this.$store.state.auth.token
             }
@@ -91,16 +92,16 @@ export default {
           })
         } else {
           let payload = {
-            nama: this.nama
+            name: this.name
           }
-          const { data } = await this.axios.put(`admin/komponen-layanan/${this.$route.query.komponen_layanan}/materi/${this.id}`, payload, {
+          const { data } = await this.axios.put(`service-components/${this.$route.query.komponen_layanan}/topics/${this.id}`, payload, {
             headers: {
               Authorization: "Bearer " + this.$store.state.auth.token
             }
           })
           this.tmp = {
             id: this.id,
-            nama: this.nama,
+            name: this.name,
           }
           this.$emit('saved')
           await this.$swal({
@@ -126,7 +127,7 @@ export default {
           html: text,
         })
       }
-      this.$refs.loading.hide()
+      this.loading=false
     },
   },
 };

@@ -2,7 +2,7 @@
   <div>
     <CCard accent-color="primary">
       <CCardHeader>
-        <h1>Skkpd bidang layanan "{{bidang_layanan.nama}}"</h1>
+        <h1>Skkpd bidang layanan "{{bidang_layanan.name}}"</h1>
 
         <div class="card-header-actions">
           <CButton color="primary" @click="$refs.addModal.setModal(true)">Tambah SKKPD</CButton>
@@ -22,7 +22,7 @@
                   Edit
                 </CDropdownItem>
                 <CDropdownItem
-                  @click="(deleteData.index = index), (deleteData.nama = item.nama), (deleteData.modal = true)">
+                  @click="(deleteData.index = index), (deleteData.name = item.name), (deleteData.modal = true)">
                   <CIcon name="cil-trash" class="mr-1" />
                   Delete
                 </CDropdownItem>
@@ -39,7 +39,7 @@
         </CDataTable>
 
         <CModal title="Hapus Skkpd" color="danger" :show.sync="deleteData.modal">
-          <span>Hapus SKKPD {{ deleteData.nama }} ?</span>
+          <span>Hapus SKKPD {{ deleteData.name }} ?</span>
           <template #footer>
             <CButton color="primary" variant="outline" @click="deleteData.modal = false">Close</CButton>
             <CButton @click="remove">Yes</CButton>
@@ -57,8 +57,8 @@ import Loading from '../../../components/Loading.vue'
 
 // fields
 const fields = [
-  { label: 'SKKPD', key: "nama" },
-  // { label: 'Jumlah Materi/Topik', key: "nama" },
+  { label: 'SKKPD', key: "name" },
+  // { label: 'Jumlah Materi/Topik', key: "name" },
   { label: "", key: "actions" },
 ];
 
@@ -70,19 +70,20 @@ export default {
   },
   data() {
     return {
+      loading: true,
       datatable: true,
       pagination: {
         max_page: 1,
         active: 1,
       },
       bidang_layanan: {
-        nama: '',
+        name: '',
       },
       fields,
       items: [],
       deleteData: {
         index: -1,
-        nama: '',
+        name: '',
         modal: false,
       },
     };
@@ -92,26 +93,26 @@ export default {
   },
   methods: {
     async getData() {
-      await this.$refs.loading.show()
+      this.loading = true
       try {
         await this.getBidangLayanan()
         await this.getSkkpd()
       } catch (e) {
         console.log(e)
       } finally {
-        await this.$refs.loading.hide()
+        this.loading = false
       }
     },
     async getBidangLayanan() {
-      const { data: bidang_layanan } = await this.axios.get(`admin/bidang-layanan/${this.$route.query.bidang_layanan}`, {
+      const { data: bidang_layanan } = await this.axios.get(`field-components/${this.$route.query.bidang_layanan}`, {
         headers: {
           Authorization: "Bearer " + this.$store.state.auth.token
         }
       })
-      this.bidang_layanan.nama = bidang_layanan.data.nama
+      this.bidang_layanan.name = bidang_layanan.data.name
     },
     async getSkkpd() {
-      const { data } = await this.axios.get(`admin/bidang-layanan/${this.$route.query.bidang_layanan}/skkpd`, {
+      const { data } = await this.axios.get(`field-components/${this.$route.query.bidang_layanan}/skkpd`, {
         headers: {
           Authorization: "Bearer " + this.$store.state.auth.token
         }
@@ -134,21 +135,21 @@ export default {
         return;
       }
       try {
-        this.$refs.loading.show()
+        this.loading = true
         // di sini fungsi axios
-        const { data } = await this.axios.delete(`admin/bidang-layanan/${this.$route.query.bidang_layanan}/skkpd/${this.items[this.deleteData.index].id}`, {
+        const { data } = await this.axios.delete(`field-components/${this.$route.query.bidang_layanan}/skkpd/${this.items[this.deleteData.index].id}`, {
           headers: {
             Authorization: "Bearer " + this.$store.state.auth.token
           }
         })
-        this.$refs.loading.hide()
+        this.loading = false
         await this.$swal({
           icon: 'success',
           title: 'Berhasil!',
           text: data.message,
         })
       } catch (e) {
-        this.$refs.loading.hide()
+        this.loading = false
         var icon = 'error'
         var title = 'Terjadi Kesalahan'
         var text = 'Terjadi Kesalahan di aplikasi'

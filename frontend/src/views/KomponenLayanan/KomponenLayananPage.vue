@@ -23,7 +23,7 @@
                   Edit
                 </CDropdownItem>
                 <CDropdownItem
-                  @click="(deleteData.index = index), (deleteData.nama = item.nama), (deleteData.modal = true)">
+                  @click="(deleteData.index = index), (deleteData.name = item.name), (deleteData.modal = true)">
                   <CIcon name="cil-trash" class="mr-1" />
                   Delete
                 </CDropdownItem>
@@ -37,7 +37,7 @@
         </CDataTable>
 
         <CModal title="Hapus Kelas" color="danger" :show.sync="deleteData.modal">
-          <span>Delete komponen layanan {{ deleteData.nama }} ?</span>
+          <span>Delete komponen layanan {{ deleteData.name }} ?</span>
           <template #footer>
             <CButton color="primary" variant="outline" @click="deleteData.modal = false">Close</CButton>
             <CButton @click="remove">Yes</CButton>
@@ -45,7 +45,7 @@
         </CModal>
       </CCardBody>
     </CCard>
-    <Loading ref="loading"></Loading>
+    <Loading :loading="loading"></Loading>
   </div>
 </template>
 
@@ -55,8 +55,8 @@ import Loading from '../../components/Loading.vue'
 
 // fields
 const fields = [
-  { label: 'Komponen Layanan', key: "nama" },
-  // { label: 'Jumlah Materi/Topik', key: "nama" },
+  { label: 'Komponen Layanan', key: "name" },
+  // { label: 'Jumlah Materi/Topik', key: "name" },
   { label: "", key: "actions" },
 ];
 
@@ -68,12 +68,13 @@ export default {
   },
   data() {
     return {
+      loading: true,
       datatable: true,
       items: [],
       fields,
       deleteData: {
         index: -1,
-        nama: '',
+        name: '',
         modal: false,
       },
     };
@@ -83,9 +84,9 @@ export default {
   },
   methods: {
     async getData() {
-      this.$refs.loading.show()
+      this.loading = true
       try {
-        const { data } = await this.axios.get('admin/komponen-layanan', {
+        const { data } = await this.axios.get('service-components', {
           headers: {
             Authorization: "Bearer " + this.$store.state.auth.token
           }
@@ -94,7 +95,7 @@ export default {
       } catch (e) {
         console.log(e)
       } finally {
-        this.$refs.loading.hide()
+        this.loading = false
       }
     },
     async forceRerender() {
@@ -112,21 +113,19 @@ export default {
         return;
       }
       try {
-        this.$refs.loading.show()
+        this.loading = true
         // di sini fungsi axios
-        const { data } = await this.axios.delete(`admin/komponen-layanan/${this.items[this.deleteData.index].id}`, {
+        const { data } = await this.axios.delete(`service-components/${this.items[this.deleteData.index].id}`, {
           headers: {
             Authorization: "Bearer " + this.$store.state.auth.token
           }
         })
-        this.$refs.loading.hide()
         await this.$swal({
           icon: 'success',
           title: 'Berhasil!',
           text: data.message,
         })
       } catch (e) {
-        this.$refs.loading.hide()
         var icon = 'error'
         var title = 'Terjadi Kesalahan'
         var text = 'Terjadi Kesalahan di aplikasi'
@@ -145,6 +144,7 @@ export default {
       } finally {
         this.deleteData.index = -1
         this.deleteData.modal = false
+        this.loading = false
         this.getData()
       }
     },
@@ -152,6 +152,4 @@ export default {
 };
 </script>
 
-<style>
-
-</style>
+<style></style>

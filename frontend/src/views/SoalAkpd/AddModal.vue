@@ -3,17 +3,17 @@
     :show.sync="showModal">
     <CRow>
       <CCol sm="12">
-        <CTextarea label="Soal" type="text" placeholder="Masukkan Soal" v-model="soal" />
+        <CTextarea label="Soal" type="text" placeholder="Masukkan Soal" v-model="question" />
       </CCol>
       <CCol sm="12">
         <label> Rumusan Kebutuhan </label>
-        <search-input ref="search_input_bidang" :url="'admin/rumusan-kebutuhan/search'" v-model="rumusan_kebutuhan"
+        <search-input ref="search_input_bidang" :url="'requirements-formulation/search'" v-model="requirement_formulation"
           placeholder="Cari ...">
           <template v-slot="{ data }">
-            <span>{{ data.nama }}</span>
+            <span>{{ data.name }}</span>
           </template>
         </search-input>
-        <div class="table-responsive no-min-height" v-if="rumusan_kebutuhan != null">
+        <div class="table-responsive no-min-height" v-if="requirement_formulation != null">
           <table class="table">
             <thead>
               <tr>
@@ -24,9 +24,9 @@
             </thead>
             <tbody>
               <tr>
-                <td>{{ rumusan_kebutuhan.skkpd.bidang.nama }}</td>
-                <td>{{ rumusan_kebutuhan.skkpd.nama }}</td>
-                <td>{{ rumusan_kebutuhan.nama }}</td>
+                <td>{{ requirement_formulation.skkpd.field_component.name }}</td>
+                <td>{{ requirement_formulation.skkpd.name }}</td>
+                <td>{{ requirement_formulation.name }}</td>
               </tr>
             </tbody>
           </table>
@@ -41,7 +41,7 @@
       <CButton color="secondary" @click="showModal = false">Close</CButton>
       <CButton color="primary" @click="save">Save</CButton>
     </template>
-    <Loading ref="loading"></Loading>
+    <Loading :loading="loading"></Loading>
   </CModal>
 </template>
 
@@ -56,10 +56,11 @@ export default {
   },
   data() {
     return {
+      loading: false,
       tmp: null,
       id: '',
-      soal: '',
-      rumusan_kebutuhan: null,
+      question: '',
+      requirement_formulation: null,
       insertModal: true,
       showModal: false,
     }
@@ -78,37 +79,38 @@ export default {
   methods: {
     reset() {
       this.id = ""
-      this.soal = ""
-      this.rumusan_kebutuhan = null
+      this.question = ""
+      this.requirement_formulation = null
       if (this.tmp != null) {
         this.id = this.tmp.id
-        this.soal = this.tmp.soal
-        this.rumusan_kebutuhan = this.tmp.rumusan_kebutuhan
+        this.question = this.tmp.question
+        this.requirement_formulation = this.tmp.requirement_formulation
       }
     },
     setModal(stat, data = '') {
       this.showModal = stat
       if (data != '') {
+        console.log(data)
         this.insertModal = false
         this.id = data.id
-        this.soal = data.soal
-        this.rumusan_kebutuhan = data.rumusan_kebutuhan
+        this.question = data.question
+        this.requirement_formulation = data.requirement_formulation
         this.tmp = data
       } else {
         this.insertModal = true
       }
     },
     async save() {
-      this.$refs.loading.show()
+      this.loading=true
       try {
         let payload = {
-          soal: this.soal,
+          question: this.question,
         }
-        if (this.rumusan_kebutuhan != null) {
-          payload.rumusan_kebutuhan_id = this.rumusan_kebutuhan.id
+        if (this.requirement_formulation != null) {
+          payload.requirement_formulation_id = this.requirement_formulation.id
         }
         if (this.insertModal) {
-          const { data } = await this.axios.post(`admin/butir-angket-konseling`, payload, {
+          const { data } = await this.axios.post(`survey-items`, payload, {
             headers: {
               Authorization: "Bearer " + this.$store.state.auth.token
             }
@@ -121,15 +123,15 @@ export default {
             text: data.message,
           })
         } else {
-          const { data } = await this.axios.put(`admin/butir-angket-konseling/${this.id}`, payload, {
+          const { data } = await this.axios.put(`survey-items/${this.id}`, payload, {
             headers: {
               Authorization: "Bearer " + this.$store.state.auth.token
             }
           })
           this.tmp = {
             id: this.id,
-            soal: this.soal,
-            rumusan_kebutuhan: this.rumusan_kebutuhan,
+            question: this.question,
+            requirement_formulation: this.requirement_formulation,
           }
           this.$emit('saved')
           await this.$swal({
@@ -155,7 +157,7 @@ export default {
           html: text,
         })
       }
-      this.$refs.loading.hide()
+      this.loading=false
     },
   },
 }

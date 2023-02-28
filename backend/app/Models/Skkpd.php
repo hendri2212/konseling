@@ -9,11 +9,16 @@ class Skkpd extends Model
 {
     use HasFactory;
 
+    protected $table = "skkpd";
     protected $keyType = 'string';
     public $incrementing = false;
-    protected $table = "skkpd";
+    public $timestamps = false;
+    protected $fillable = [
+        'created_at',
+        'updated_at',
+    ];
 
-    public function bidang() {
-        return $this->belongsTo(Bidang::class, 'bidang_id', 'id');
+    public function fieldComponent() {
+        return $this->belongsTo(FieldComponent::class, 'field_component_id', 'id');
     }
 }

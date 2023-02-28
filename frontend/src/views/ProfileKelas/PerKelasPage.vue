@@ -60,7 +60,7 @@ export default {
         }
     },
     created(){
-        this.axios.get(`guru/angket/kelas/${this.$route.params.id}`, {
+        this.axios.get(`angket/kelas/${this.$route.params.id}`, {
         headers: {
             Authorization: "Bearer " + this.$store.state.auth.token
         }

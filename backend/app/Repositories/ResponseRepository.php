@@ -2,7 +2,6 @@
 
 namespace App\Repositories;
 
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
 class ResponseRepository
@@ -15,7 +14,7 @@ class ResponseRepository
      * @param object $errors
      * @return Response
      */
-    public static function ResponseError($errors, $message = 'Internal Server Error !', $status_code = JsonResponse::HTTP_INTERNAL_SERVER_ERROR)
+    public static function ResponseError($errors, $message = 'Internal Server Error !', $status_code = 500)
     {
         return response()->json([
             'status' => false,
@@ -35,7 +34,7 @@ class ResponseRepository
      * @param integer $status_code
      * @return Response
      */
-    public static function ResponseSuccess($data, $message = "Successfull", $status_code = JsonResponse::HTTP_OK, $pagination = [])
+    public static function ResponseSuccess($data, $message = "Successfull", $status_code = 200, $pagination = [])
     {
         return response()->json([
             'status' => true,

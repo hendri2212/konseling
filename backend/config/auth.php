@@ -52,19 +52,19 @@ return [
             'provider' => 'admin',
         ],
     
-        'sekolah' => [
+        'schools' => [
             'driver' => 'sanctum',
-            'provider' => 'sekolah',
+            'provider' => 'schools',
         ],
 
-        'guru' => [
+        'teachers' => [
             'driver' => 'sanctum',
-            'provider' => 'guru',
+            'provider' => 'teachers',
         ],
     
-        'siswa' => [
+        'students' => [
             'driver' => 'sanctum',
-            'provider' => 'siswa',
+            'provider' => 'students',
         ],
     ],
 
@@ -93,22 +93,22 @@ return [
 
         'admin' => [
             'driver' => 'eloquent',
-            'model' => App\Models\AdminUser::class,
+            'model' => App\Models\Admin::class,
         ],
     
-        'sekolah' => [
+        'schools' => [
             'driver' => 'eloquent',
-            'model' => App\Models\SekolahUser::class,
+            'model' => App\Models\School::class,
         ],
 
-        'guru' => [
+        'teachers' => [
             'driver' => 'eloquent',
-            'model' => App\Models\GuruUser::class,
+            'model' => App\Models\Teacher::class,
         ],
     
-        'siswa' => [
+        'students' => [
             'driver' => 'eloquent',
-            'model' => App\Models\SiswaUser::class,
+            'model' => App\Models\Student::class,
         ],
 
         // 'users' => [

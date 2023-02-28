@@ -74,7 +74,7 @@ export default {
             attempt: '',
         }
     },
-    async mounted() {
+    async created() {
         try {
             const { data } = await axios.get(`${this.url}/angket/${this.id}/status`, {
                 headers: {

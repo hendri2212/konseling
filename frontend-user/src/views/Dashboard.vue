@@ -33,7 +33,7 @@ export default {
             angket: [],
         }
     },
-    async mounted() {
+    async created() {
         this.getData()
     },
     methods: {

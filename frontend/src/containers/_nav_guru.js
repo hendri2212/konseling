@@ -16,7 +16,7 @@ export default [
       {
         _name: 'CSidebarNavItem',
         name: 'Angket',
-        to: '/angket',
+        to: '/admin/angket',
         icon: 'cil-pencil'
       },
       {

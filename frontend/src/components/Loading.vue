@@ -1,5 +1,5 @@
 <template>
-    <CModal :backdrop="true" :fade="true" :closeOnBackdrop="false" :centered="true" :show.sync="modal">
+    <CModal :backdrop="true" :fade="true" :closeOnBackdrop="false" :centered="true" :show.sync="loading_data">
         <template #header-wrapper>
             <div></div>
         </template>
@@ -14,18 +14,22 @@
 </template>
 <script>
 export default {
+    props: {
+        loading: Boolean
+    },
     data() {
         return {
-            modal: false,
+            loading_data: this.loading
         }
     },
-    methods: {
-        show() {
-            this.modal = true
-        },
-        hide() {
-            this.modal = false
-        }
+    mounted() {
+        this.$watch(
+            () => this.loading,
+            (v) => {
+                this.loading_data = v
+            },
+            {immediate: true}
+        )
     }
 }
 </script>

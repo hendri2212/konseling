@@ -54,7 +54,7 @@ export default {
         }
     },
     created(){
-        this.axios.get('guru/kelas', {
+        this.axios.get('kelas', {
         headers: {
             Authorization: "Bearer " + this.$store.state.auth.token
         }

@@ -9,9 +9,9 @@
                 <CForm @submit.prevent="login">
                   <h1>Login</h1>
                   <p class="text-muted">Sign In to your account</p>
-                  <CInput type="text" placeholder="Username" autocomplete="Username" v-model="username">
+                  <CInput type="text" placeholder="Email" autocomplete="Email" v-model="email">
                     <template #prepend-content>
-                      <CIcon name="cil-user" />
+                      <CIcon name="cil-envelope-closed" />
                     </template>
                   </CInput>
                   <CInput placeholder="Password" type="password" autocomplete="curent-password" v-model="password">
@@ -43,15 +43,16 @@ export default {
   name: 'AdminLogin',
   data() {
     return {
-      username: "",
+      email: "",
       password: "",
     }
   },
   methods: {
     login() {
-      this.axios.post("/admin/login", {
-        username: this.username,
-        password: this.password
+      this.axios.post("login", {
+        email: this.email,
+        password: this.password,
+        type: "admin"
       }).then(response => {
         localStorage.setItem("ADMIN_PAGE_TOKEN", response.data.data.token)
         this.$store.dispatch('auth/authenticated', { token: response.data.data.token, as: response.data.data.as })

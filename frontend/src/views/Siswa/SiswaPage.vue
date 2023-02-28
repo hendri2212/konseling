@@ -18,7 +18,7 @@
                 Edit
               </CButton>
               <CButton size="sm" color="danger" class="ml-1"
-                @click="(deleteData.index = index), (deleteData.nama = item.nama), (deleteData.modal = true)">
+                @click="(deleteData.index = index), (deleteData.name = item.name), (deleteData.modal = true)">
                 Delete
               </CButton>
             </td>
@@ -26,7 +26,7 @@
         </CDataTable>
 
         <CModal title="Hapus Kelas" color="danger" :show.sync="deleteData.modal">
-          <span>Delete akun siswa yang bernama {{ deleteData.nama }} ?</span>
+          <span>Hapus akun siswa yang bernama {{ deleteData.name }} ?</span>
           <template #footer>
             <CButton color="primary" variant="outline" @click="deleteData.modal = false">Close</CButton>
             <CButton @click="remove">Yes</CButton>
@@ -34,7 +34,7 @@
         </CModal>
       </CCardBody>
     </CCard>
-    <Loading ref="loading"></Loading>
+    <Loading :loading="loading"></Loading>
   </div>
 </template>
   
@@ -45,8 +45,8 @@ import Loading from '../../components/Loading.vue'
 
 //   fields
 const fields = [
-  { label: 'Username', key: "username" },
-  { label: 'Nama', key: "nama" },
+  { label: 'Email', key: "email" },
+  { label: 'Nama', key: "name" },
   {
     key: "actions",
     label: "",
@@ -64,12 +64,13 @@ export default {
   },
   data() {
     return {
+      loading: true,
       datatable: true,
       items: [],
       fields,
       deleteData: {
         index: -1,
-        nama: '',
+        name: '',
         modal: false,
       },
     };
@@ -79,9 +80,9 @@ export default {
   },
   methods: {
     async getData() {
-      this.$refs.loading.show()
+      this.loading = true
       try {
-        const { data } = await this.axios.get('sekolah/siswa', {
+        const { data } = await this.axios.get('students', {
           headers: {
             Authorization: "Bearer " + this.$store.state.auth.token
           }
@@ -90,7 +91,7 @@ export default {
       } catch (e) {
         console.log(e)
       } finally {
-        this.$refs.loading.hide()
+        this.loading = false
       }
     },
     async forceRerender() {
@@ -108,8 +109,9 @@ export default {
         return;
       }
       try {
+        this.loading = true
         // di sini fungsi axios
-        const { data } = await this.axios.delete(`sekolah/siswa/${this.items[this.deleteData.index].id}`, {
+        const { data } = await this.axios.delete(`students/${this.items[this.deleteData.index].id}`, {
           headers: {
             Authorization: "Bearer " + this.$store.state.auth.token
           }
@@ -138,7 +140,7 @@ export default {
       } finally {
         this.deleteData.index = -1
         this.deleteData.modal = false
-        this.$refs.loading.hide()
+        this.loading = false
         this.getData()
       }
     },
@@ -146,6 +148,4 @@ export default {
 };
 </script>
   
-<style>
-
-</style>
+<style></style>

@@ -2,7 +2,7 @@
   <div>
     <CCard accent-color="primary">
       <CCardHeader>
-        <h1>Rumusan Kebutuhan dari SKKPD "{{skkpd.nama}}"</h1>
+        <h1>Rumusan Kebutuhan dari SKKPD "{{skkpd.name}}"</h1>
 
         <div class="card-header-actions">
           <CButton color="primary" @click="$refs.addModal.setModal(true)">Tambah Rumusan Kebutuhan</CButton>
@@ -11,10 +11,10 @@
       </CCardHeader>
       <CCardBody>
         <CDataTable :responsive="true" v-if="datatable" :items="items" :fields="fields" hover>
-          <template #materi="{ item }">
+          <template #topic="{ item }">
           <td align="left">
-            <span v-if="(item.materi != null)">
-              {{item.materi.nama}}
+            <span v-if="(item.topic != null)">
+              {{item.topic.name}}
             </span>
             <span v-else class="text-danger">
               Belum ada
@@ -32,7 +32,7 @@
                   Edit
                 </CDropdownItem>
                 <CDropdownItem
-                  @click="(deleteData.index = index), (deleteData.nama = item.nama), (deleteData.modal = true)">
+                  @click="(deleteData.index = index), (deleteData.name = item.name), (deleteData.modal = true)">
                   <CIcon name="cil-trash" class="mr-1" />
                   Delete
                 </CDropdownItem>
@@ -45,7 +45,7 @@
         </CDataTable>
 
         <CModal title="Hapus Skkpd" color="danger" :show.sync="deleteData.modal">
-          <span>Hapus SKKPD {{ deleteData.nama }} ?</span>
+          <span>Hapus SKKPD {{ deleteData.name }} ?</span>
           <template #footer>
             <CButton color="primary" variant="outline" @click="deleteData.modal = false">Close</CButton>
             <CButton @click="remove">Yes</CButton>
@@ -53,7 +53,7 @@
         </CModal>
       </CCardBody>
     </CCard>
-    <Loading ref="loading"></Loading>
+    <Loading :loading="loading"></Loading>
   </div>
 </template>
 
@@ -63,10 +63,10 @@ import Loading from '@/components/Loading.vue'
 
 // fields
 const fields = [
-  { label: 'Rumusan Kebutuhan', key: "nama" },
-  { label: 'Tujuan Layanan', key: "tujuan_layanan" },
-  { label: 'Materi/Topik', key: "materi"},
-  // { label: 'Jumlah Materi/Topik', key: "nama" },
+  { label: 'Rumusan Kebutuhan', key: "name" },
+  { label: 'Tujuan Layanan', key: "service_objective" },
+  { label: 'Materi/Topik', key: "topic"},
+  // { label: 'Jumlah Materi/Topik', key: "name" },
   { label: "", key: "actions" },
 ];
 
@@ -78,19 +78,20 @@ export default {
   },
   data() {
     return {
+      loading: true,
       datatable: true,
       pagination: {
         max_page: 1,
         active: 1,
       },
       skkpd: {
-        nama: '',
+        name: '',
       },
       fields,
       items: [],
       deleteData: {
         index: -1,
-        nama: '',
+        name: '',
         modal: false,
       },
     };
@@ -100,26 +101,26 @@ export default {
   },
   methods: {
     async getData() {
-      await this.$refs.loading.show()
+      this.loading = true
       try {
         await this.getSkkpd()
         await this.getRumusanKebutuhan()
       } catch (e) {
         console.log(e)
       } finally {
-        await this.$refs.loading.hide()
+        this.loading = false
       }
     },
     async getSkkpd() {
-      const { data: skkpd } = await this.axios.get(`admin/bidang-layanan/${this.$route.query.bidang_layanan}/skkpd/${this.$route.query.skkpd}`, {
+      const { data: skkpd } = await this.axios.get(`field-components/${this.$route.query.bidang_layanan}/skkpd/${this.$route.query.skkpd}`, {
         headers: {
           Authorization: "Bearer " + this.$store.state.auth.token
         }
       })
-      this.skkpd.nama = skkpd.data.nama
+      this.skkpd.name = skkpd.data.name
     },
     async getRumusanKebutuhan() {
-      const { data } = await this.axios.get(`admin/bidang-layanan/${this.$route.query.bidang_layanan}/skkpd/${this.$route.query.skkpd}/rumusan-kebutuhan`, {
+      const { data } = await this.axios.get(`field-components/${this.$route.query.bidang_layanan}/skkpd/${this.$route.query.skkpd}/requirements-formulation`, {
         headers: {
           Authorization: "Bearer " + this.$store.state.auth.token
         }
@@ -142,21 +143,19 @@ export default {
         return;
       }
       try {
-        this.$refs.loading.show()
+        this.loading = true
         // di sini fungsi axios
-        const { data } = await this.axios.delete(`admin/bidang-layanan/${this.$route.query.bidang_layanan}/skkpd/${this.$route.query.skkpd}/rumusan-kebutuhan/${this.items[this.deleteData.index].id}`, {
+        const { data } = await this.axios.delete(`field-components/${this.$route.query.bidang_layanan}/skkpd/${this.$route.query.skkpd}/requirements-formulation/${this.items[this.deleteData.index].id}`, {
           headers: {
             Authorization: "Bearer " + this.$store.state.auth.token
           }
         })
-        this.$refs.loading.hide()
         await this.$swal({
           icon: 'success',
           title: 'Berhasil!',
           text: data.message,
         })
       } catch (e) {
-        this.$refs.loading.hide()
         var icon = 'error'
         var title = 'Terjadi Kesalahan'
         var text = 'Terjadi Kesalahan di aplikasi'
@@ -173,6 +172,7 @@ export default {
           html: text,
         })
       } finally {
+        this.loading = false
         this.deleteData.index = -1
         this.deleteData.modal = false
         this.getData()

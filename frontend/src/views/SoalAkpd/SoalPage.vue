@@ -13,25 +13,25 @@
 
       <CCardBody>
         <CDataTable :responsive="true" v-if="datatable" :items="items" :fields="fields" hover>
-          <template #bidang_layanan="{ item }">
-            <td align="left" v-if="(item.rumusan_kebutuhan?.skkpd?.bidang != null)">
-              {{item.rumusan_kebutuhan.skkpd.bidang.nama}}
+          <template #field_component="{ item }">
+            <td align="left" v-if="(item.requirement_formulation?.skkpd?.field_component != null)">
+              {{item.requirement_formulation.skkpd.field_component.name}}
             </td>
             <td v-else class="text-danger">
               Belum ada
             </td>
           </template>
           <template #skkpd="{ item }">
-            <td align="left" v-if="(item.rumusan_kebutuhan?.skkpd != null)">
-              {{item.rumusan_kebutuhan.skkpd.nama}}
+            <td align="left" v-if="(item.requirement_formulation?.skkpd != null)">
+              {{item.requirement_formulation.skkpd.name}}
             </td>
             <td v-else class="text-danger">
               Belum ada
             </td>
           </template>
-          <template #rumusan_kebutuhan="{ item }">
-            <td align="left" v-if="(item.rumusan_kebutuhan != null)">
-              {{item.rumusan_kebutuhan.nama}}
+          <template #requirement_formulation="{ item }">
+            <td align="left" v-if="(item.requirement_formulation != null)">
+              {{item.requirement_formulation.name}}
             </td>
             <td v-else class="text-danger">
               Belum ada
@@ -48,7 +48,7 @@
                   Edit
                 </CDropdownItem>
                 <CDropdownItem
-                  @click="(deleteData.index = index), (deleteData.soal = item.soal), (deleteData.modal = true)">
+                  @click="(deleteData.index = index), (deleteData.question = item.question), (deleteData.modal = true)">
                   <CIcon name="cil-trash" class="mr-1" />
                   Delete
                 </CDropdownItem>
@@ -61,7 +61,7 @@
         </CDataTable>
 
         <CModal title="Hapus Butir Angket" color="danger" :show.sync="deleteData.modal">
-          <span>Hapus butir angket {{ deleteData.soal }} ?</span>
+          <span>Hapus butir angket {{ deleteData.question }} ?</span>
           <template #footer>
             <CButton color="primary" variant="outline" @click="deleteData.modal = false">Batal</CButton>
             <CButton @click="remove">Oke</CButton>
@@ -69,22 +69,21 @@
         </CModal>
       </CCardBody>
     </CCard>
-    <Loading ref="loading"></Loading>
+    <Loading :loading="loading"></Loading>
   </div>
 </template>
 
-<!-- Axios -->
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
 import AddModal from "./AddModal.vue";
 import Loading from '@/components/Loading.vue'
+import axios from 'axios'
 
 // fields
 const fields = [
-  "soal",
-  { label: "Bidang Layanan", key: "bidang_layanan" },
+  { label: "Soal", key: "question"},
+  { label: "Bidang Layanan", key: "field_component" },
   { label: "SKKPD", key: "skkpd" },
-  { label: "Rumusan Kebutuhan", key: "rumusan_kebutuhan" },
+  { label: "Rumusan Kebutuhan", key: "requirement_formulation" },
   { label: "", key: "actions" },
 ]
 
@@ -96,6 +95,7 @@ export default {
   },
   data() {
     return {
+      loading: true,
       datatable: true,
       pagination: {
         max_page: 1,
@@ -105,7 +105,7 @@ export default {
       fields,
       deleteData: {
         index: -1,
-        soal: '',
+        question: '',
         modal: false,
       },
     }
@@ -115,10 +115,10 @@ export default {
   },
   methods: {
     async getData(param = null) {
-      let page = param ?? 1;
-      this.$refs.loading.show()
+      let page = param ?? 1
+      this.loading=true
       try {
-        const { data } = await this.axios.get(`admin/butir-angket-konseling?page=${page}`, {
+        const { data } = await axios.get(`survey-items?page=${page}`, {
           headers: {
             Authorization: "Bearer " + this.$store.state.auth.token
           }
@@ -128,7 +128,7 @@ export default {
       } catch (e) {
         console.log(e)
       } finally {
-        this.$refs.loading.hide()
+        this.loading=false
       }
     },
     async forceRerender() {
@@ -146,8 +146,9 @@ export default {
         return;
       }
       try {
+        this.loading=true
         // di sini fungsi axios
-        const { data } = await this.axios.delete(`admin/butir-angket-konseling/${this.items[this.deleteData.index].id}`, {
+        const { data } = await this.axios.delete(`butir-angket-konseling/${this.items[this.deleteData.index].id}`, {
           headers: {
             Authorization: "Bearer " + this.$store.state.auth.token
           }
@@ -176,7 +177,7 @@ export default {
       } finally {
         this.deleteData.index = -1
         this.deleteData.modal = false
-        this.$refs.loading.hide()
+        this.loading = false
         this.getData(this.pagination.active)
       }
     },

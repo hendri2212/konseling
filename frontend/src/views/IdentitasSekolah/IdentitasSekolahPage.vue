@@ -14,7 +14,7 @@
       <CCardBody>
         <table style="width:100%" >
           <tr v-for="(item, index) in items" :key="index">
-            <th style="width:20%">{{item.head | capitalize}}:</th>
+            <th style="width:30%">{{item.head | capitalize}}:</th>
             <td>{{item.body}}</td>
           </tr>
         </table>
@@ -44,18 +44,18 @@ export default {
       var items = []
       if(this.me != null){
         items.push(
-          {head: 'pemerintah', body:this.me.pemerintah !=null ? this.me.pemerintah : "(Belum diisi)"},
-          {head: 'dinas', body: this.me.dinas !=null ?  this.me.dinas : "(Belum diisi)"},
-          {head: 'nama sekolah', body: this.me.nama !=null ?  this.me.nama : "(Belum diisi)"},
-          {head: 'alamat', body: this.me.alamat_lengkap !=null ?  this.me.alamat_lengkap : "(Belum diisi)"},
-          {head: 'nama kepala sekolah', body: this.me.kepsek !=null ?  this.me.kepsek : "(Belum diisi)"},
+          // {head: 'pemerintah', body:this.me.pemerintah !=null ? this.me.pemerintah : "(Belum diisi)"},
+          // {head: 'dinas', body: this.me.dinas !=null ?  this.me.dinas : "(Belum diisi)"},
+          {head: 'nama sekolah', body: this.me.name !=null ?  this.me.name : "(Belum diisi)"},
+          {head: 'alamat', body: this.me.address !=null ?  this.me.address : "(Belum diisi)"},
+          {head: 'nama kepala sekolah', body: this.me.headmaster !=null ?  this.me.headmaster : "(Belum diisi)"},
         )
       }
       return items
     }
   },
   created(){
-    this.axios.get('/sekolah/me', {
+    this.axios.get('me', {
       headers: {
         Authorization: "Bearer " + this.$store.state.auth.token
       }

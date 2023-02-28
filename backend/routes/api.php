@@ -1,29 +1,21 @@
 <?php
 
-use App\Http\Controllers\admin\AuthenticationController as AdminAuthenticationController;
-use App\Http\Controllers\admin\BidangLayananController;
-use App\Http\Controllers\admin\ButirAngketKonselingController;
-use App\Http\Controllers\admin\KomponenLayananController;
-use App\Http\Controllers\admin\MateriController;
-use App\Http\Controllers\admin\RumusanKebutuhanController;
+use App\Http\Controllers\admin\AuthenticationController;
+use App\Http\Controllers\admin\FieldComponentLayananController;
+use App\Http\Controllers\admin\ServiceComponentController;
+use App\Http\Controllers\admin\TopicController;
+use App\Http\Controllers\admin\RequirementFormulationController;
 use App\Http\Controllers\admin\SkkpdController;
-// use App\Http\Controllers\admin\RoleController;
-// use App\Http\Controllers\admin\ServiceController;
-use App\Http\Controllers\AnalisisProfileKelasController;
-use App\Http\Controllers\AuthenticationController;
-use App\Http\Controllers\guru\AuthenticationController as GuruAuthenticationController;
-use App\Http\Controllers\sekolah\AuthenticationController as SekolahAuthenticationController;
-use App\Http\Controllers\guru\AngketController;
-use App\Http\Controllers\KelasController;
-use App\Http\Controllers\sekolah\GuruController;
+use App\Http\Controllers\admin\ClassAnalysisController;
+use App\Http\Controllers\admin\SurveyController;
+use App\Http\Controllers\admin\ClassModelController;
+use App\Http\Controllers\admin\GuruController;
+use App\Http\Controllers\admin\ManageSiswaController;
+use App\Http\Controllers\admin\SurveyItemController;
+use App\Http\Controllers\student\SurveyController as SiswaSurveyController;
+// use App\Http\Controllers\student\SurveyItemController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
-// use App\Http\Controllers\guru\VerifyEmailController;
-use App\Http\Controllers\sekolah\ManageSiswaController;
-use App\Http\Controllers\siswa\AngketController as SiswaAngketController;
-use App\Http\Controllers\siswa\AuthenticationController as SiswaAuthenticationController;
-use App\Http\Controllers\SoalController;
 
 /*
 |--------------------------------------------------------------------------
@@ -41,94 +33,78 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::middleware('api')->group(function () {
-    // Route::get('/email/verify/{id}/{hash}', [VerifyEmailController::class, '__invoke'])
-    // ->middleware(['signed', 'throttle:6,1'])
-    // ->name('verification.verify');
-
-    Route::middleware('auth:sekolah,guru,admin')->get('me', [AuthenticationController::class, 'me']);
 
     Route::prefix('admin')->group(function () {
-
-        Route::post('login', [AdminAuthenticationController::class, 'login']);
+        Route::post('login', [AuthenticationController::class, 'login']);
+        Route::middleware('auth:admin,schools,teachers')->get('me', [AuthenticationController::class, 'me']);
         Route::middleware('auth:admin')->group(function () {
-            Route::get('komponen-layanan/materi', [MateriController::class, 'all'])->name('materi.all');
-            Route::resource('komponen-layanan', KomponenLayananController::class);
-            Route::prefix('komponen-layanan/{id}/materi')->group(function () {
-                Route::get('', [MateriController::class, 'index'])->name('materi.index');
-                Route::post('', [MateriController::class, 'store'])->name('materi.store');
-                Route::put('{id_materi}', [MateriController::class, 'update'])->name('materi.update');
-                Route::delete('{id_materi}', [MateriController::class, 'destroy'])->name('materi.destroy');
+            Route::resource('service-components', ServiceComponentController::class);
+            Route::prefix('service-components/{id}/topics')->group(function () {
+                Route::get('', [TopicController::class, 'index'])->name('topics.index');
+                Route::post('', [TopicController::class, 'store'])->name('topics.store');
+                Route::put('{topic_id}', [TopicController::class, 'update'])->name('topics.update');
+                Route::delete('{topic_id}', [TopicController::class, 'destroy'])->name('topics.destroy');
             });
-            Route::resource('/bidang-layanan', BidangLayananController::class);
-            Route::prefix('bidang-layanan/{id}/skkpd')->group(function () {
+
+            Route::get('topics', [TopicController::class, 'all'])->name('topics.all');
+
+            Route::resource('field-components', FieldComponentLayananController::class);
+            Route::prefix('field-components/{id}/skkpd')->group(function () {
                 Route::get('', [SkkpdController::class, 'index'])->name('skkpd.index');
                 Route::post('', [SkkpdController::class, 'store'])->name('skkpd.store');
-                Route::get('{id_skkpd}', [SkkpdController::class, 'show'])->name('skkpd.show');
-                Route::put('{id_skkpd}', [SkkpdController::class, 'update'])->name('skkpd.update');
-                Route::delete('{id_skkpd}', [SkkpdController::class, 'destroy'])->name('skkpd.destroy');
-
-                Route::prefix('{id_skkpd}/rumusan-kebutuhan')->group(function () {
-                    Route::get('', [RumusanKebutuhanController::class, 'index'])->name('rumusan_kebutuhan.index');
-                    Route::post('', [RumusanKebutuhanController::class, 'store'])->name('rumusan_kebutuhan.store');
-                    Route::put('{id_rumusan_kebutuhan}', [RumusanKebutuhanController::class, 'update'])->name('rumusan_kebutuhan.update');
-                    Route::delete('{id_rumusan_kebutuhan}', [RumusanKebutuhanController::class, 'destroy'])->name('rumusan_kebutuhan.destroy');
+                Route::prefix('{skkpd_id}')->group(function () {
+                    Route::get('', [SkkpdController::class, 'show'])->name('skkpd.show');
+                    Route::put('', [SkkpdController::class, 'update'])->name('skkpd.update');
+                    Route::delete('', [SkkpdController::class, 'destroy'])->name('skkpd.destroy');
+                    Route::prefix('requirements-formulation')->group(function () {
+                        Route::get('', [RequirementFormulationController::class, 'index'])->name('requirements_formulation.index');
+                        Route::post('', [RequirementFormulationController::class, 'store'])->name('requirements_formulation.store');
+                        Route::put('{requirement_formulation_id}', [RequirementFormulationController::class, 'update'])->name('requirements_formulation.update');
+                        Route::delete('{requirement_formulation_id}', [RequirementFormulationController::class, 'destroy'])->name('requirements_formulation.destroy');
+                    });
                 });
             });
-            Route::get('rumusan-kebutuhan/search', [RumusanKebutuhanController::class, 'search'])->name('rumusan_kebutuhan.search');
-            Route::resource('butir-angket-konseling', ButirAngketKonselingController::class);
-            // Route::resource('service', ServiceController::class)->middleware('ability:service.*');
-            // Route::get('service/{service_id}/permission', [ServiceController::class, 'getPermission'])->middleware('ability:service.*, service.permission.list');
-            // Route::post('service/{service_id}/permission', [ServiceController::class, 'addPermission'])->middleware('ability:service.*, service.permission.add');
-            // Route::resource('role', RoleController::class)->middleware('ability:role.*');
+            Route::get('requirements-formulation/search', [RequirementFormulationController::class, 'search'])->name('requirements_formulation.search');
+            Route::resource('survey-items', SurveyItemController::class);
+        });
+
+        Route::middleware('auth:schools,teachers')->get('classes', [ClassModelController::class, 'index']);
+        
+        Route::middleware('auth:schools')->group(function () {
+            Route::get('teachers/search', [GuruController::class, 'search']);
+            Route::resource('teachers', GuruController::class);
+            Route::post('classes/{id}/assign', [ClassModelController::class, 'assign']);
+            Route::post('classes/{id}/unassign', [ClassModelController::class, 'unassign']);
+            Route::resource('classes', ClassModelController::class);
+            Route::resource('students', ManageSiswaController::class);
+        });
+
+        Route::middleware('auth:teachers')->group(function () {
+            Route::resource('surveys', SurveyController::class);
+            Route::prefix('surveys')->group(function () {
+                Route::patch('{id}/open', [SurveyController::class, 'open']);
+                Route::patch('{id}/close', [SurveyController::class, 'close']);
+                // Route::get('classes/{id}', [SurveyController::class, 'setiapClassModel']);
+            });
+            Route::get('classes-analysis/{id}', [ClassAnalysisController::class, 'class_profile']);
+            Route::get('analisis-profile-konseling/{id}', [ClassAnalysisController::class, 'profile_konseling']);
         });
     });
 
-    Route::post('login', [AuthenticationController::class, 'login']);
-    Route::prefix('sekolah')->group(function () {
-        Route::post('register', [SekolahAuthenticationController::class, 'register']);
-        Route::middleware('auth:sekolah')->group(function () {
-            Route::get('guru/search', [GuruController::class, 'search']);
-            Route::resource('guru', GuruController::class);
-            Route::post('kelas/{id}/assign', [KelasController::class, 'assign']);
-            Route::post('kelas/{id}/hapus', [KelasController::class, 'hapus']);
-            Route::resource('kelas', KelasController::class);
-            Route::resource('siswa', ManageSiswaController::class);
-        });
-    });
-
-    Route::prefix('guru')->group(function () {
-        Route::post('login', [GuruAuthenticationController::class, 'login']);
-
-        Route::middleware('auth:guru')->group(function () {
-            Route::get('me', [GuruController::class, 'me']);
-            Route::get('kelas', [KelasController::class, 'index']);
-            Route::resource('angket', AngketController::class);
-            Route::patch('angket/{id}/open', [AngketController::class, 'open']);
-            Route::patch('angket/{id}/close', [AngketController::class, 'close']);
-            Route::get('angket/kelas/{id}', [AngketController::class, 'setiapKelas']);
-            Route::get('analisis-profile-kelas/{id}', [AnalisisProfileKelasController::class, 'profile_kelas']);
-            Route::get('analisis-profile-konseling/{id}', [AnalisisProfileKelasController::class, 'profile_konseling']);
-        });
-    });
-
-    Route::prefix('siswa')->group(function () {
+    Route::prefix('student')->group(function () {
         Route::post('login', [SiswaAuthenticationController::class, 'login']);
-
-        Route::get('peserta', [SiswaAuthenticationController::class, 'peserta']);
-        Route::middleware('auth:siswa')->group(function () {
+        Route::middleware('auth:students')->group(function () {
             Route::get('me', [SiswaAuthenticationController::class, 'me']);
             Route::prefix('angket')->group(function () {
-                Route::get('', [SiswaAngketController::class, 'index']);
-                Route::get('{id}', [SiswaAngketController::class, 'show']);
-                Route::get('{id}/status', [SiswaAngketController::class, 'status']);
-                Route::post('{id}/startattempt', [SiswaAngketController::class, 'startattempt']);
-                Route::get('{id}/attempt', [SiswaAngketController::class, 'attempt']);
-                Route::get('{id}/attempt/lists', [SiswaAngketController::class, 'lists']);
-                Route::post('{id}/attempt/{id_soal}/answer', [SiswaAngketController::class, 'answer']);
-                Route::post('{id}/finishattempt', [SiswaAngketController::class, 'finishattempt']);
+                Route::get('', [SiswaSurveyController::class, 'index']);
+                Route::get('{id}', [SiswaSurveyController::class, 'show']);
+                Route::get('{id}/status', [SiswaSurveyController::class, 'status']);
+                Route::post('{id}/startattempt', [SiswaSurveyController::class, 'startattempt']);
+                Route::get('{id}/attempt', [SiswaSurveyController::class, 'attempt']);
+                Route::get('{id}/attempt/lists', [SiswaSurveyController::class, 'lists']);
+                Route::post('{id}/attempt/{id_survey_items}/answer', [SiswaSurveyController::class, 'answer']);
+                Route::post('{id}/finishattempt', [SiswaSurveyController::class, 'finishattempt']);
             });
-            // Route::post('soal/jawab', [SoalController::class, 'jawab']);
-            // Route::resource('soal', SoalController::class);
         });
     });
 });

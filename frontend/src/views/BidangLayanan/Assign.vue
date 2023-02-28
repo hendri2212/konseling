@@ -2,7 +2,7 @@
     <div>
         <CCard accent-color="primary">
             <CCardHeader>
-                <h1>Anggota Kelas '{{ kelas.nama }}'</h1>
+                <h1>Anggota Kelas '{{ kelas.name }}'</h1>
             </CCardHeader>
 
             <CCardBody>
@@ -30,7 +30,7 @@
                 </CRow>
             </CCardBody>
         </CCard>
-        <Loading ref="loading"></Loading>
+        <Loading :loading="loading"></Loading>
     </div>
 </template>
   
@@ -44,8 +44,9 @@ export default {
     },
     data() {
         return {
+            loading: true,
             kelas: {
-                nama: '',
+                name: '',
             },
             anggota_kelas: [],
             anggota_kelas_selected: [],
@@ -53,23 +54,23 @@ export default {
             siswa_selected: [],
         }
     },
-    async mounted() {
+    async created() {
         this.getData()
     },
     methods: {
         async getData() {
-            await this.$refs.loading.show()
+            this.loading = true
             try {
                 await this.getKelas()
                 await this.getSiswa()
             } catch (e) {
                 console.log(e)
             } finally {
-                await this.$refs.loading.hide()
+                this.loading = false
             }
         },
         async getKelas() {
-            const { data: kelas } = await this.axios.get(`sekolah/kelas/${this.$route.query.kelas}`, {
+            const { data: kelas } = await this.axios.get(`classes/${this.$route.query.kelas}`, {
                 headers: {
                     Authorization: "Bearer " + this.$store.state.auth.token
                 }
@@ -78,12 +79,12 @@ export default {
             this.anggota_kelas = kelas.data.siswa.map(p => {
                 return {
                     value: p.id,
-                    label: p.nama + " (" + p.username + ")"
+                    label: p.name + " (" + p.email + ")"
                 }
             })
         },
         async getSiswa() {
-            const { data: siswa } = await this.axios.get(`sekolah/siswa?punya_kelas=false`, {
+            const { data: siswa } = await this.axios.get(`students?have_class=false`, {
                 headers: {
                     Authorization: "Bearer " + this.$store.state.auth.token
                 }
@@ -91,16 +92,16 @@ export default {
             this.siswa = siswa.data.map(p => {
                 return {
                     value: p.id,
-                    label: p.nama + " (" + p.username + ")"
+                    label: p.name + " (" + p.email + ")"
                 }
             })
         },
         async assign() {
             if (this.siswa_selected.length > 0) {
                 try {
-                    await this.$refs.loading.show()
-                    await this.axios.post(`sekolah/kelas/${this.$route.query.kelas}/assign`, {
-                        siswa_id: this.siswa_selected,
+                    this.loading = true
+                    await this.axios.post(`classes/${this.$route.query.kelas}/assign`, {
+                        student_id: this.siswa_selected,
                     }, {
                         headers: {
                             Authorization: "Bearer " + this.$store.state.auth.token
@@ -111,15 +112,15 @@ export default {
                 } catch (e) {
                     console.log(e)
                 } finally {
-                    await this.$refs.loading.hide()
+                    this.loading = false
                 }
             }
         },
         async hapus() {
             if (this.anggota_kelas_selected.length > 0) {
                 try {
-                    await this.$refs.loading.show()
-                    await this.axios.post(`sekolah/kelas/${this.$route.query.kelas}/hapus`, {
+                    this.loading = true
+                    await this.axios.post(`classes/${this.$route.query.kelas}/unassign`, {
                         siswa_id: this.anggota_kelas_selected,
                     }, {
                         headers: {
@@ -131,7 +132,7 @@ export default {
                 } catch (e) {
                     console.log(e)
                 } finally {
-                    await this.$refs.loading.hide()
+                    this.loading = false
                 }
             }
         }

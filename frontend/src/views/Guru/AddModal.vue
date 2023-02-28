@@ -3,10 +3,10 @@
     <CModal :title="insertModal ? 'Add Guru' : 'Edit Guru'" color="primary" :centered="true" :show.sync="showModal">
       <CRow>
         <CCol sm="12">
-          <CInput required label="Username" placeholder="Masukkan Username" v-model="username" />
+          <CInput required label="Email" placeholder="Masukkan Email" v-model="email" />
         </CCol>
         <CCol sm="12">
-          <CInput required label="Nama" placeholder="Masukkan Nama" v-model="nama" />
+          <CInput required label="Nama" placeholder="Masukkan Nama" v-model="name" />
         </CCol>
         <CCol sm="12">
           <CInput :required="insertModal" label="Password" type="password" placeholder="Masukkan Password"
@@ -23,7 +23,7 @@
           </div>
         </div>
       </template>
-      <Loading ref="loading"></Loading>
+      <Loading :loading="loading"></Loading>
     </CModal>
   </form>
 </template>
@@ -38,14 +38,14 @@ export default {
   emits: ['saved'],
   data() {
     return {
+      loading: false,
       tmp: null,
       id: '',
-      username: '',
-      nama: '',
+      email: '',
+      name: '',
       password: '',
       insertModal: true,
       showModal: false,
-      dataGuru: []
     };
   },
   created() {
@@ -62,46 +62,37 @@ export default {
   methods: {
     reset() {
       this.id = ""
-      this.username = ""
-      this.nama = ""
+      this.email = ""
+      this.name = ""
       this.password = ""
       if (this.tmp != null) {
         this.id = this.tmp.id
-        this.username = this.tmp.username
-        this.nama = this.tmp.nama
+        this.email = this.tmp.email
+        this.name = this.tmp.name
       }
-    },
-    onSearch(query) {
-      this.axios.get(`sekolah/guru/search?search=${query}`, {
-        headers: {
-          Authorization: "Bearer " + this.$store.state.auth.token
-        }
-      }).then(response => {
-        this.dataGuru = response.data
-      })
     },
     setModal(stat, data = '') {
       this.showModal = stat;
       if (data != '') {
         this.insertModal = false;
         this.id = data.id
-        this.username = data.username
-        this.nama = data.nama
+        this.email = data.email
+        this.name = data.name
         this.tmp = data
       } else {
         this.insertModal = true;
       }
     },
     async save() {
-      this.$refs.loading.show()
+      this.loading = true
       try {
         if (this.insertModal) {
           let payload = {
-            username: this.username,
-            nama: this.nama,
+            email: this.email,
+            name: this.name,
             password: this.password,
           }
-          const { data } = await this.axios.post("sekolah/guru", payload, {
+          const { data } = await this.axios.post("teachers", payload, {
             headers: {
               Authorization: "Bearer " + this.$store.state.auth.token
             }
@@ -115,20 +106,20 @@ export default {
           })
         } else {
           let payload = {}
-          payload.username = this.username
-          payload.nama = this.nama
+          payload.email = this.email
+          payload.name = this.name
           if (this.password?.trim().length >= 1) {
             payload.password = this.password
           }
-          const { data } = await this.axios.put(`sekolah/guru/${this.id}`, payload, {
+          const { data } = await this.axios.put(`teachers/${this.id}`, payload, {
             headers: {
               Authorization: "Bearer " + this.$store.state.auth.token
             }
           })
           this.tmp = {
             id: this.id,
-            username: this.username,
-            nama: this.nama,
+            email: this.email,
+            name: this.name,
           }
           this.$emit('saved')
           await this.$swal({
@@ -154,12 +145,8 @@ export default {
           html: text,
         })
       }
-      this.$refs.loading.hide()
+      this.loading = false
     },
   },
 };
 </script>
-
-<style>
-
-</style>

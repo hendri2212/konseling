@@ -2,7 +2,7 @@
   <div>
     <CCard accent-color="primary">
       <CCardHeader>
-        <h1>Materi komponen layanan "{{komponen_layanan.nama}}"</h1>
+        <h1>Materi komponen layanan "{{ komponen_layanan.name }}"</h1>
 
         <div class="card-header-actions">
           <CButton color="primary" @click="$refs.addModal.setModal(true)">Tambah Materi</CButton>
@@ -22,7 +22,7 @@
                   Edit
                 </CDropdownItem>
                 <CDropdownItem
-                  @click="(deleteData.index = index), (deleteData.nama = item.nama), (deleteData.modal = true)">
+                  @click="(deleteData.index = index), (deleteData.name = item.name), (deleteData.modal = true)">
                   <CIcon name="cil-trash" class="mr-1" />
                   Delete
                 </CDropdownItem>
@@ -39,7 +39,7 @@
         </CDataTable>
 
         <CModal title="Hapus Materi" color="danger" :show.sync="deleteData.modal">
-          <span>Hapus materi {{ deleteData.nama }} ?</span>
+          <span>Hapus materi {{ deleteData.name }} ?</span>
           <template #footer>
             <CButton color="primary" variant="outline" @click="deleteData.modal = false">Close</CButton>
             <CButton @click="remove">Yes</CButton>
@@ -47,7 +47,7 @@
         </CModal>
       </CCardBody>
     </CCard>
-    <Loading ref="loading"></Loading>
+    <Loading :loading="loading"></Loading>
   </div>
 </template>
 
@@ -57,8 +57,8 @@ import Loading from '../../../components/Loading.vue'
 
 // fields
 const fields = [
-  { label: 'Materi', key: "nama" },
-  // { label: 'Jumlah Materi/Topik', key: "nama" },
+  { label: 'Materi', key: "name" },
+  // { label: 'Jumlah Materi/Topik', key: "name" },
   { label: "", key: "actions" },
 ];
 
@@ -70,19 +70,20 @@ export default {
   },
   data() {
     return {
+      loading: true,
       datatable: true,
       pagination: {
         max_page: 1,
         active: 1,
       },
       komponen_layanan: {
-        nama: '',
+        name: '',
       },
       fields,
       items: [],
       deleteData: {
         index: -1,
-        nama: '',
+        name: '',
         modal: false,
       },
     };
@@ -92,26 +93,26 @@ export default {
   },
   methods: {
     async getData() {
-      await this.$refs.loading.show()
+      this.loading = true
       try {
         await this.getKomponenLayanan()
         await this.getMateri()
       } catch (e) {
         console.log(e)
       } finally {
-        await this.$refs.loading.hide()
+        this.loading = false
       }
     },
     async getKomponenLayanan() {
-      const { data: komponen_layanan } = await this.axios.get(`admin/komponen-layanan/${this.$route.query.komponen_layanan}`, {
+      const { data: komponen_layanan } = await this.axios.get(`service-components/${this.$route.query.komponen_layanan}`, {
         headers: {
           Authorization: "Bearer " + this.$store.state.auth.token
         }
       })
-      this.komponen_layanan.nama = komponen_layanan.data.nama
+      this.komponen_layanan.name = komponen_layanan.data.name
     },
     async getMateri() {
-      const { data } = await this.axios.get(`admin/komponen-layanan/${this.$route.query.komponen_layanan}/materi`, {
+      const { data } = await this.axios.get(`service-components/${this.$route.query.komponen_layanan}/topics`, {
         headers: {
           Authorization: "Bearer " + this.$store.state.auth.token
         }
@@ -134,21 +135,21 @@ export default {
         return;
       }
       try {
-        this.$refs.loading.show()
+        this.loading = true
         // di sini fungsi axios
-        const { data } = await this.axios.delete(`admin/komponen-layanan/${this.$route.query.komponen_layanan}/materi/${this.items[this.deleteData.index].id}`, {
+        const { data } = await this.axios.delete(`service-components/${this.$route.query.komponen_layanan}/topics/${this.items[this.deleteData.index].id}`, {
           headers: {
             Authorization: "Bearer " + this.$store.state.auth.token
           }
         })
-        this.$refs.loading.hide()
+        this.loading = false
         await this.$swal({
           icon: 'success',
           title: 'Berhasil!',
           text: data.message,
         })
       } catch (e) {
-        this.$refs.loading.hide()
+        this.loading = false
         var icon = 'error'
         var title = 'Terjadi Kesalahan'
         var text = 'Terjadi Kesalahan di aplikasi'
@@ -174,6 +175,4 @@ export default {
 };
 </script>
 
-<style>
-
-</style>
+<style></style>

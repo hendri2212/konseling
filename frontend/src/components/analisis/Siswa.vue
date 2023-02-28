@@ -72,7 +72,7 @@ export default {
         }
     },
     created(){
-        this.axios.get(`guru/analisis-profile-konseling/${this.$route.params.id}`, {
+        this.axios.get(`analisis-profile-konseling/${this.$route.params.id}`, {
         headers: {
             Authorization: "Bearer " + this.$store.state.auth.token
         }

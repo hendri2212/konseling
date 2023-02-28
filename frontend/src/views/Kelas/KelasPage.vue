@@ -13,7 +13,7 @@
       <CCardBody>
         <CDataTable :responsive="false" v-if="datatable" :items="items" :fields="fields" hover>
           <template #nama_guru="{ item }">
-            <td>{{item.guru.nama}}</td>
+            <td>{{ item.teacher.name }}</td>
           </template>
           <template #actions="{ item, index }">
             <td>
@@ -26,7 +26,7 @@
                   Edit
                 </CDropdownItem>
                 <CDropdownItem
-                  @click="(deleteData.index = index), (deleteData.nama = item.nama), (deleteData.modal = true)">
+                  @click="(deleteData.index = index), (deleteData.name = item.name), (deleteData.modal = true)">
                   <CIcon name="cil-trash" class="mr-1" />
                   Delete
                 </CDropdownItem>
@@ -44,7 +44,7 @@
         </CDataTable>
 
         <CModal title="Hapus Kelas" color="danger" :show.sync="deleteData.modal">
-          <span>Delete akun guru yang bernama {{ deleteData.nama }} ?</span>
+          <span>Delete akun guru yang bernama {{ deleteData.name }} ?</span>
           <template #footer>
             <CButton color="primary" variant="outline" @click="deleteData.modal = false">Close</CButton>
             <CButton @click="remove">Yes</CButton>
@@ -52,7 +52,7 @@
         </CModal>
       </CCardBody>
     </CCard>
-    <Loading ref="loading"></Loading>
+    <Loading :loading="loading"></Loading>
   </div>
 </template>
 
@@ -62,9 +62,9 @@ import Loading from '../../components/Loading.vue'
 
 // fields
 const fields = [
-  { label: 'Nama Kelas', key: "nama" },
+  { label: 'Nama Kelas', key: "name" },
   { label: 'Nama Guru', key: "nama_guru" },
-  { label: 'Jumlah Siswa', key: "jumlah_siswa" },
+  { label: 'Jumlah Siswa', key: "number_of_students" },
   { label: "", key: "actions" },
 ];
 
@@ -76,6 +76,7 @@ export default {
   },
   data() {
     return {
+      loading: true,
       datatable: true,
       pagination: {
         max_page: 1,
@@ -85,7 +86,7 @@ export default {
       fields,
       deleteData: {
         index: -1,
-        nama: '',
+        name: '',
         modal: false,
       },
     };
@@ -96,9 +97,9 @@ export default {
   methods: {
     async getData(param = null) {
       let page = param ?? 1;
-      this.$refs.loading.show()
+      this.loading = true
       try {
-        const { data } = await this.axios.get(`sekolah/kelas?page=${page}`, {
+        const { data } = await this.axios.get(`classes?page=${page}`, {
           headers: {
             Authorization: "Bearer " + this.$store.state.auth.token
           }
@@ -108,7 +109,7 @@ export default {
       } catch (e) {
         console.log(e)
       } finally {
-        this.$refs.loading.hide()
+        this.loading = false
       }
     },
     async forceRerender() {
@@ -127,7 +128,7 @@ export default {
       }
       try {
         // di sini fungsi axios
-        const { data } = await this.axios.delete(`sekolah/kelas/${this.items[this.deleteData.index].id}`, {
+        const { data } = await this.axios.delete(`classes/${this.items[this.deleteData.index].id}`, {
           headers: {
             Authorization: "Bearer " + this.$store.state.auth.token
           }
@@ -156,14 +157,10 @@ export default {
       } finally {
         this.deleteData.index = -1
         this.deleteData.modal = false
-        this.$refs.loading.hide()
+        this.loading = false
         this.getData(this.pagination.active)
       }
     },
   },
 };
 </script>
-
-<style>
-
-</style>
