@@ -13,6 +13,8 @@ class ServiceComponent extends Model
     public $incrementing = false;
     public $timestamps = false;
     protected $fillable = [
+        'id',
+        'name',
         'created_at',
         'updated_at',
     ];

@@ -58,7 +58,6 @@
     </div>
 </template>
 <script>
-import axios from 'axios'
 import moment from 'moment'
 export default {
     name: "Angket",
@@ -70,13 +69,12 @@ export default {
         return {
             error: false,
             message: "",
-            url: import.meta.env.VITE_API_URL,
             attempt: '',
         }
     },
     async created() {
         try {
-            const { data } = await axios.get(`${this.url}/angket/${this.id}/status`, {
+            const { data } = await this.axios.get(`surveys/${this.id}/status`, {
                 headers: {
                     Authorization: `Bearer ${this.token}`
                 }
@@ -98,7 +96,7 @@ export default {
         },
         async startattempt() {
             try {
-                const { data } = await axios.post(`${this.url}/angket/${this.id}/startattempt`, {}, {
+                const { data } = await this.axios.post(`surveys/${this.id}/start-attempt`, {}, {
                     headers: {
                         Authorization: `Bearer ${this.token}`
                     }

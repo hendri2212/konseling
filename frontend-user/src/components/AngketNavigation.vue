@@ -14,11 +14,11 @@
                     <div class="card-body py-3 px-3">
                         <h1 class="h5"><b>Butir angket</b></h1>
                         <div class="d-flex justify-content-between flex-wrap box-btn-number">
-                            <a class="btn-number" v-for="list in lists" @click="move(list.order)">
-                                <span v-if="list.answered" class="flag-number bg-primary"></span>
+                            <a class="btn-number" v-for="survey_item in survey_items" @click="move(survey_item.order)">
+                                <span v-if="survey_item.answered" class="flag-number bg-primary"></span>
                                 <span class="thispageholder"
-                                    :class="{ 'thispage': (current_page == list.order - 1 && !is_summary) }"></span>
-                                {{ list.order }}
+                                    :class="{ 'thispage': (current_page == survey_item.order - 1 && !is_summary) }"></span>
+                                {{ survey_item.order }}
                             </a>
                             <a class="btn-number hidden" v-for="n in 5 - (50 % 5)"></a>
                         </div>
@@ -29,8 +29,7 @@
     </aside>
 </template>
 <script>
-import axios from 'axios'
-import { mapActions } from 'pinia'
+import { mapState, mapActions } from 'pinia'
 import { useAttemptStore } from '@/stores/attempt'
 export default {
     name: "Sidebar",
@@ -41,12 +40,11 @@ export default {
     data() {
         return {
             loading: false,
-            url: import.meta.env.VITE_API_URL,
             expanded: false,
-            lists: [],
         }
     },
     computed: {
+        ...mapState(useAttemptStore, ['survey_items']),
         id() {
             return this.$route.query.id
         },
@@ -58,19 +56,10 @@ export default {
         }
     },
     async created() {
-        this.$watch(
-            () => this.$route.query,
-            () => {
-                if (this.$route.meta.angketnavigation) {
-                    this.getData()
-                }
-            },
-            { immediate: true }
-        )
+        
     },
     mounted() {
-        const demo = document.querySelector('#angket_navigation');
-        const ps = new PerfectScrollbar(demo);
+        new PerfectScrollbar(document.querySelector('#angket_navigation'));
     },
     methods: {
         ...mapActions(useAttemptStore, ['saveAnswer']),
@@ -86,37 +75,13 @@ export default {
             this.expanded = expanded
             this.$emit('watchexpanded', expanded)
         },
-        async getData() {
-            try {
-                this.loading = true
-                const { data } = await axios.get(`${this.url}/angket/${this.id}/attempt/lists`, {
-                    headers: {
-                        Authorization: `Bearer ${this.token}`
-                    }
-                })
-                this.lists = data.data
-                this.loading = false
-            } catch (e) {
-                this.error = true
-                if (e.name == "AxiosError") {
-                    let { message } = e.response.data
-                    this.message = message
-                } else {
-                    this.message = `Client side error! : ${e}`
-                }
-            }
-        },
         move(number) {
             let id = this.$route.query.id ? this.$route.query.id : 0
-            // if (this.is_summary) {
-            //     this.$router.push({ name: 'AttemptSummary', query: { id: id }, hash: `#soal_${number-1}`  })
-            //     return;
-            // }
             this.saveAnswer()
             if (number) {
-                this.$router.push({ name: 'Attempt', query: { id: id, page: number - 1 } })
+                this.$router.push({ name: this.$route.name, query: { id: id, page: number - 1 } })
             }
-        }
+        },
     },
 }
 </script>

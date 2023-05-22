@@ -15,8 +15,9 @@ class ListSurveyItemResource extends JsonResource
     public function toArray($request)
     {
         return [
+            'id' => $this->id,
             'order' => $this->order,
-            'answered' => $this->answer != null ? true : false,
+            'answered' => $this->surveyResponse != null ? true : false,
         ];
     }
 }

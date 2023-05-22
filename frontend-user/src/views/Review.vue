@@ -17,15 +17,15 @@
                             <div class="col-lg-9" :class="{ 'layout_expanded': all_expanded }">
                                 <div class="card shadow-none alert-info text-black border border-secondary mb-3">
                                     <div class="card-body py-2 pb-5">
-                                        <p class="mb-3">{{ soal.soal }}</p>
+                                        <p class="mb-3">{{ survey_item.question }}</p>
                                         <div class="answer">
                                             <div class="py-1">
-                                                <input :disabled="attempt_finished" :style="attempt_finished ? 'cursor: no-drop;' : ''" v-model="jawaban" type="radio" name="jawaban" value="1">
-                                                <label for="answertrue" class="ms-1" @click="jawaban = 1">Ya</label>
+                                                <input :disabled="attempt_finished" :style="attempt_finished ? 'cursor: no-drop;' : ''" v-model="answer" type="radio" name="jawaban" value="1">
+                                                <label for="answertrue" class="ms-1" @click="answer = 1">Ya</label>
                                             </div>
                                             <div class="py-1">
-                                                <input :disabled="attempt_finished" :style="attempt_finished ? 'cursor: no-drop;' : ''" v-model="jawaban" type="radio" name="jawaban" value="0">
-                                                <label for="answerfalse" class="ms-1" @click="jawaban = 0">Tidak</label>
+                                                <input :disabled="attempt_finished" :style="attempt_finished ? 'cursor: no-drop;' : ''" v-model="answer" type="radio" name="jawaban" value="0">
+                                                <label for="answerfalse" class="ms-1" @click="answer = 0">Tidak</label>
                                             </div>
                                         </div>
                                     </div>
@@ -53,9 +53,9 @@
     </div>
 </template>
 <script>
-import axios from 'axios'
 import { mapState, mapActions } from 'pinia'
 import { useLayoutStore } from '@/stores/layout'
+import { useAttemptStore } from '../stores/attempt'
 export default {
     name: "AttemptAngketReview",
     props: {
@@ -75,34 +75,37 @@ export default {
         return {
             error: false,
             message: "",
-            url: import.meta.env.VITE_API_URL,
             loading: false,
             attempt: null,
             number: 1,
-            soal: {
+            survey_item: {
                 id: null,
-                soal: ''
+                question: ''
             },
             answered: false,
-            jawaban: '',
+            answer: '',
             btnnext: null,
             btnprev: null
         }
     },
     async created() {
+        this.getSurveyItems()
+        this.statusAttempt()
         this.$watch(
             () => this.$route.query,
             () => {
-                this.getData()
+                if (this.$route.name == "AttemptReview") {
+                    this.getData()
+                }
             },
             { immediate: true }
         )
-        await this.statusAttempt()
     },
     methods: {
+        ...mapActions(useAttemptStore, ['getSurveyItems']),
         async statusAttempt() {
             try {
-                const { data } = await axios.get(`${this.url}/angket/${this.id}/status`, {
+                const { data } = await this.axios.get(`surveys/${this.id}/status`, {
                     headers: {
                         Authorization: `Bearer ${this.token}`
                     }
@@ -122,16 +125,16 @@ export default {
             try {
                 this.loading = true
                 let page = this.$route.query.page
-                const { data } = await axios.get(`${this.url}/angket/${this.id}/attempt?page=${page ? page : 0}`, {
+                const { data } = await this.axios.get(`surveys/${this.id}/attempt?page=${page ? page : 0}`, {
                     headers: {
                         Authorization: `Bearer ${this.token}`
                     }
                 })
                 this.number = data.data.meta.number
-                this.soal.id = data.data.soal.id
-                this.soal.soal = data.data.soal.soal
-                if (data.data.jawaban != null) {
-                    this.jawaban = data.data.jawaban.jawaban
+                this.survey_item.id = data.data.survey_item.id
+                this.survey_item.question = data.data.survey_item.question
+                if (data.data.survey_response != null) {
+                    this.answer = data.data.survey_response.answer
                     this.answered = true
                 }
                 if (data.data.meta.previous_number) {

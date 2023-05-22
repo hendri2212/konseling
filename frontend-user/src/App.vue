@@ -1,6 +1,6 @@
 <template>
   <component v-if="component != ''" :is="component" :error="false" :angketnavigation="angketnavigation" :token="token">
-    <router-view :token="token" :authenticated="authenticated"></router-view>
+    <router-view v-bind="data_props"></router-view>
   </component>
 </template>
 
@@ -18,9 +18,20 @@ export default {
     LayoutAuthentication,
   },
   computed: {
-    ...mapState(useAuthStore, ['token']),
+    ...mapState(useAuthStore, ['token', 'isAuthenticated']),
     angketnavigation() {
       return this.$route.meta.angketnavigation ? true : false
+    },
+    data_props() {
+      if (this.$route.name != "Login") {
+        return {
+          token: this.token,
+          authenticated: this.authenticated
+        }
+      }
+      return {
+        authenticated: this.authenticated
+      }
     }
   },
   data() {
@@ -29,6 +40,17 @@ export default {
     }
   },
   created() {
+    if (this.isAuthenticated) {
+      let headers = {
+        headers: {
+          Authorization: "Bearer " + this.token
+        }
+      }
+      this.axios.get('me', headers).catch(() => {
+        this.logout()
+        this.$router.push({ name: "Login" })
+      })
+    }
     this.$watch(
       () => this.$route.meta,
       (toParams, previousParams) => {
@@ -41,13 +63,9 @@ export default {
     )
   },
   methods: {
-    ...mapActions(useAuthStore, ['authenticated']),
+    ...mapActions(useAuthStore, ['authenticated', 'logout']),
   }
 }
 
 
 </script>
-
-<style scoped>
-
-</style>

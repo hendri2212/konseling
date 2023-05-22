@@ -47,36 +47,6 @@
 
                 </ul>
             </li>
-            <li class="menu-item">
-                <span class="menu-link menu-toggle">
-                    <i class="menu-icon tf-icons bx bx-detail"></i>
-                    <div data-i18n="Layouts">Angket</div>
-                </span>
-
-                <ul class="menu-sub">
-                    <li class="menu-item">
-                        <a href="layouts-without-menu.html" class="menu-link">
-                            <div data-i18n="Without menu">Without menu</div>
-                        </a>
-                    </li>
-                    <li class="menu-item">
-                        <a href="layouts-without-menu.html" class="menu-link">
-                            <div data-i18n="Without menu">Without menu</div>
-                        </a>
-                    </li>
-                    <li class="menu-item">
-                        <a href="layouts-without-menu.html" class="menu-link">
-                            <div data-i18n="Without menu">Without menu</div>
-                        </a>
-                    </li>
-                    <li class="menu-item">
-                        <a href="layouts-without-menu.html" class="menu-link">
-                            <div data-i18n="Without menu">Without menu</div>
-                        </a>
-                    </li>
-
-                </ul>
-            </li>
         </ul>
     </aside>
 </template>
@@ -102,7 +72,7 @@ export default {
             })
         })
         const demo = document.querySelector('.menu-inner');
-        const ps = new PerfectScrollbar(demo);
+        new PerfectScrollbar(demo);
     },
     methods: {
         thats_route(...name) {

@@ -12,7 +12,9 @@ class SurveyResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'date' => $this->created_at,
-            'class' => new ClassResource($this->class),
+            'class' => [
+                "name" => $this->class_name
+            ],
             'status' => $this->status,
         ];
     }

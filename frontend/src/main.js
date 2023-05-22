@@ -18,13 +18,26 @@ Vue.component('v-select', vSelect)
 axios.defaults.baseURL = "http://127.0.0.1:8000/api/admin/";
 // axios.defaults.baseURL = "http://api.akukonselor.com/api/admin/";
 
+axios.interceptors.response.use(undefined, function (error) {
+  if (error) {
+    const originalRequest = error.config;
+    if (error.response.status === 401 && !originalRequest._retry) {
+
+      originalRequest._retry = true;
+      store.dispatch("auth/logout")
+      return router.push({ name: "Login" })
+    }
+  }
+})
+
+
 Vue.use(VueAxios, axios)
 
-import { cilCog, cilTrash, cilGroup, cilArrowLeft, cilArrowRight, cilArrowTop, cilArrowBottom, cilPencil, cilLockLocked, cilEnvelopeClosed } from '@coreui/icons'
+import { cilX, cilPlus, cilCog, cilTrash, cilGroup, cilArrowLeft, cilArrowRight, cilArrowTop, cilArrowBottom, cilPencil, cilLockLocked, cilEnvelopeClosed } from '@coreui/icons'
 
 new Vue({
   router,
   store,
-  icons: { cilCog, cilTrash, cilGroup, cilArrowLeft, cilArrowRight, cilArrowTop, cilArrowBottom, cilPencil, cilLockLocked, cilEnvelopeClosed},
+  icons: { cilX, cilPlus, cilCog, cilTrash, cilGroup, cilArrowLeft, cilArrowRight, cilArrowTop, cilArrowBottom, cilPencil, cilLockLocked, cilEnvelopeClosed },
   render: h => h(App)
 }).$mount('#app')

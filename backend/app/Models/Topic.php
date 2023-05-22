@@ -13,6 +13,9 @@ class Topic extends Model
     public $incrementing = false;
     public $timestamps = false;
     protected $fillable = [
+        'id',
+        'name',
+        'service_component_id',
         'created_at',
         'updated_at',
     ];

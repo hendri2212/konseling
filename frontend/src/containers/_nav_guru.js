@@ -19,28 +19,34 @@ export default [
         to: '/admin/angket',
         icon: 'cil-pencil'
       },
-      {
-        _name: 'CSidebarNavItem',
-        name: 'Jawaban Peserta Didik',
-        to: '/akpd/jawaban',
-        icon: 'cil-pencil'
-      },
-      // hasil analisis
-      {
-        _name: 'CSidebarNavTitle',
-        _children: ['hasil analisis']
-      },
-      {
-        _name: 'CSidebarNavItem',
-        name: 'Analisis Profile',
-        to: '/analisis',
-        icon: 'cil-chart'
-      },
+      // Rencana Pelaksanaan Layanan (RPL)
+      // {
+      //   _name: 'CSidebarNavTitle',
+      //   _children: ['Rencana Pelaksanaan Layanan (RPL)']
+      // },
       // {
       //   _name: 'CSidebarNavItem',
-      //   name: 'Analisis Profile Konseling',
-      //   to: '/analisis/profile-konseling',
-      //   icon: 'cil-chart-line'
+      //   name: 'RPL Individual',
+      //   to: '/analisis',
+      //   icon: 'cil-chart'
+      // },
+      // {
+      //   _name: 'CSidebarNavItem',
+      //   name: 'RPL Klasikal',
+      //   to: '/analisis',
+      //   icon: 'cil-chart'
+      // },
+      // {
+      //   _name: 'CSidebarNavItem',
+      //   name: 'RPL Kelompok',
+      //   to: '/analisis',
+      //   icon: 'cil-chart'
+      // },
+      // {
+      //   _name: 'CSidebarNavItem',
+      //   name: 'RPL Kelas Besar',
+      //   to: '/analisis',
+      //   icon: 'cil-chart'
       // },
     ]
   }

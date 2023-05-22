@@ -7,6 +7,7 @@ use App\Http\Requests\admin\SurveyRequest;
 use App\Http\Resources\SurveyResource;
 use App\Models\ClassModel;
 use App\Models\Survey;
+use App\Models\SurveyItem;
 use App\Repositories\ResponseRepository;
 
 use Illuminate\Http\Request;
@@ -50,8 +51,10 @@ class SurveyController extends Controller
             $angket = new Survey;
             $angket->id = Str::uuid();
             $angket->name = $request->name;
-            $angket->tanggal = round(microtime(true) * 1000);
-            $angket->class_id = auth()->user()->kelas->id;
+            $angket->number_of_survey_items = SurveyItem::count();
+            $angket->class_name = auth()->user()->class->name;
+            $angket->class_id = auth()->user()->class->id;
+            $angket->school_id = auth()->user()->school->id;
             $angket->created_at = round(microtime(true) * 1000);
             $angket->save();
             return $this->responseRepository->ResponseSuccess(null, "Success membuat angket baru", 201);
@@ -71,11 +74,6 @@ class SurveyController extends Controller
             return $e->getMessage();
             return $this->responseRepository->ResponseError(null);
         }
-    }
-
-    public function update(Request $request, $id)
-    {
-        //
     }
 
     public function destroy($id)

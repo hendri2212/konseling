@@ -10,20 +10,26 @@
                 </div>
             </CCardHeader>
 
-            <CCardBody>
-                <CNav variant="tabs">
-                    <CNavItem :active="$route.name == 'Setelan'">
-                        <router-link class="nav-link" :to="{ name: 'Setelan', query: { id: id } }">Setelan</router-link>
-                    </CNavItem>
-                    <CNavItem :active="$route.name == 'Hasil'">
-                        <router-link class="nav-link" :to="{ name: 'Hasil', query: { id: id } }">Hasil</router-link>
-                    </CNavItem>
-                </CNav>
-                <transition name="fade" mode="out-in">
-                    <router-view></router-view>
-                </transition>
-            </CCardBody>
+            <CNav variant="tabs">
+                <CNavItem :active="$route.name == 'Hasil'">
+                    <router-link class="nav-link" :to="{ name: 'Hasil', query: { id: id } }">Analisis
+                        Siswa</router-link>
+                </CNavItem>
+                <CNavItem :active="$route.name == 'HasilPerButir'">
+                    <router-link class="nav-link" :to="{ name: 'HasilPerButir', query: { id: id } }">Analisis
+                        Butir</router-link>
+                </CNavItem>
+                <CNavItem :active="$route.name == 'RplKlasikal'">
+                    <router-link class="nav-link" :to="{ name: 'RplKlasikal', query: { id: id } }">RPL
+                        Klasikal</router-link>
+                </CNavItem>
+            </CNav>
         </CCard>
+        <transition name="fade" mode="out-in">
+            <keep-alive>
+                <router-view></router-view>
+            </keep-alive>
+        </transition>
         <Loading ref="loading"></Loading>
     </div>
 </template>

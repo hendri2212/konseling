@@ -1,0 +1,685 @@
+<template>
+    <div>
+        <CRow>
+            <CCol class="transition" :lg="!add_rpl_state ? '12' : '5'">
+                <CCard accent-color="primary">
+                    <CCardBody>
+                        <CButton color="secondary" class="mb-3" @click="moveComponent('ListRplKlasikal')">
+                            <CIcon name="cil-arrow-left" class="mr-2" />Kembali
+                        </CButton>
+                        <CDataTable :responsive="true" :items="items" :fields="fields" hover>
+                            <template #order="{ index }">
+                                <td>{{ index + 1 }}</td>
+                            </template>
+                            <template #action>
+                                <td>
+                                    <CButton @click="add_rpl_state = true" :color="'info'">
+                                        Buat RPL
+                                        <CIcon color="white" name="cil-arrow-right" />
+                                    </CButton>
+                                </td>
+                            </template>
+                        </CDataTable>
+                    </CCardBody>
+                </CCard>
+            </CCol>
+            <CCol v-if="add_rpl_state" lg="7">
+                <CCard accent-color="primary">
+                    <CCardBody>
+                        <CRow class="mb-2">
+                            <CCol sm="12">
+                                <div>
+                                    <label for="exampleFormControlInput1" class="form-label">Fungsi layanan</label>
+                                    <input type="text" class="form-control" placeholder="Fungsi layanan"
+                                        v-model="fungsi_layanan">
+                                </div>
+                            </CCol>
+                        </CRow>
+                        <CRow class="mb-2">
+                            <CCol sm="12">
+                                <div>
+                                    <label for="exampleFormControlInput1" class="form-label">Tujuan khusus</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" placeholder="Tujuan khusus"
+                                            v-model="tujuan_khusus_form">
+                                        <button class="input-group-text bg-success text-white text-bold"
+                                            @click="tujuan_khusus.push({ id: null, value: tujuan_khusus_form }), tujuan_khusus_form = ''">
+                                            <CIcon name="cil-plus" class="text-white" />
+                                        </button>
+                                    </div>
+                                </div>
+                            </CCol>
+                        </CRow>
+                        <CRow>
+                            <CCol sm="12">
+                                <CCard v-if="tujuan_khusus.length > 0">
+                                    <CCardFooter v-for="(tk, key) in tujuan_khusus" :key="key">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            {{ tk.value }}
+                                            <button class="input-group-text bg-danger text-white text-bold"
+                                                @click="removeTujuanKhusus(key)">
+                                                <CIcon class="text-white" name="cil-x" />
+                                            </button>
+                                        </div>
+                                    </CCardFooter>
+                                </CCard>
+                            </CCol>
+                        </CRow>
+                        <CRow class="mb-2">
+                            <CCol sm="12">
+                                <div>
+                                    <label for="exampleFormControlInput1" class="form-label">Materi layanan</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" placeholder="Materi layanan"
+                                            v-model="materi_layanan_form">
+                                        <button class="input-group-text bg-success text-white text-bold"
+                                            @click="materi_layanan.push({ id: null, value: materi_layanan_form }), materi_layanan_form = ''">
+                                            <CIcon name="cil-plus" class="text-white" />
+                                        </button>
+                                    </div>
+                                </div>
+                            </CCol>
+                        </CRow>
+                        <CRow>
+                            <CCol sm="12">
+                                <CCard v-if="materi_layanan.length > 0">
+                                    <CCardFooter v-for="(ml, key) in materi_layanan" :key="key">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            {{ ml.value }}
+                                            <button class="input-group-text bg-danger text-white text-bold"
+                                                @click="removeMateriLayanan(key)">
+                                                <CIcon class="text-white" name="cil-x" />
+                                            </button>
+                                        </div>
+                                    </CCardFooter>
+                                </CCard>
+                            </CCol>
+                        </CRow>
+                        <CRow class="mb-2">
+                            <CCol sm="12">
+                                <div>
+                                    <label for="exampleFormControlInput1" class="form-label">Waktu layanan</label>
+                                    <input type="text" class="form-control"
+                                        placeholder="Waktu layanan, cth: 2 x 45 Menit" v-model="waktu_layanan">
+                                </div>
+                            </CCol>
+                        </CRow>
+                        <CRow class="mb-2">
+                            <CCol sm="12">
+                                <div>
+                                    <label for="exampleFormControlInput1" class="form-label">Sumber</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" placeholder="Sumber"
+                                            v-model="sumber_form">
+                                        <button class="input-group-text bg-success text-white text-bold"
+                                            @click="sumber.push({ id: null, value: sumber_form }), sumber_form = ''">
+                                            <CIcon name="cil-plus" class="text-white" />
+                                        </button>
+                                    </div>
+                                </div>
+                            </CCol>
+                        </CRow>
+                        <CRow>
+                            <CCol sm="12">
+                                <CCard v-if="sumber.length > 0">
+                                    <CCardFooter v-for="(s, key) in sumber" :key="key">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            {{ s.value }}
+                                            <button class="input-group-text bg-danger text-white text-bold"
+                                                @click="removeSumber(key)">
+                                                <CIcon class="text-white" name="cil-x" />
+                                            </button>
+                                        </div>
+                                    </CCardFooter>
+                                </CCard>
+                            </CCol>
+                        </CRow>
+                        <CRow class="mb-2">
+                            <CCol sm="12">
+                                <div>
+                                    <label for="exampleFormControlInput1" class="form-label">Metode/Teknik</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" placeholder="Metode/Teknik"
+                                            v-model="metode_or_teknik_form">
+                                        <button class="input-group-text bg-success text-white text-bold"
+                                            @click="metode_or_teknik.push({ id: null, value: metode_or_teknik_form }), metode_or_teknik_form = ''">
+                                            <CIcon name="cil-plus" class="text-white" />
+                                        </button>
+                                    </div>
+                                </div>
+                            </CCol>
+                        </CRow>
+                        <CRow>
+                            <CCol sm="12">
+                                <CCard v-if="metode_or_teknik.length > 0">
+                                    <CCardFooter v-for="(mot, key) in metode_or_teknik" :key="key">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            {{ mot.value }}
+                                            <button class="input-group-text bg-danger text-white text-bold"
+                                                @click="removeMetodeOrTeknik(key)">
+                                                <CIcon class="text-white" name="cil-x" />
+                                            </button>
+                                        </div>
+                                    </CCardFooter>
+                                </CCard>
+                            </CCol>
+                        </CRow>
+                        <CRow class="mb-2">
+                            <CCol sm="12">
+                                <div>
+                                    <label for="exampleFormControlInput1" class="form-label">Media/Alat</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" placeholder="Media/Alat"
+                                            v-model="media_or_alat_form">
+                                        <button class="input-group-text bg-success text-white text-bold"
+                                            @click="media_or_alat.push({ id: null, value: media_or_alat_form }), media_or_alat_form = ''">
+                                            <CIcon name="cil-plus" class="text-white" />
+                                        </button>
+                                    </div>
+                                </div>
+                            </CCol>
+                        </CRow>
+                        <CRow>
+                            <CCol sm="12">
+                                <CCard v-if="media_or_alat.length > 0">
+                                    <CCardFooter v-for="(moa, key) in media_or_alat" :key="key">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            {{ moa.value }}
+                                            <button class="input-group-text bg-danger text-white text-bold"
+                                                @click="removeMediaOrAlat(key)">
+                                                <CIcon class="text-white" name="cil-x" />
+                                            </button>
+                                        </div>
+                                    </CCardFooter>
+                                </CCard>
+                            </CCol>
+                        </CRow>
+                        <CRow v-for="(dynamic_form, key) in dynamic_forms" :key="`dynamic_form_${key}`">
+                            <CCol sm="12">
+                                <CRow class="mb-2">
+                                    <CCol sm="12">
+                                        <div>
+                                            <label for="exampleFormControlInput1" class="form-label">
+                                                {{ dynamic_form.value }}
+                                            </label>
+                                            <div class="d-flex align-items-center mb-1">
+                                                <input type="text" class="form-control font-weight-light"
+                                                    v-model="dynamic_form.value" />
+                                            </div>
+                                        </div>
+                                    </CCol>
+                                </CRow>
+                            </CCol>
+                            <CCol sm="12" v-if="dynamic_form.child.length > 0">
+                                <child-form v-for="(child, key2) in dynamic_form.child" :dynamic_form="child"
+                                    :key="`child_${key2}`" :my_key="key2"
+                                    @emit_remove_from_child="(array_of_key) => reactEmitForRemoveElement(array_of_key, key)"
+                                    @emit_edit_from_child="(array_of_key, value) => reactEmitForEditElement(array_of_key, value, key)"></child-form>
+                            </CCol>
+                        </CRow>
+                    </CCardBody>
+                </CCard>
+            </CCol>
+        </CRow>
+    </div>
+</template>
+<script>
+    import moment from 'moment'
+    import ChildForm from './ChildForm.vue'
+
+    const fields = [
+        { label: 'No', key: 'order' },
+        { label: 'Butir Angket', key: 'question' },
+        { label: 'Jml Responden', key: 'students_count' },
+        { label: '%', key: 'result_as_percent' },
+        { label: '', key: 'action' },
+    ]
+
+    export default {
+        name: "AddRplKlasikal",
+        components: {
+            ChildForm,
+        },
+        props: ['moveComponent'],
+        data() {
+            return {
+                fields: fields,
+                items: [],
+                add_rpl_state: true,
+                fungsi_layanan: "",
+                tujuan_khusus_form: "",
+                tujuan_khusus: [],
+                materi_layanan_form: "",
+                materi_layanan: [],
+                waktu_layanan: "",
+                sumber_form: "",
+                sumber: [],
+                metode_or_teknik_form: "",
+                metode_or_teknik: [],
+                media_or_alat_form: "",
+                media_or_alat: [],
+                pelaksanaan_form: "",
+                dynamic_forms: [
+                    {
+                        id: null,
+                        value: "Pelaksanaan",
+                        child: [
+                            {
+                                id: null,
+                                value: "Tahap Awal/Pendahuluan",
+                                child: [
+                                    {
+                                        id: null,
+                                        value: "Pernyataan tujuan",
+                                        child: [
+                                            {
+                                                id: null,
+                                                value: "Salam",
+                                                child: []
+                                            },
+                                            {
+                                                id: null,
+                                                value: "Menanyakan Kabar",
+                                                child: []
+                                            },
+                                            {
+                                                id: null,
+                                                value: "Ice breaker ( berbagai macam variasi).",
+                                                child: []
+                                            },
+                                            {
+                                                id: null,
+                                                value: "Menyampaikan tujuan yang akan dicapai",
+                                                child: []
+                                            },
+                                        ]
+                                    },
+                                    {
+                                        id: null,
+                                        value: "Penjelasan tentang langkah-langkah kegiatan",
+                                        child: [
+                                            {
+                                                id: null,
+                                                value: "Memberikan langkah-langkah kegiatan, tugas dan tanggung jawab peserta didik",
+                                                child: []
+                                            },
+                                            {
+                                                id: null,
+                                                value: "Kontrak layanan ( kesepakatan layanan ), hari ini kita akan melakukan kegiatan selama 1 jam pelayanan, kita sepakat akan melakukan dengan baik.",
+                                                child: []
+                                            },
+                                        ]
+                                    },
+                                    {
+                                        id: null,
+                                        value: "Mengarahkan kegiatan (konsolidasi)",
+                                        child: [
+                                            {
+                                                id: null,
+                                                value: "Guru BK/Konselor memberikan penejelasan tentang topik yang akan dibicarakan",
+                                                child: []
+                                            },
+                                        ]
+                                    },
+                                    {
+                                        id: null,
+                                        value: "Tahap peralihan ( Transisi)",
+                                        child: [
+                                            {
+                                                id: null,
+                                                value: "Guru BK/Konselor menanyakan kesiapan peserta didik melaksanakan kegiatan, dan memulai ke tahap inti",
+                                                child: []
+                                            },
+
+                                        ]
+                                    },
+                                ]
+                            },
+                            {
+                                id: null,
+                                value: "Tahap Inti",
+                                child: [
+                                    {
+                                        id: null,
+                                        value: "Kegiatan Peserta Didik",
+                                        child: [],
+                                    },
+                                    {
+                                        id: null,
+                                        value: "Kegiatan Guru BK/Konselor",
+                                        child: [],
+                                    },
+                                ]
+                            },
+                            {
+                                id: null,
+                                value: "Tahap Penutup",
+                                child: [
+                                    {
+                                        id: null,
+                                        value: "Guru BK/Konselor memberikan penguatan",
+                                        child: []
+                                    },
+                                    {
+                                        id: null,
+                                        value: "Merencanakan tindak lanjut",
+                                        child: []
+                                    },
+                                ]
+                            },
+                        ]
+                    },
+                    {
+                        id: null,
+                        value: "Evaluasi",
+                        child: [
+                            {
+                                id: null,
+                                value: "Proses",
+                                child: [
+                                    {
+                                        id: null,
+                                        value: "Kegiatan Peserta Didik",
+                                        child: [],
+                                    },
+                                    {
+                                        id: null,
+                                        value: "Kegiatan Guru BK/Konselor",
+                                        child: [],
+                                    },
+                                ],
+                            },
+                            {
+                                id: null,
+                                value: "Hasil",
+                                child: [
+                                    {
+                                        id: null,
+                                        value: "Kegiatan Peserta Didik",
+                                        child: [],
+                                    },
+                                    {
+                                        id: null,
+                                        value: "Kegiatan Guru BK/Konselor",
+                                        child: [],
+                                    },
+                                ]
+                            },
+                        ]
+                    }
+                ],
+
+            }
+        },
+        computed: {
+            survey_id() {
+                return this.$route.query.id
+            }
+        },
+        created() {
+            this.getData()
+        },
+        methods: {
+            reactEmitForRemoveElement(array_of_key, key) {
+                let el = this.dynamic_forms[key]
+                for (var i = array_of_key.length - 1; i > 0; i--) {
+                    el = el.child[array_of_key[i]]
+                }
+                el.child.splice(array_of_key[0], 1)
+
+            },
+            reactEmitForEditElement(array_of_key, value, key) {
+                let el = this.dynamic_forms[key]
+                for (var i = array_of_key.length - 1; i > 0; i--) {
+                    el = el.child[array_of_key[i]]
+                }
+                el.child[array_of_key[0]].value = value
+
+            },
+            dateTime(value) {
+                return moment(new Date(value)).format('dddd, DD MMMM YYYY, HH:mm');
+            },
+            duration(start, finish) {
+                return moment().endOf(new Date(finish)).from(new Date(start));
+            },
+            async getData() {
+                this.loading = true
+                try {
+                    const { data } = await this.axios.get(`surveys/${this.survey_id}/result-per-survey-items?filter_by_service_strategy=klasikal`, {
+                        headers: {
+                            Authorization: "Bearer " + this.$store.state.auth.token
+                        }
+                    })
+                    this.items = data.data
+                } catch (e) {
+                    console.log(e)
+                } finally {
+                    this.loading = false
+                }
+            },
+            removeTujuanKhusus(key) {
+                this.tujuan_khusus.splice(key, 1)
+            },
+            removeMateriLayanan(key) {
+                this.materi_layanan.splice(key, 1)
+            },
+            removeSumber(key) {
+                this.sumber.splice(key, 1)
+            },
+            removeMetodeOrTeknik(key) {
+                this.metode_or_teknik.splice(key, 1)
+            },
+            removeMediaOrAlat(key) {
+                this.media_or_alat.splice(key, 1)
+            },
+            removePelaksanaan(key) {
+                this.pelaksanaan.splice(key, 1)
+            },
+        }
+    }
+</script>
+<style>
+    .table td {
+        vertical-align: middle !important;
+    }
+
+    .transition {
+        transition: .5s;
+    }
+
+    .wrapper-tree>.button-add {
+        display: none;
+    }
+
+    .wrapper-tree:hover>.button-add {
+        display: block;
+    }
+</style>
+
+
+
+[
+{
+id: null,
+value: "Fungsi Layanan",
+child: [],
+},
+{
+id: null,
+value: "Tujuan Khusus",
+child: [],
+},
+{
+id: null,
+value: "Materi Layanan",
+child: [],
+},
+{
+id: null,
+value: "Waktu Layanan",
+child: [],
+},
+{
+id: null,
+value: "Sumber",
+child: [],
+},
+{
+id: null,
+value: "Metode/Teknik",
+child: [],
+},
+{
+id: null,
+value: "Media/Alat",
+child: [],
+},
+{
+id: null,
+value: "Pelaksanaan",
+child: [
+{
+id: null,
+value: "Tahap Awal/Pendahuluan",
+child: [
+{
+id: null,
+value: "Pernyataan tujuan",
+child: [
+{
+id: null,
+value: "Salam",
+child: []
+},
+{
+id: null,
+value: "Menanyakan Kabar",
+child: []
+},
+{
+id: null,
+value: "Ice breaker ( berbagai macam variasi).",
+child: []
+},
+{
+id: null,
+value: "Menyampaikan tujuan yang akan dicapai",
+child: []
+},
+]
+},
+{
+id: null,
+value: "Penjelasan tentang langkah-langkah kegiatan",
+child: [
+{
+id: null,
+value: "Memberikan langkah-langkah kegiatan, tugas dan tanggung jawab peserta didik",
+child: []
+},
+{
+id: null,
+value: "Kontrak layanan ( kesepakatan layanan ), hari ini kita akan melakukan kegiatan selama 1 jam pelayanan, kita
+sepakat akan melakukan dengan baik.",
+child: []
+},
+]
+},
+{
+id: null,
+value: "Mengarahkan kegiatan (konsolidasi)",
+child: [
+{
+id: null,
+value: "Guru BK/Konselor memberikan penejelasan tentang topik yang akan dibicarakan",
+child: []
+},
+]
+},
+{
+id: null,
+value: "Tahap peralihan ( Transisi)",
+child: [
+{
+id: null,
+value: "Guru BK/Konselor menanyakan kesiapan peserta didik melaksanakan kegiatan, dan memulai ke tahap inti",
+child: []
+},
+
+]
+},
+]
+},
+{
+id: null,
+value: "Tahap Inti",
+child: [
+{
+id: null,
+value: "Kegiatan Peserta Didik",
+child: [],
+},
+{
+id: null,
+value: "Kegiatan Guru BK/Konselor",
+child: [],
+},
+]
+},
+{
+id: null,
+value: "Tahap Penutup",
+child: [
+{
+id: null,
+value: "Guru BK/Konselor memberikan penguatan",
+child: []
+},
+{
+id: null,
+value: "Merencanakan tindak lanjut",
+child: []
+},
+]
+},
+]
+},
+{
+id: null,
+value: "Evaluasi",
+child: [
+{
+id: null,
+value: "Proses",
+child: [
+{
+id: null,
+value: "Kegiatan Peserta Didik",
+child: [],
+},
+{
+id: null,
+value: "Kegiatan Guru BK/Konselor",
+child: [],
+},
+],
+},
+{
+id: null,
+value: "Hasil",
+child: [
+{
+id: null,
+value: "Kegiatan Peserta Didik",
+child: [],
+},
+{
+id: null,
+value: "Kegiatan Guru BK/Konselor",
+child: [],
+},
+]
+},
+]
+}
+]

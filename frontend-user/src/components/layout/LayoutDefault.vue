@@ -5,16 +5,19 @@
             <sidebar ref="sidebar" @watchexpanded="watchexpandedleft"></sidebar>
             <main class="k-main py-4 px-5">
                 <div class="drawer-toggles d-flex">
-                    <button @click="$refs.sidebar.expand()" v-if="!expanded_left" class="text-large drawer-toggler drawer-left-toggle">
+                    <button @click="$refs.sidebar.expand()" v-if="!expanded_left"
+                        class="text-large drawer-toggler drawer-left-toggle">
                         <i class="bx bx-chevron-right bx-sm align-middle"></i>
                     </button>
-                    <button @click="$refs.angketnavigation.expand()" v-if="!expanded_right && angketnavigation" class="text-large drawer-toggler drawer-right-toggle">
+                    <button @click="$refs.angketnavigation.expand()" v-if="!expanded_right && angketnavigation"
+                        class="text-large drawer-toggler drawer-right-toggle">
                         <i class="bx bx-chevron-left bx-sm align-middle"></i>
                     </button>
                 </div>
                 <slot></slot>
             </main>
-            <angket-navigation v-if="angketnavigation" ref="angketnavigation" :token="token" @watchexpanded="watchexpandedright"></angket-navigation>
+            <angket-navigation v-if="angketnavigation" ref="angketnavigation" :token="token"
+                @watchexpanded="watchexpandedright"></angket-navigation>
         </div>
     </template>
     <ErrorID v-else :message="message"></ErrorID>
@@ -65,7 +68,9 @@ export default {
         window.addEventListener('resize', (p) => {
             if (p.target.innerWidth < 1390) {
                 this.$refs.sidebar.expand(false)
-                this.$refs.angketnavigation.expand(false)
+                if (this.angketnavigation) {
+                    this.$refs.angketnavigation.expand(false)
+                }
             }
         })
     },
@@ -112,7 +117,7 @@ export default {
     background-color: #dee2e6;
     box-shadow: 0 0.125rem 0.25rem rgb(0 0 0 / 8%);
     transition: padding 200ms;
-    border:0;
+    border: 0;
 }
 
 .drawer-toggles .drawer-left-toggle {
@@ -133,5 +138,4 @@ export default {
 
 .drawer-toggles .drawer-toggler:hover {
     padding-left: 20px;
-}
-</style>
+}</style>

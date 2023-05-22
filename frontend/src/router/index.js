@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import store from '@/store/index'
-import axios from 'axios'
 
 
 // Views
@@ -17,15 +16,15 @@ const GuruPage = () => import('@/views/Guru/GuruPage')
 const KelasPage = () => import('@/views/Kelas/KelasPage')
 const Assign = () => import('@/views/Kelas/Assign')
 const SoalPage = () => import('@/views/SoalAkpd/SoalPage')
-const JawabanPage = () => import('@/views/JawabanPeserta/JawabanPage')
-const ProfileKelasParent = () => import('@/views/ProfileKelas/Parent')
-const ProfileKelasPage = () => import('@/views/ProfileKelas/Page')
-const ProfileKelasPerKelasPage = () => import('@/views/ProfileKelas/PerKelasPage')
-const ProfileKelasPerAngketPage = () => import('@/views/ProfileKelas/PerAngketPage')
+// const ProfileKelasParent = () => import('@/views/ProfileKelas/Parent')
+// const ProfileKelasPage = () => import('@/views/ProfileKelas/Page')
+// const ProfileKelasPerKelasPage = () => import('@/views/ProfileKelas/PerKelasPage')
+// const ProfileKelasPerAngketPage = () => import('@/views/ProfileKelas/PerAngketPage')
 const AngketPage = () => import('@/views/Angket/AngketPage')
 const Angket = () => import('@/views/Angket/Angket')
-const SetelanAngket = () => import('@/components/Angket/Setelan')
 const HasilAngket = () => import('@/components/Angket/Hasil')
+const HasilPerButirAngket = () => import('@/components/Angket/HasilPerButirAngket')
+const RplKlasikal = () => import('@/components/Angket/RplKlasikal/RplKlasikal')
 
 
 // Views - Pages
@@ -196,49 +195,41 @@ function configRoutes() {
         requiredLogin: true
       },
     },
-    {
-      path: '/akpd/jawaban',
-      name: 'Jawaban Peserta Didik',
-      component: JawabanPage,
-      meta: {
-        requiredLogin: true
-      },
-    },
-    {
-      path: '/analisis',
-      component: ProfileKelasParent,
-      meta: {
-        requiredLogin: true
-      },
-      children: [
-        {
-          path: '/',
-          name: 'Analisis Profile Kelas Home',
-          component: ProfileKelasPage,
-        },
-        {
-          path: 'kelas/:id',
-          name: 'Analisis Profile Kelas View',
-          component: ProfileKelasPerKelasPage,
-        },
-        {
-          path: 'angket/:id/butir',
-          name: 'Analisis Profil Tiap Butir Soal',
-          component: ProfileKelasPerAngketPage,
-          meta: {
-            type: 'butir',
-          },
-        },
-        {
-          path: 'angket/:id/siswa',
-          name: 'Analisis Profile Tiap Siswa',
-          component: ProfileKelasPerAngketPage,
-          meta: {
-            type: 'siswa',
-          },
-        },
-      ]
-    },
+    // {
+    //   path: '/analisis',
+    //   component: ProfileKelasParent,
+    //   meta: {
+    //     requiredLogin: true
+    //   },
+    //   children: [
+    //     {
+    //       path: '/',
+    //       name: 'Analisis Profile Kelas Home',
+    //       component: ProfileKelasPage,
+    //     },
+    //     {
+    //       path: 'kelas/:id',
+    //       name: 'Analisis Profile Kelas View',
+    //       component: ProfileKelasPerKelasPage,
+    //     },
+    //     {
+    //       path: 'angket/:id/butir',
+    //       name: 'Analisis Profil Tiap Butir Soal',
+    //       component: ProfileKelasPerAngketPage,
+    //       meta: {
+    //         type: 'butir',
+    //       },
+    //     },
+    //     {
+    //       path: 'angket/:id/siswa',
+    //       name: 'Analisis Profile Tiap Siswa',
+    //       component: ProfileKelasPerAngketPage,
+    //       meta: {
+    //         type: 'siswa',
+    //       },
+    //     },
+    //   ]
+    // },
     {
       path: '/admin/angket',
       name: "AngketPage",
@@ -251,23 +242,31 @@ function configRoutes() {
       path: '/angket',
       name: "Angket",
       component: Angket,
-      redirect: { path: "/angket/setelan" },
+      redirect: { path: "/angket/analisis-siswa" },
       meta: {
         requiredLogin: true
       },
       children: [
         {
-          path: 'setelan',
-          name: "Setelan",
-          component: SetelanAngket,
+          path: 'analisis-siswa',
+          name: "Hasil",
+          component: HasilAngket,
           meta: {
             requiredLogin: true
           },
         },
         {
-          path: 'hasil',
-          name: "Hasil",
-          component: HasilAngket,
+          path: 'analisis-butir',
+          name: "HasilPerButir",
+          component: HasilPerButirAngket,
+          meta: {
+            requiredLogin: true
+          },
+        },
+        {
+          path: 'rpl-klasikal',
+          name: "RplKlasikal",
+          component: RplKlasikal,
           meta: {
             requiredLogin: true
           },
@@ -285,26 +284,15 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  if (!store.getters['auth/isAuthenticated'] && to.meta.requiredLogin) {
-    next({ name: 'Login' })
-  } else if (store.getters['auth/isAuthenticated'] && to.meta.requiredLogin) {
-    let headers = {
-      headers: {
-        Authorization: "Bearer " + store.state.auth.token
-      }
+  if (to.matched.some(record => record.meta.requiredLogin)) {
+    if (store.getters['auth/isAuthenticated']) {
+      next()
+      return
     }
-    axios.get('me', headers).then(response => {
-      store.dispatch('auth/logedAs', response.data.data.as)
-    }).catch(() => {
-      store.dispatch('auth/logout')
-      if (from.name == "Login") {
-        next({ name: 'Login' })
-      } else {
-        next({ name: 'AdminLogin' })
-      }
-    })
-
+    console.log("trs")
+    next({ name: "Login" })
+  } else {
+    next()
   }
-  next()
 })
 export default router

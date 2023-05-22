@@ -9,33 +9,24 @@
                 <CForm @submit.prevent="login">
                   <h1>Login</h1>
                   <p class="text-muted">Sign In to your account</p>
-                  <CInputRadio inline type="radio" name="type" value="schools" label="Sekolah" @input="type = $event.target.value" :checked="true"/>
-                  <CInputRadio inline type="radio" name="type" value="teachers" label="Guru" @input="type = $event.target.value"/>
-                  <CInput
-                    v-if="type=='schools'"
-                    type="email"
-                    placeholder="Email"
-                    autocomplete="email"
-                    v-model="email"
-                  >
-                    <template #prepend-content><CIcon name="cil-user"/></template>
+                  <CInputRadio inline type="radio" name="type" value="schools" label="Sekolah"
+                    @input="type = $event.target.value" :checked="true" />
+                  <CInputRadio inline type="radio" name="type" value="teachers" label="Guru"
+                    @input="type = $event.target.value" />
+                  <CInput v-if="type == 'schools'" type="email" placeholder="Email" autocomplete="email" v-model="email">
+                    <template #prepend-content>
+                      <CIcon name="cil-user" />
+                    </template>
                   </CInput>
-                  <CInput
-                    v-else
-                    type="text"
-                    placeholder="Email"
-                    autocomplete="Email"
-                    v-model="email"
-                  >
-                    <template #prepend-content><CIcon name="cil-user"/></template>
+                  <CInput v-else type="text" placeholder="Email" autocomplete="Email" v-model="email">
+                    <template #prepend-content>
+                      <CIcon name="cil-user" />
+                    </template>
                   </CInput>
-                  <CInput
-                    placeholder="Password"
-                    type="password"
-                    autocomplete="curent-password"
-                    v-model="password"
-                  >
-                    <template #prepend-content><CIcon name="cil-lock-locked"/></template>
+                  <CInput placeholder="Password" type="password" autocomplete="curent-password" v-model="password">
+                    <template #prepend-content>
+                      <CIcon name="cil-lock-locked" />
+                    </template>
                   </CInput>
                   <CRow>
                     <CCol col="6" class="text-left">
@@ -77,23 +68,23 @@
 <script>
 export default {
   name: 'Login',
-  data(){
+  data() {
     return {
-      email:"",
-      password:"",
-      type:"schools"
+      email: "",
+      password: "",
+      type: "schools"
     }
   },
   methods: {
-    login(){
+    login() {
       this.axios.post("/login", {
-        email:this.email,
-        password:this.password,
+        email: this.email,
+        password: this.password,
         type: this.type
       }).then(response => {
         localStorage.setItem("ADMIN_PAGE_TOKEN", response.data.data.token)
-        this.$store.dispatch('auth/authenticated', {token:response.data.data.token, as:response.data.data.as})
-        this.$router.push({name:"DashboardPage"})
+        this.$store.dispatch('auth/authenticated', { token: response.data.data.token, as: response.data.data.as })
+        this.$router.push({ name: "DashboardPage" })
       }).catch(e => {
         this.$swal({
           icon: 'error',

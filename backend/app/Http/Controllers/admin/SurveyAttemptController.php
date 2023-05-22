@@ -3,10 +3,16 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\admin\SurveyAttemptResource;
+use App\Http\Resources\admin\SurveyAttemptResultPerSurveyItemsResource;
 use App\Http\Resources\siswa\SurveyResource;
+use App\Models\Survey;
 use App\Models\SurveyAttempt;
+use App\Models\SurveyItem;
+use App\Models\SurveyResponse;
 use App\Repositories\ResponseRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class SurveyAttemptController extends Controller
 {
@@ -17,23 +23,43 @@ class SurveyAttemptController extends Controller
         $this->responseRepository = $rr;
     }
 
-    public function show($id, Request $request)
+    public function resultOfSurveys($survey_id, Request $request)
     {
+        // SELECT students.name as nama, sum(answer) as answer_sum FROM `survey_responses` INNER JOIN survey_attempts ON survey_attempts.id=survey_responses.survey_attempt_id INNER JOIN students ON students.id=survey_attempts.student_id WHERE survey_attempts.survey_id="50224ef8-964a-4e35-cj24-be7821bcd219" GROUP BY survey_attempt_id;
         try {
             $max = 10;
             $page = isset($request->page) ? ((int)$request->page >= 1 ? (int)$request->page : 1)  : 1;
-            $count_attempts = SurveyAttempt::whereSurveyId($id)->count();
-            $attempts = SurveyAttempt::whereSurveyId($id)->withSiswa()->pagination($max);
-            // $angket = Survey::whereIn('class_id', $class_id)->paginate($max);
-            $data = SurveyResource::collection($attempts);
+            $query_attempts = SurveyAttempt::select("survey_attempts.*", "surveys.number_of_survey_items")->withStudent()->where("survey_id", $survey_id)->join("surveys", "surveys.id", "=", "survey_attempts.survey_id");
+            $count_attempts = count($query_attempts->get());
+            $attempts = $query_attempts->paginate($max);
+            $data = SurveyAttemptResource::collection($attempts);
             $pagination = [
                 'max_page' => ceil($count_attempts / $max),
                 'next' => null
             ];
             if ($page < $pagination['max_page']) {
-                $pagination['next'] = route('angket.index', ['page' => $page + 1]);
+                $pagination['next'] = route('surveys.result_of_surveys', ['survey_id' => $survey_id, 'page' => $page + 1]);
             }
             return $this->responseRepository->ResponseSuccess($data, "Successfull", 200, $pagination);
+        } catch (\Exception $e) {
+            return $this->responseRepository->ResponseError($e->getMessage());
+        }
+    }
+
+    public function resultOfSurveysPerSurveyItems(Request $request, $survey_id)
+    {
+        try {
+            $sum_result_of_survey_items = SurveyResponse::JoinSurveyAttemptAndwhereSurveyId($survey_id)->where("answer", 1)->count();
+
+            $result_per_survey_items = SurveyResponse::with(["surveyItem.serviceImplementationPlan" => function ($q) use ($survey_id) {
+                $q->where('survey_id', $survey_id);
+            }])->joinSurveyAttemptAndwhereSurveyId($survey_id)->select("survey_items.id as survey_item_id", "survey_items.order", "survey_items.question", DB::raw("SUM(answer) as result, (SUM(answer) / $sum_result_of_survey_items * 100) as result_as_percent, sum(case when answer=1 then 1 else 0 end) as students_count"))->joinSurveyItems()->groupBy("survey_items.id", "survey_items.question", "survey_items.order")->orderBy("order");
+
+            if (isset($request->filter_by_service_strategy)) {
+                $result_per_survey_items = $result_per_survey_items->where("survey_items.service_strategy", $request->filter_by_service_strategy);
+            }
+            $data = SurveyAttemptResultPerSurveyItemsResource::collection($result_per_survey_items->get());
+            return $this->responseRepository->ResponseSuccess($data, "Successfull", 200);
         } catch (\Exception $e) {
             return $this->responseRepository->ResponseError($e->getMessage());
         }

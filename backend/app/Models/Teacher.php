@@ -29,7 +29,13 @@ class Teacher extends Authenticatable
         'remember_token',
     ];
 
-    public function class() {
+    public function school()
+    {
+        return $this->hasOne(School::class, 'school_id', 'id');
+    }
+
+    public function class()
+    {
         return $this->hasOne(ClassModel::class, 'teacher_id', 'id');
     }
 }

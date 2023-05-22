@@ -15,10 +15,10 @@
                                         </tr>
                                     </thead>
                                     <tbody class="table-border-bottom-0">
-                                        <tr v-for="soal in lists">
-                                            <td>{{ soal.order }}</td>
+                                        <tr v-for="survey_item in lists">
+                                            <td>{{ survey_item.order }}</td>
                                             <td>
-                                                <template v-if="soal.answered">Jawaban tersimpan</template>
+                                                <template v-if="survey_item.answered">Jawaban tersimpan</template>
                                                 <template v-else>Belum dijawab</template>
                                             </td>
                                         </tr>
@@ -33,7 +33,7 @@
                             </router-link>
                         </div>
                         <div class="text-center">
-                            <button @click="finishattempt()" class="btn btn-primary mb-3">
+                            <button @click="finishAttempt()" class="btn btn-primary mb-3">
                                 Kirim semua dan selesai
                             </button>
                         </div>
@@ -44,7 +44,6 @@
     </div>
 </template>
 <script>
-import axios from 'axios'
 import { mapState } from 'pinia'
 import { useLayoutStore } from '@/stores/layout'
 import Swal from 'sweetalert2'
@@ -61,7 +60,6 @@ export default {
         return {
             error: false,
             message: "",
-            url: import.meta.env.VITE_API_URL,
             loading: false,
             lists: []
         }
@@ -73,7 +71,7 @@ export default {
         async getData() {
             try {
                 this.loading = true
-                const { data } = await axios.get(`${this.url}/angket/${this.id}/attempt/lists`, {
+                const { data } = await this.axios.get(`surveys/${this.id}/attempt/lists`, {
                     headers: {
                         Authorization: `Bearer ${this.token}`
                     }
@@ -90,7 +88,7 @@ export default {
                 }
             }
         },
-        finishattempt() {
+        finishAttempt() {
             let not_answered = this.lists.filter((p) => {
                 return !p.answered
             }).length
@@ -126,7 +124,7 @@ export default {
         },
         async axiosFinishAttempt() {
             try {
-                await axios.post(`${this.url}/angket/${this.id}/finishattempt`, {}, {
+                await this.axios.post(`surveys/${this.id}/finish-attempt`, {}, {
                     headers: {
                         Authorization: `Bearer ${this.token}`
                     }

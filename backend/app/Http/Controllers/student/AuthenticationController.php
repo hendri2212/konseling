@@ -29,7 +29,6 @@ class AuthenticationController extends Controller
             $user = Student::where('email', $request->email)->first();
             $tokenName = 'students-token';
             if ($user && Hash::check($request->password, $user->password)) {
-                // $abilities =  $user->append('abilities')->abilities;
                 $token = $user->createToken($tokenName);
                 $data = [
                     'token' => $token->plainTextToken,
@@ -44,9 +43,9 @@ class AuthenticationController extends Controller
         }
     }
 
-    // public function me() {
-    //     $user = auth()->user()->with('class')->first();
-    //     return $this->responseRepository->ResponseSuccess($user);
-    //     // return auth()->user()->role->permission->append('permission_merge')->pluck('permission_merge');
-    // }
+    public function me() {
+        $user = auth()->user()->with('class')->first();
+        return $this->responseRepository->ResponseSuccess($user);
+        // return auth()->user()->role->permission->append('permission_merge')->pluck('permission_merge');
+    }
 }

@@ -3,9 +3,9 @@
     <h4 class="mb-2">Selamat Datang! 👋</h4>
     <form id="formAuthentication" class="mb-3" method="POST" @submit.prevent="login">
         <div class="mb-3">
-            <label for="username" class="form-label">Username</label>
-            <input type="text" class="form-control" id="username" name="username"
-                placeholder="Masukkan nama pengguna anda" autofocus v-model="username" />
+            <label for="email" class="form-label">Email</label>
+            <input type="text" class="form-control" id="email" name="email"
+                placeholder="Masukkan nama pengguna anda" autofocus v-model="email" />
         </div>
         <div class="mb-3 form-password-toggle">
             <div class="d-flex justify-content-between">
@@ -33,7 +33,6 @@
     </form>
 </template>
 <script>
-import axios from 'axios'
 import Swal from 'sweetalert2'
 import LayoutAuthentication from '../components/layout/LayoutAuthentication.vue'
 export default {
@@ -46,15 +45,14 @@ export default {
     },
     data() {
         return {
-            url: import.meta.env.VITE_API_URL,
-            username: "",
+            email: "",
             password: "",
         }
     },
     methods: {
         async login() {
             try {
-                if (this.username.trim() == "" || this.password.trim() == "") {
+                if (this.email.trim() == "" || this.password.trim() == "") {
                     Swal.fire({
                         icon: 'error',
                         title: 'Upss...',
@@ -64,11 +62,11 @@ export default {
                 }
 
                 let payload = {
-                    username: this.username,
+                    email: this.email,
                     password: this.password
                 }
 
-                const { data } = await axios.post(`${this.url}/login`, payload)
+                const { data } = await this.axios.post(`login`, payload)
                 this.authenticated(data.data.token)
                 this.$router.push({ name: "Dashboard" })
             } catch (e) {

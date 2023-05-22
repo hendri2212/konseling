@@ -1,5 +1,7 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
+import axios from 'axios'
+import VueAxios from 'vue-axios'
 
 import App from './App.vue'
 import router from './router'
@@ -12,6 +14,9 @@ import 'moment/locale/id.js';
 
 const app = createApp(App)
 
+axios.defaults.baseURL = import.meta.env.VITE_API_URL
+
+app.use(VueAxios, axios)
 app.use(createPinia())
 app.use(router)
 

@@ -9,9 +9,9 @@
                                 <li class="breadcrumb-item">
                                     <router-link :to="{ name: 'Dashboard' }">Dashboard</router-link>
                                 </li>
-                                <li v-if="$route.name == 'Angket'" class="breadcrumb-item active">{{ nama }}</li>
+                                <li v-if="$route.name == 'Angket'" class="breadcrumb-item active">{{ name }}</li>
                                 <li v-if="$route.name == 'AttemptSummary' || $route.name == 'Attempt' || $route.name == 'AttemptReview'" class="breadcrumb-item">
-                                    <router-link :to="{ name: 'Angket', query: { id: $route.query.id } }">{{ nama }}</router-link>
+                                    <router-link :to="{ name: 'Angket', query: { id: $route.query.id } }">{{ name }}</router-link>
                                 </li>
                                 <li v-if="$route.name == 'Attempt'" class="breadcrumb-item active">Pengerjaan angket</li>
                                 <li v-if="$route.name == 'AttemptReview'" class="breadcrumb-item active">Ulasan pengerjaan angket</li>
@@ -19,7 +19,7 @@
 
                             </ol>
                         </nav>
-                        <h3 class="text-primary mb-0">{{ nama }}</h3>
+                        <h3 class="text-primary mb-0">{{ name }}</h3>
                     </div>
                 </div>
             </div>
@@ -28,7 +28,8 @@
     </div>
 </template>
 <script>
-import axios from 'axios'
+import { mapActions } from 'pinia'
+import { useAttemptStore } from '@/stores/attempt'
 export default {
     name: "AngketParent",
     props: {
@@ -38,9 +39,8 @@ export default {
         return {
             error: false,
             message: "",
-            url: import.meta.env.VITE_API_URL,
             loaded: false,
-            nama: ""
+            name: ""
         }
     },
     async created() {
@@ -54,13 +54,16 @@ export default {
             this.message = "ID angket tidak valid"
             return;
         }
+
+        this.setSurveyId(this.$route.query.id.trim())
+
         try {
-            const { data } = await axios.get(`${this.url}/angket/${this.$route.query.id.trim()}`, {
+            const { data } = await this.axios.get(`surveys/${this.$route.query.id.trim()}`, {
                 headers: {
                     Authorization: `Bearer ${this.token}`
                 }
             })
-            this.nama = data.data.nama
+            this.name = data.data.name
         } catch (e) {
             this.error = true
             if (e.name == "AxiosError") {
@@ -73,5 +76,8 @@ export default {
             this.loaded = true
         }
     },
+    methods: {
+        ...mapActions(useAttemptStore, ['setSurveyId']),
+    }
 }
 </script>

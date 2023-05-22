@@ -29,13 +29,13 @@ class Student extends Authenticatable
         'remember_token',
     ];
 
+    public function school()
+    {
+        return $this->hasOne(School::class, 'school_id', 'id');
+    }
+
     public function class()
     {
         return $this->belongsTo(ClassModel::class, 'class_id', 'id');
-    }
-
-    public function survey_responses()
-    {
-        return $this->hasMany(SurveyResponse::class, 'student_id', 'id');
     }
 }

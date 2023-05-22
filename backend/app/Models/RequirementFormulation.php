@@ -14,6 +14,11 @@ class RequirementFormulation extends Model
     public $incrementing = false;
     public $timestamps = false;
     protected $fillable = [
+        'id',
+        'name',
+        'service_objective',
+        'topic_id',
+        'skkpd_id',
         'created_at',
         'updated_at',
     ];

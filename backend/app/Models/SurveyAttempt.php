@@ -28,6 +28,10 @@ class SurveyAttempt extends Model
         return $this->belongsTo(Student::class, 'student_id', 'id');
     }
 
+    public function surveyResponses() {
+        return $this->hasMany(SurveyResponse::class, 'survey_attempt_id', 'id');
+    }
+
     public function scopeWhereClassId($query, $id) {
         return $query->where('class_id', $id);
     }

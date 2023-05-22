@@ -16,8 +16,9 @@ class CreateSurveyItemsTable extends Migration
         Schema::create('survey_items', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->text('question');
-            $table->uuid('requirement_formulation_id')->nullable();
             $table->integer('order')->nullable();
+            $table->string('service_strategy')->nullable();
+            $table->uuid('requirement_formulation_id')->nullable();
             $table->bigInteger('created_at')->nullable();
             $table->bigInteger('updated_at')->nullable();
             // relasi

@@ -8,11 +8,7 @@ use Illuminate\Support\Facades\Hash;
 
 class StudentSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
+
     public function run()
     {
         $student = new Student;

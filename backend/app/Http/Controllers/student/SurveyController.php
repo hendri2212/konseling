@@ -13,6 +13,7 @@ use App\Models\SurveyItem;
 use App\Repositories\ResponseRepository;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class SurveyController extends Controller
@@ -81,7 +82,7 @@ class SurveyController extends Controller
 
 
 
-    public function startattempt($id)
+    public function startAttempt($id)
     {
         try {
             $angket = Survey::where('class_id', auth()->user()->class_id)->where('id', $id)->first();
@@ -95,6 +96,7 @@ class SurveyController extends Controller
                 $attempt->id = Str::uuid();
                 $attempt->survey_id = $id;
                 $attempt->student_id = auth()->id();
+                $attempt->school_id = auth()->user()->school->id;
                 $attempt->created_at = round(microtime(true) * 1000);
                 $attempt->timestart = round(microtime(true) * 1000);
                 $attempt->save();
@@ -107,19 +109,28 @@ class SurveyController extends Controller
         }
     }
 
-    public function finishattempt($id)
+    public function finishAttempt($id)
     {
         try {
-            $angket = Survey::where('class_id', auth()->user()->class_id)->where('id', $id)->first();
-            if (!$angket) {
+            $survey = Survey::where('class_id', auth()->user()->class_id)->where('id', $id)->first();
+            if (!$survey) {
                 return $this->responseRepository->ResponseError("NOT_FOUND", "Survey tidak ditemukan!", 404);
             }
 
-            $attempt = SurveyAttempt::where('survey_id', $angket->id)->where('state', 'inprogress')->where('student_id', auth()->id())->first();
+            $attempt = SurveyAttempt::where('survey_id', $survey->id)->where('state', 'inprogress')->where('student_id', auth()->id())->first();
             if (!$attempt) {
                 return $this->responseRepository->ResponseError("ATTEMPT_NOT_FOUND", "Sesi pengisian angket tidak ditemukan!", 404);
             }
 
+            $is_all_answered = SurveyResponse::whereSurveyAttemptId($attempt->id)->count() >= $survey->number_of_survey_items;
+            if (!$is_all_answered) {
+                return $this->responseRepository->ResponseError("HAS_QUESTION_NOT_ANSWERED", "Ada butir angket yang belum dijawab!", 422);
+            }
+
+            // menghitung nilai yang didapatkan
+            // saat ini karena yang dibutuhkan hanya iya atau tidak
+            // jadi nilai hanya 1 atau 0
+            $attempt->sumgrades = SurveyResponse::whereSurveyAttemptId($attempt->id)->where("answer", 1)->count();
             $attempt->state = "finished";
             $attempt->timefinish = round(microtime(true) * 1000);
             $attempt->updated_at = round(microtime(true) * 1000);
@@ -145,8 +156,8 @@ class SurveyController extends Controller
                 return $this->responseRepository->ResponseError("NOT_FOUND", "Sesi pengisian angket tidak ditemukan!", 404);
             }
 
-            $lists = SurveyItem::with(['survey_responses' => function ($query) use ($attempt) {
-                $query->select('survey_item_id')->where('survey_attempt_id', $attempt->id);
+            $lists = SurveyItem::with(['surveyResponse' => function ($query) use ($attempt) {
+                $query->select('survey_item_id')->whereSurveyAttemptId($attempt->id);
             }])->orderBy('order', 'asc')->get();
             return $this->responseRepository->ResponseSuccess(ListSurveyItemResource::collection($lists), "Successfull", 200);
         } catch (\Exception $e) {
@@ -154,22 +165,22 @@ class SurveyController extends Controller
         }
     }
 
-    public function attempt(Request $request, $id)
+    public function surveyItemAndResponse(Request $request, $id)
     {
         try {
             $page = $request->page ? $request->page : 0;
-            $angket = Survey::where('class_id', auth()->user()->class_id)->where('id', $id)->first();
-            if (!$angket) {
+            $survey = Survey::where('class_id', auth()->user()->class_id)->where('id', $id)->first();
+            if (!$survey) {
                 return $this->responseRepository->ResponseError("NOT_FOUND", "Survey tidak ditemukan!", 404);
             }
 
-            $attempt = SurveyAttempt::where('survey_id', $angket->id)->where('student_id', auth()->id())->first();
+            $attempt = SurveyAttempt::where('survey_id', $survey->id)->where('student_id', auth()->id())->first();
             if (!$attempt) {
                 return $this->responseRepository->ResponseError("NOT_FOUND", "Sesi pengisian angket tidak ditemukan!", 404);
             }
 
             $survey_item = SurveyItem::orderBy('order', 'asc')->skip($page)->take(1)->first();
-            $survey_response = SurveyResponse::where('survey_attempt_id', $attempt->id)->where('survey_item_id', $survey_item->id)->first();
+            $survey_response = SurveyResponse::whereSurveyAttemptId($attempt->id)->where('survey_item_id', $survey_item->id)->first();
             $meta = [
                 'number' => $survey_item->order,
                 'next_number' => $survey_item->order == SurveyItem::max('order') ? null : $survey_item->order + 1,
@@ -178,7 +189,7 @@ class SurveyController extends Controller
 
             $data = [
                 'survey_item' => $survey_item,
-                'survey_responses' => $survey_response,
+                'survey_response' => $survey_response,
                 'meta' => $meta
             ];
             return $this->responseRepository->ResponseSuccess($data, "Successfull", 200);
@@ -204,7 +215,7 @@ class SurveyController extends Controller
                 return $this->responseRepository->ResponseError("NOT_FOUND", "Butir angket tidak ditemukan!", 404);
             }
 
-            $survey_response = SurveyResponse::where('survey_attempt_id', $attempt->id)->where('survey_item_id', $survey_item->id)->first();
+            $survey_response = SurveyResponse::whereSurveyAttemptId($attempt->id)->where('survey_item_id', $survey_item->id)->first();
             if (!$survey_response) {
                 $survey_response = new SurveyResponse();
                 $survey_response->id = Str::uuid();

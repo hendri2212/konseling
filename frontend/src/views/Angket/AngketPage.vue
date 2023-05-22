@@ -11,15 +11,15 @@
       </CCardHeader>
 
       <CCardBody>
-        <CDataTable :responsive="true" v-if="datatable" :items="items" :fields="fields" hover>
-          <template #nama="{ item }">
-            <td><router-link :to="{ name: 'Angket', query: { id:item.id } }">{{ item.nama }}</router-link></td>
+        <CDataTable :responsive="false" v-if="datatable" :items="items" :fields="fields" hover>
+          <template #name="{ item }">
+            <td><router-link :to="{ name: 'Angket', query: { id: item.id } }">{{ item.name }}</router-link></td>
           </template>
-          <template #kelas="{ item }">
-            <td>{{ item.kelas.nama }}</td>
+          <template #class="{ item }">
+            <td>{{ item.class.name }}</td>
           </template>
-          <template #tanggal="{ item }">
-            <td>{{ getDate(item.tanggal) }}</td>
+          <template #date="{ item }">
+            <td>{{ getDate(item.date) }}</td>
           </template>
           <template #status="{ item }">
             <td>
@@ -47,7 +47,7 @@
                   Edit
                 </CDropdownItem> -->
                 <CDropdownItem
-                  @click="(deleteData.index = index), (deleteData.nama = item.nama), (deleteData.modal = true)">
+                  @click="(deleteData.index = index), (deleteData.name = item.name), (deleteData.modal = true)">
                   <CIcon name="cil-trash" class="mr-1" />
                   Delete
                 </CDropdownItem>
@@ -61,7 +61,7 @@
         </CDataTable>
 
         <CModal title="Hapus Angket" color="danger" :show.sync="deleteData.modal">
-          <span>Hapus angket {{ deleteData.nama }} ?</span>
+          <span>Hapus angket {{ deleteData.name }} ?</span>
           <template #footer>
             <CButton color="primary" variant="outline" @click="deleteData.modal = false">Batal</CButton>
             <CButton @click="remove">Oke</CButton>
@@ -79,9 +79,9 @@ import Loading from '@/components/Loading.vue'
 
 // fields
 const fields = [
-  { label: 'Angket', key: 'nama' },
-  { label: 'Kelas', key: 'kelas' },
-  { label: 'Tanggal Angket', key: 'tanggal' },
+  { label: 'Angket', key: 'name' },
+  { label: 'Kelas', key: 'class' },
+  { label: 'Tanggal Angket', key: 'date' },
   { label: 'Status', key: 'status' },
   { label: 'Edit', key: 'actions' }
 ]
@@ -104,7 +104,7 @@ export default {
       fields,
       deleteData: {
         index: -1,
-        nama: '',
+        name: '',
         modal: false,
       },
     };
@@ -115,13 +115,13 @@ export default {
   methods: {
     getDate(milis) {
       let date = new Date(milis)
-      return `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
+      return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
     },
     async getData(param = null) {
       let page = param ?? 1
       this.loading = true
       try {
-        const { data } = await this.axios.get(`angket?page=${page}`, {
+        const { data } = await this.axios.get(`surveys?page=${page}`, {
           headers: {
             Authorization: "Bearer " + this.$store.state.auth.token
           }
@@ -150,7 +150,7 @@ export default {
       }
       try {
         // di sini fungsi axios
-        const { data } = await this.axios.delete(`angket/${this.items[this.deleteData.index].id}`, {
+        const { data } = await this.axios.delete(`surveys/${this.items[this.deleteData.index].id}`, {
           headers: {
             Authorization: "Bearer " + this.$store.state.auth.token
           }
@@ -179,12 +179,13 @@ export default {
       } finally {
         this.deleteData.index = -1
         this.deleteData.modal = false
+        this.deleteData.name = ""
         this.loading = false
         this.getData(this.pagination.active)
       }
     },
     bukaAngket(id) {
-      this.axios.patch(`angket/${id}/open`, {}, {
+      this.axios.patch(`surveys/${id}/open`, {}, {
         headers: {
           Authorization: 'Bearer ' + this.$store.state.auth.token
         }
@@ -215,7 +216,7 @@ export default {
       })
     },
     tutupAngket(id) {
-      this.axios.patch(`angket/${id}/close`, {}, {
+      this.axios.patch(`surveys/${id}/close`, {}, {
         headers: {
           Authorization: 'Bearer ' + this.$store.state.auth.token
         }
@@ -240,6 +241,4 @@ export default {
 };
 </script>
 
-<style>
-
-</style>
+<style></style>

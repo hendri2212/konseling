@@ -15,16 +15,19 @@ class CreateSurveyAttemptsTable extends Migration
     {
         Schema::create('survey_attempts', function (Blueprint $table) {
             $table->uuid('id')->primary();
+            $table->string('state')->default('inprogress');
+            $table->integer('sumgrades')->nullable();
             $table->uuid('survey_id');
             $table->uuid('student_id');
-            $table->string('state')->default('inprogress');
+            $table->uuid('school_id');
             $table->bigInteger('timestart')->nullable();
             $table->bigInteger('timefinish')->nullable();
             $table->bigInteger('created_at')->nullable();
             $table->bigInteger('updated_at')->nullable();
             //relasi
-            $table->foreign('survey_id')->references('id')->on('surveys')->onDelete('cascade');
-            $table->foreign('student_id')->references('id')->on('students')->onDelete('cascade');
+            $table->foreign('survey_id')->references('id')->on('surveys');
+            $table->foreign('student_id')->references('id')->on('students');
+            $table->foreign('school_id')->references('id')->on('schools');
         });
     }
 

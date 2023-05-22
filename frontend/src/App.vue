@@ -25,12 +25,26 @@ export default {
       return "TheBlankContainer"
 
     }
+  },
+  created() {
+    if (this.$store.getters['auth/isAuthenticated']) {
+      let headers = {
+        headers: {
+          Authorization: "Bearer " + this.$store.state.auth.token
+        }
+      }
+      this.axios.get('me', headers).then(response => {
+        this.$store.dispatch('auth/logedAs', response.data.data.as)
+      }).catch(() => {
+        this.$store.dispatch('auth/logout')
+        this.$router.push({ name: 'Login' })
+      })
+    }
   }
 }
 </script>
 
 <style>
-
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.3s ease-in-out;
@@ -40,6 +54,7 @@ export default {
 .fade-leave-to {
   opacity: 0;
 }
+
 .form-control {
   color: black !important;
 }

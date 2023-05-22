@@ -5,41 +5,46 @@ export const useAttemptStore = defineStore('attempt', {
 
     state: () => ({
         token: useAuthStore().token,
-        url: import.meta.env.VITE_API_URL,
-        angket_id: null,
-        soal_id: null,
-        jawaban: "",
+        survey_items: [],
+        survey_id: null,
+        survey_item_id: null,
+        answer: "",
     }),
     actions: {
-        set_jawaban(value) {
-            this.jawaban = value
+        setSurveyId(survey_id) {
+            this.survey_id = survey_id
         },
-        set_init(angket_id, soal_id, jawaban) {
-            this.angket_id = angket_id
-            this.soal_id = soal_id
-            this.jawaban = jawaban
+        async getSurveyItems() {
+            const { data } = await axios.get(`surveys/${this.survey_id}/attempt/lists`, {
+                headers: {
+                    Authorization: `Bearer ${this.token}`
+                }
+            })
+            this.survey_items = data.data
+        },
+        setSurveyItemId_Answer(survey_item_id, answer) {
+            this.survey_item_id = survey_item_id
+            this.answer = answer
         },
         async saveAnswer() {
-            if (this.jawaban == '') {
+            if (this.answer == "") {
                 return
             }
-            try {
-                const { data } = await axios.post(`${this.url}/angket/${this.angket_id}/attempt/${this.soal_id}/answer`, {
-                    jawaban: this.jawaban
-                }, {
-                    headers: {
-                        Authorization: `Bearer ${this.token}`
-                    }
-                })
-            } catch (e) {
-                this.error = true
-                if (e.name == "AxiosError") {
-                    let { message } = e.response.data
-                    this.message = message
-                } else {
-                    this.message = `Client side error! : ${e}`
+            await axios.post(`surveys/${this.survey_id}/attempt/${this.survey_item_id}/answer`, { answer: this.answer }, {
+                headers: {
+                    Authorization: `Bearer ${this.token}`
                 }
-            }
+            }).then(() => {
+                let survey_item_index = this.survey_items.findIndex(survey_item => {
+                    return survey_item.id == this.survey_item_id
+                })
+                
+                if (survey_item_index < 0) {
+                    return
+                }
+
+                this.survey_items[survey_item_index].answered = true
+            })
         },
     },
 })
