@@ -15,7 +15,7 @@ class SurveySeeder extends Seeder
     public function run()
     {
         $angket = new Survey;
-        $angket->id = '50224ef8-964a-4e35-cj24-be7821bcd219';
+        $angket->id = '94757351-03a4-4fea-8cad-b16a60e396f2';
         $angket->name = 'Survey semester genap 2022';
         $angket->number_of_survey_items = 50;
         $angket->class_name = "RPL";

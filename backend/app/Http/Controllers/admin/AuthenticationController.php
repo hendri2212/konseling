@@ -74,7 +74,7 @@ class AuthenticationController extends Controller
 
             return $this->responseRepository->ResponseSuccess($data, 'Logged In Successfully !');
         } catch (\Exception $e) {
-            return $this->responseRepository->ResponseError(null, 'Internal Server Error !', 500);
+            return $this->responseRepository->ResponseError($e->getMessage(), 'Internal Server Error !', 500);
         }
     }
 

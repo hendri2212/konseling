@@ -18,7 +18,9 @@ Vue.component('v-select', vSelect)
 axios.defaults.baseURL = "http://127.0.0.1:8000/api/admin/";
 // axios.defaults.baseURL = "http://api.akukonselor.com/api/admin/";
 
-axios.interceptors.response.use(undefined, function (error) {
+axios.interceptors.response.use(function (response) {
+  return response
+}, function (error) {
   if (error) {
     const originalRequest = error.config;
     if (error.response.status === 401 && !originalRequest._retry) {
@@ -27,6 +29,7 @@ axios.interceptors.response.use(undefined, function (error) {
       store.dispatch("auth/logout")
       return router.push({ name: "Login" })
     }
+    return Promise.reject(error);
   }
 })
 

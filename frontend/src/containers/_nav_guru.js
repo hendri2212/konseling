@@ -16,7 +16,7 @@ export default [
       {
         _name: 'CSidebarNavItem',
         name: 'Angket',
-        to: '/admin/angket',
+        to: '/angket',
         icon: 'cil-pencil'
       },
       // Rencana Pelaksanaan Layanan (RPL)

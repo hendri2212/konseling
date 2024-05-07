@@ -5,16 +5,17 @@
                 <CCard accent-color="primary">
                     <CCardBody>
 
-                        <CButton color="secondary" class="mb-3" @click="moveComponent('ListRplKlasikal')">
+                        <CButton color="secondary" class="mb-3"
+                            @click="$router.push({ name: 'ListRplKlasikal', query: {id: $route.query.id} })">
                             <CIcon name="cil-arrow-left" class="mr-2" />Kembali
                         </CButton>
                         <CDataTable :responsive="true" :items="items" :fields="fields" hover>
                             <template #order="{ index }">
                                 <td>{{ index + 1 }}</td>
                             </template>
-                            <template #action="{ item }">
+                            <template #action="{ item, index }">
                                 <td>
-                                    <CButton @click="openFormRpl(item.id, item.have_sip)" :color="'secondary'">
+                                    <CButton @click="openFormRpl(index)" :color="'secondary'">
                                         <span v-if="item.have_sip">Ubah RPL</span>
                                         <span v-else>Buat RPL</span>
                                         <CIcon color="white" name="cil-arrow-right" />
@@ -43,8 +44,8 @@
                                                     </button>
                                                 </div>
                                             </label>
-                                            <child-form v-for="(child, key2) in dynamic_form.child" :key="`child_${key2}`"
-                                                :dynamic_form="child" :my_key="key2" :level="1"
+                                            <child-form v-for="(child, key2) in dynamic_form.child"
+                                                :key="`child_${key2}`" :dynamic_form="child" :my_key="key2" :level="1"
                                                 @emit_remove_from_child="(array_of_key) => reactEmitForRemoveElement(array_of_key, key)"
                                                 @emit_edit_from_child="(array_of_key, value) => reactEmitForEditElement(array_of_key, value, key)"
                                                 @emit_add_child_from_child="(array_of_key) => reactEmitForAddChildElement(array_of_key, key)"></child-form>
@@ -62,11 +63,13 @@
                 </CCard>
             </CCol>
         </CRow>
+        <Loading :loading="loading"></Loading>
     </div>
 </template>
 <script>
 import moment from 'moment'
 import ChildForm from './ChildForm.vue'
+import Loading from '@/components/Loading.vue'
 
 const fields = [
     { label: 'No', key: 'order' },
@@ -80,10 +83,12 @@ export default {
     name: "AddRplKlasikal",
     components: {
         ChildForm,
+        Loading,
     },
     props: ['moveComponent'],
     data() {
         return {
+            loading: false,
             loading_get_rpl: false,
             fields: fields,
             items: [],
@@ -96,12 +101,20 @@ export default {
             return this.$route.query.id
         }
     },
-    created() {
+    watch: {
+        async '$route.query.rpl_id'(rpl_id) {
+            this.rpl = await this.getRpl(rpl_id)
+        }
+    },
+    async mounted() {
         this.getData()
+        if (this.$route.query.rpl_id) {
+            this.rpl = await this.getRpl(this.$route.query.rpl_id)
+        }
     },
     methods: {
         reactEmitForRemoveElement(array_of_key, key) {
-            let el = this.content[key]
+            let el = this.rpl.service_implementation_plan_details[key]
             for (var i = array_of_key.length - 1; i > 0; i--) {
                 el = el.child[array_of_key[i]]
             }
@@ -109,7 +122,7 @@ export default {
 
         },
         reactEmitForAddChildElement(array_of_key, key) {
-            let el = this.content[key]
+            let el = this.rpl.service_implementation_plan_details[key]
             for (var i = array_of_key.length - 1; i >= 0; i--) {
                 el = el.child[array_of_key[i]]
             }
@@ -121,7 +134,7 @@ export default {
 
         },
         reactEmitForEditElement(array_of_key, value, key) {
-            let el = this.content[key]
+            let el = this.rpl.service_implementation_plan_details[key]
             for (var i = array_of_key.length - 1; i > 0; i--) {
                 el = el.child[array_of_key[i]]
             }
@@ -149,27 +162,26 @@ export default {
                 this.loading = false
             }
         },
-        async openFormRpl(id, have_sip) {
+        async getRpl(id) {
+            const { data } = await this.axios.get(`surveys/${this.survey_id}/service-implementation-plans/${id}`, {
+                headers: {
+                    Authorization: "Bearer " + this.$store.state.auth.token
+                }
+            })
+            return data.data
+        },
+        async openFormRpl(index) {
             this.loading_get_rpl = true
             try {
-                let rpl = null;
-                if (have_sip) {
-                    const { data } = await this.axios.get(`surveys/${this.survey_id}/service-implementation-plans/${id}`, {
+                if (!this.items[index].have_sip) {
+                    await this.axios.post(`surveys/${this.survey_id}/service-implementation-plans/${this.items[index].id}`, null, {
                         headers: {
                             Authorization: "Bearer " + this.$store.state.auth.token
                         }
                     })
-                    rpl = data.data
-
-                } else {
-                    const { data } = await this.axios.post(`surveys/${this.survey_id}/service-implementation-plans/${id}`, null, {
-                        headers: {
-                            Authorization: "Bearer " + this.$store.state.auth.token
-                        }
-                    })
-                    rpl = data.data
+                    this.items[index].have_sip = true
                 }
-                this.rpl = rpl
+                this.$router.push({ name: 'AddRplKlasikal', query: {...this.$route.query, rpl_id:this.items[index].id} })
             } catch (e) {
                 console.log(e)
             } finally {
@@ -179,11 +191,8 @@ export default {
         async saveRpl() {
             this.loading = true
             try {
-                let payload = {
-                    survey_item_id: this.rpl.survey_item_id,
-                    content: this.content
-                }
-                await this.axios.post(`surveys/${this.survey_id}/service-implementation-plans`, payload, {
+                let payload = this.rpl
+                await this.axios.put(`service-implementation-plans/${this.rpl.id}`, payload, {
                     headers: {
                         Authorization: "Bearer " + this.$store.state.auth.token
                     }

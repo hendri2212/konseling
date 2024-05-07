@@ -97,6 +97,7 @@ Route::middleware('api')->group(function () {
                 // Route::get('service-implementation-plans/{sip_id}', [ServiceImplementationPlanController::class, 'show']);
                 // Route::get('classes/{id}', [SurveyController::class, 'setiapClassModel']);
             });
+            Route::put('service-implementation-plans/{sipl_id}', [ServiceImplementationPlanController::class, 'save']);
             Route::get('classes-analysis/{id}', [ClassAnalysisController::class, 'class_profile']);
             Route::get('analisis-profile-konseling/{id}', [ClassAnalysisController::class, 'profile_konseling']);
 

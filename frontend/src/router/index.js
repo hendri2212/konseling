@@ -24,7 +24,9 @@ const AngketPage = () => import('@/views/Angket/AngketPage')
 const Angket = () => import('@/views/Angket/Angket')
 const HasilAngket = () => import('@/components/Angket/Hasil')
 const HasilPerButirAngket = () => import('@/components/Angket/HasilPerButirAngket')
-const RplKlasikal = () => import('@/components/Angket/RplKlasikal/RplKlasikal')
+// const RplKlasikal = () => import('@/components/Angket/RplKlasikal/RplKlasikal')
+const ListRplKlasikal = () => import('@/components/Angket/RplKlasikal/ListRplKlasikal')
+const AddRplKlasikal = () => import('@/components/Angket/RplKlasikal/AddRplKlasikal')
 
 
 // Views - Pages
@@ -231,7 +233,7 @@ function configRoutes() {
     //   ]
     // },
     {
-      path: '/admin/angket',
+      path: '/angket',
       name: "AngketPage",
       component: AngketPage,
       meta: {
@@ -240,7 +242,7 @@ function configRoutes() {
     },
     {
       path: '/angket',
-      name: "Angket",
+      name: "AngketDetail",
       component: Angket,
       redirect: { path: "/angket/analisis-siswa" },
       meta: {
@@ -265,8 +267,16 @@ function configRoutes() {
         },
         {
           path: 'rpl-klasikal',
-          name: "RplKlasikal",
-          component: RplKlasikal,
+          name: "ListRplKlasikal",
+          component: ListRplKlasikal,
+          meta: {
+            requiredLogin: true
+          },
+        },
+        {
+          path: 'rpl-klasikal/tambah',
+          name: "AddRplKlasikal",
+          component: AddRplKlasikal,
           meta: {
             requiredLogin: true
           },
@@ -289,7 +299,6 @@ router.beforeEach((to, from, next) => {
       next()
       return
     }
-    console.log("trs")
     next({ name: "Login" })
   } else {
     next()

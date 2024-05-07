@@ -30,6 +30,7 @@ class DatabaseSeeder extends Seeder
             SurveyItemSeeder::class,
             SurveyAttemptSeeder::class,
             DefaultServiceImplementationPlanDetailSeeder::class,
+            SurveyResponsesSeeder::class,
         ]);
     }
 }
