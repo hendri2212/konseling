@@ -1,9 +1,7 @@
 <template>
   <div>
     <CCard accent-color="primary">
-      <CCardHeader>
-        Angket
-
+      <CCardHeader> Angket
         <div class="card-header-actions">
           <CButton color="primary" @click="$refs.addModal.setModal(true)">Tambah Angket</CButton>
           <AddModal @saved="saved" ref="addModal"></AddModal>
@@ -13,7 +11,7 @@
       <CCardBody>
         <CDataTable :responsive="false" v-if="datatable" :items="items" :fields="fields" hover>
           <template #name="{ item }">
-            <td><router-link :to="{ name: 'Angket', query: { id: item.id } }">{{ item.name }}</router-link></td>
+            <td><router-link :to="{ name: 'AngketDetail', query: { id: item.id } }">{{ item.name }}</router-link></td>
           </template>
           <template #class="{ item }">
             <td>{{ item.class.name }}</td>

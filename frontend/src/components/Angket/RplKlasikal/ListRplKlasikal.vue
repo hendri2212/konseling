@@ -4,10 +4,14 @@
             <CCol class="transition" :lg="!add_rpl_state ? '12' : '5'">
                 <CCard accent-color="primary">
                     <CCardBody>
-                        <CButton color="primary" class="mb-3" @click="moveComponent('AddRplKlasikal')">Tambah RPL</CButton>
+                        <CButton color="primary" class="mb-3" @click="$router.push({ name: 'AddRplKlasikal', query: $route.query })">Tambah RPL
+                        </CButton>
                         <CDataTable :responsive="true" :items="items" :fields="fields" hover>
                             <template #order="{ index }">
                                 <td>{{ index + 1 }}</td>
+                            </template>
+                            <template #question="{ item }">
+                                <td>{{ item.survey_item.question }}</td>
                             </template>
                         </CDataTable>
                     </CCardBody>
@@ -45,6 +49,7 @@
     </div>
 </template>
 <script>
+// import router from '@/router'
 import moment from 'moment'
 
 const fields = [
@@ -89,7 +94,13 @@ export default {
                 })
                 this.items = data.data
             } catch (e) {
-                console.log(e)
+                if (e.response.status === 400) {
+                    await this.$swal({
+                        icon: 'error',
+                        title: 'Request tidak valid !',
+                        html: e.response.data.message,
+                    })
+                }
             } finally {
                 this.loading = false
             }

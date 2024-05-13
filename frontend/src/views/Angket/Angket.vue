@@ -20,7 +20,7 @@
                         Butir</router-link>
                 </CNavItem>
                 <CNavItem :active="$route.name == 'RplKlasikal'">
-                    <router-link class="nav-link" :to="{ name: 'RplKlasikal', query: { id: id } }">RPL
+                    <router-link class="nav-link" :to="{ name: 'ListRplKlasikal', query: { id: id } }">RPL
                         Klasikal</router-link>
                 </CNavItem>
             </CNav>

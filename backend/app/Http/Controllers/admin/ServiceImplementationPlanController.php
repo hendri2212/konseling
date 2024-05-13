@@ -32,7 +32,7 @@ class ServiceImplementationPlanController extends Controller
             return $this->responseRepository->ResponseError($validator->errors(), "Service stragey not valid!", 400);
         }
 
-        $service_implementation_plans = ServiceImplementationPlan::whereHas('surveyItem', function ($q) use ($request) {
+        $service_implementation_plans = ServiceImplementationPlan::with('surveyItem')->whereHas('surveyItem', function ($q) use ($request) {
             $q->where('service_strategy', $request->service_strategy);
         })->get();
 
@@ -70,16 +70,16 @@ class ServiceImplementationPlanController extends Controller
         if ($child != null) {
             $create_sip_detail = new ServiceImplementationPlanDetail();
             $create_sip_detail->id = Str::uuid();
-            $create_sip_detail->value = $child->value;
+            $create_sip_detail->value = $child["value"];
             $create_sip_detail->parent_id = $parent_id;
             $create_sip_detail->service_implementation_plan_id = $service_implementation_plan_id;
             $create_sip_detail->school_id = auth()->user()->school_id;
             $create_sip_detail->created_at = round(microtime(true) * 1000);
             $create_sip_detail->save();
 
-            if (count($child->child) > 0) {
-                for ($i = 0; $i < count($child->child); $i++) {
-                    $this->create_service_implementation_plan_detail($service_implementation_plan_id, $create_sip_detail->id, $child->child[$i]);
+            if (count($child["child"]) > 0) {
+                for ($i = 0; $i < count($child["child"]); $i++) {
+                    $this->create_service_implementation_plan_detail($service_implementation_plan_id, $create_sip_detail->id, $child["child"][$i]);
                 }
             }
         }
@@ -122,6 +122,29 @@ class ServiceImplementationPlanController extends Controller
             $sip = ServiceImplementationPlan::with(["serviceImplementationPlanDetails" => function ($q) {
                 return $q->whereNull("parent_id");
             }, "serviceImplementationPlanDetails.child"])->where("survey_id", $survey_id)->where("survey_item_id", $survey_item_id)->where("school_id", auth()->user()->school_id)->first();
+
+            return $this->responseRepository->ResponseSuccess($sip, "Successfull", 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->responseRepository->ResponseError($e, "Create service implementation plan failed !", 500);
+        }
+    }
+
+    public function save(Request $request, $sip_id)
+    {
+        DB::beginTransaction();
+        try {
+            ServiceImplementationPlanDetail::where('service_implementation_plan_id', $sip_id)->delete();
+
+            for ($i = 0; $i < count($request->service_implementation_plan_details); $i++) {
+                $this->create_service_implementation_plan_detail($sip_id, null, $request->service_implementation_plan_details[$i]);
+            }
+
+            DB::commit();
+
+            $sip = ServiceImplementationPlan::with(["serviceImplementationPlanDetails" => function ($q) {
+                return $q->whereNull("parent_id");
+            }, "serviceImplementationPlanDetails.child"])->where("id", $sip_id)->where("school_id", auth()->user()->school_id)->first();
 
             return $this->responseRepository->ResponseSuccess($sip, "Successfull", 200);
         } catch (\Exception $e) {

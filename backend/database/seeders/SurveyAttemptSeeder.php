@@ -16,7 +16,7 @@ class SurveyAttemptSeeder extends Seeder
     {
         $survey_attempt = new SurveyAttempt;
         $survey_attempt->id = '29993999-ae65-4767-841d-53a5b226f074';
-        $survey_attempt->survey_id = '50224ef8-964a-4e35-cj24-be7821bcd219';
+        $survey_attempt->survey_id = '94757351-03a4-4fea-8cad-b16a60e396f2';
         $survey_attempt->student_id = '9afe9167-ef26-4b9f-a67d-c6a3e67e7f35';
         $survey_attempt->school_id = '07087f31-ecfb-419b-aecf-c00d6f6f74cf';
         $survey_attempt->state = 'finished';

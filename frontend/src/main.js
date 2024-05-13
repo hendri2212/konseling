@@ -19,17 +19,20 @@ axios.defaults.baseURL = "http://127.0.0.1:8000/api/admin/";
 // axios.defaults.baseURL = "http://api.akukonselor.com/api/admin/";
 
 // const baseURL1 = "http://127.0.0.1:8000/api/admin/";
-const baseURL2 = "http://127.0.0.1:8000/api/teacher/";
+// const baseURL2 = "http://127.0.0.1:8000/api/teacher/";
 
 // const baseURLAdmin = axios.create({
 //   baseURL: baseURL1
 // });
 
-export const baseURLTeacher = axios.create({
-  baseURL: baseURL2
-});
+// export const baseURLTeacher = axios.create({
+//   baseURL: baseURL2
+// });
 
-axios.interceptors.response.use(undefined, function (error) {
+// axios.interceptors.response.use(undefined, function (error) {
+axios.interceptors.response.use(function (response) {
+  return response
+}, function (error) {
   if (error) {
     const originalRequest = error.config;
     if (error.response.status === 401 && !originalRequest._retry) {
@@ -38,6 +41,7 @@ axios.interceptors.response.use(undefined, function (error) {
       store.dispatch("auth/logout")
       return router.push({ name: "Login" })
     }
+    return Promise.reject(error);
   }
 })
 

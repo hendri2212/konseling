@@ -25,7 +25,7 @@ class SurveyAttemptController extends Controller
 
     public function resultOfSurveys($survey_id, Request $request)
     {
-        // SELECT students.name as nama, sum(answer) as answer_sum FROM `survey_responses` INNER JOIN survey_attempts ON survey_attempts.id=survey_responses.survey_attempt_id INNER JOIN students ON students.id=survey_attempts.student_id WHERE survey_attempts.survey_id="50224ef8-964a-4e35-cj24-be7821bcd219" GROUP BY survey_attempt_id;
+        // SELECT students.name as nama, sum(answer) as answer_sum FROM `survey_responses` INNER JOIN survey_attempts ON survey_attempts.id=survey_responses.survey_attempt_id INNER JOIN students ON students.id=survey_attempts.student_id WHERE survey_attempts.survey_id="94757351-03a4-4fea-8cad-b16a60e396f2" GROUP BY survey_attempt_id;
         try {
             $max = 10;
             $page = isset($request->page) ? ((int)$request->page >= 1 ? (int)$request->page : 1)  : 1;
@@ -49,8 +49,8 @@ class SurveyAttemptController extends Controller
     public function resultOfSurveysPerSurveyItems(Request $request, $survey_id)
     {
         try {
-            $sum_result_of_survey_items = SurveyResponse::JoinSurveyAttemptAndwhereSurveyId($survey_id)->where("answer", 1)->count();
-
+            $sum_result_of_survey_items = SurveyResponse::JoinSurveyAttemptAndwhereSurveyId($survey_id)->count();
+            
             $result_per_survey_items = SurveyResponse::with(["surveyItem.serviceImplementationPlan" => function ($q) use ($survey_id) {
                 $q->where('survey_id', $survey_id);
             }])->joinSurveyAttemptAndwhereSurveyId($survey_id)->select("survey_items.id as survey_item_id", "survey_items.order", "survey_items.question", DB::raw("SUM(answer) as result, (SUM(answer) / $sum_result_of_survey_items * 100) as result_as_percent, sum(case when answer=1 then 1 else 0 end) as students_count"))->joinSurveyItems()->groupBy("survey_items.id", "survey_items.question", "survey_items.order")->orderBy("order");
