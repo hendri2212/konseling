@@ -49,7 +49,9 @@ import moment from 'moment'
 
 const fields = [
     { label: 'No', key: 'order' },
-    { label: 'Butir Angket', key: 'question' }
+    // { label: 'Butir Angket', key: 'question' },
+    { label: 'ID Survey', key: 'survey_id' },
+    { label: 'ID Survery Item', key: 'survey_item_id' }
 ]
 
 export default {

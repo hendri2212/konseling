@@ -67,6 +67,7 @@
 <script>
 import moment from 'moment'
 import ChildForm from './ChildForm.vue'
+// import { baseURLTeacher } from '../../../main.js'
 
 const fields = [
     { label: 'No', key: 'order' },
@@ -183,7 +184,8 @@ export default {
                     survey_item_id: this.rpl.survey_item_id,
                     content: this.content
                 }
-                await this.axios.post(`surveys/${this.survey_id}/service-implementation-plans`, payload, {
+                await this.axios.post(`surveys/${this.survey_id}/service-implementation-plans/${this.rpl.survey_item_id}`, payload, {
+                // await baseURLTeacher.post(`surveys/${this.survey_id}/service-implementation-plans`, payload, {
                     headers: {
                         Authorization: "Bearer " + this.$store.state.auth.token
                     }

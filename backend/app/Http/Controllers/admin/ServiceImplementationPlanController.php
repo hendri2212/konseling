@@ -26,7 +26,7 @@ class ServiceImplementationPlanController extends Controller
     public function index(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'service_strategy' => "in:1,2,3,4"
+            'service_strategy' => "in:1,2,3,4,klasikal,individual,group,other"
         ]);
         if ($validator->fails()) {
             return $this->responseRepository->ResponseError($validator->errors(), "Service stragey not valid!", 400);
