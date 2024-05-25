@@ -6,7 +6,7 @@
                     <CCardBody>
 
                         <CButton color="secondary" class="mb-3"
-                            @click="$router.push({ name: 'ListRplKlasikal', query: {id: $route.query.id} })">
+                            @click="$router.push({ name: 'ListRplKlasikal', query: { id: $route.query.id } })">
                             <CIcon name="cil-arrow-left" class="mr-2" />Kembali
                         </CButton>
                         <CDataTable :responsive="true" :items="items" :fields="fields" hover>
@@ -29,6 +29,14 @@
             <CCol v-if="rpl" lg="7">
                 <CCard accent-color="primary">
                     <CCardBody>
+                        <CCard class="mb-2">
+                            <CCardBody>
+                                <b v-if="!loading_get_rpl">
+                                    {{ rpl.survey_item.question }}
+                                </b>
+                                <template v-else>••••••••••••</template>
+                            </CCardBody>
+                        </CCard>
                         <CRow class="mb-2" v-for="(dynamic_form, key) in rpl.service_implementation_plan_details"
                             :key="`dynamic_form_${key}`">
                             <CCol sm="12">
@@ -99,15 +107,27 @@ export default {
     computed: {
         survey_id() {
             return this.$route.query.id
-        }
+        },
+        selected_rpl_id() {
+            return this.$route.query.rpl_id ?? null
+        },
     },
     watch: {
-        async '$route.query.rpl_id'(rpl_id) {
-            this.rpl = await this.getRpl(rpl_id)
+        '$route.query.rpl_id': {
+            handler: async function (rpl_id) {
+                this.items.forEach(p => {
+                    if (this.selected_rpl_id == p.id) {
+                        p._classes = 'table-success'
+                    } else {
+                        p._classes = ''
+                    }
+                })
+                this.rpl = await this.getRpl(rpl_id)
+            }
         }
     },
     async mounted() {
-        this.getData()
+        await this.getData()
         if (this.$route.query.rpl_id) {
             this.rpl = await this.getRpl(this.$route.query.rpl_id)
         }
@@ -155,6 +175,11 @@ export default {
                         Authorization: "Bearer " + this.$store.state.auth.token
                     }
                 })
+                data.data.forEach(p => {
+                    if (this.selected_rpl_id == p.id) {
+                        p._classes = 'table-success'
+                    }
+                })
                 this.items = data.data
             } catch (e) {
                 console.log(e)
@@ -163,11 +188,13 @@ export default {
             }
         },
         async getRpl(id) {
+            this.loading_get_rpl = true
             const { data } = await this.axios.get(`surveys/${this.survey_id}/service-implementation-plans/${id}`, {
                 headers: {
                     Authorization: "Bearer " + this.$store.state.auth.token
                 }
             })
+            this.loading_get_rpl = false
             return data.data
         },
         async openFormRpl(index) {
@@ -181,7 +208,7 @@ export default {
                     })
                     this.items[index].have_sip = true
                 }
-                this.$router.push({ name: 'AddRplKlasikal', query: {...this.$route.query, rpl_id:this.items[index].id} })
+                this.$router.push({ name: 'AddRplKlasikal', query: { ...this.$route.query, rpl_id: this.items[index].id } })
             } catch (e) {
                 console.log(e)
             } finally {

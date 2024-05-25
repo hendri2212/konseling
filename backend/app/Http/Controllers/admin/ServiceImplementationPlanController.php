@@ -51,7 +51,7 @@ class ServiceImplementationPlanController extends Controller
     {
         $sip = ServiceImplementationPlan::with(["serviceImplementationPlanDetails" => function ($q) {
             return $q->whereNull("parent_id");
-        }, "serviceImplementationPlanDetails.child"])->where("survey_id", $survey_id)->where("survey_item_id", $survey_item_id)->where("school_id", auth()->user()->school_id);
+        }, "serviceImplementationPlanDetails.child", "surveyItem"])->where("survey_id", $survey_id)->where("survey_item_id", $survey_item_id)->where("school_id", auth()->user()->school_id);
         if (!$sip->exists()) {
             return $this->responseRepository->ResponseError([], "Service implementation plan not found!", 404);
         }
