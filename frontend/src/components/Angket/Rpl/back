@@ -225,7 +225,7 @@
 </template>
 <script>
     import moment from 'moment'
-    import ChildForm from './ChildForm.vue'
+    import ChildForm from '@/components/ChildForm.vue'
 
     const fields = [
         { label: 'No', key: 'order' },

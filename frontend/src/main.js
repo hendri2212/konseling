@@ -36,11 +36,11 @@ axios.interceptors.response.use(function (response) {
 
 Vue.use(VueAxios, axios)
 
-import { cilX, cilPlus, cilCog, cilTrash, cilGroup, cilArrowLeft, cilArrowRight, cilArrowTop, cilArrowBottom, cilPencil, cilLockLocked, cilEnvelopeClosed } from '@coreui/icons'
+import { cilX, cilPlus, cilCog, cilTrash, cilGroup, cilArrowLeft, cilArrowRight, cilArrowTop, cilArrowBottom, cilPencil, cilLockLocked, cilEnvelopeClosed, cilPrint } from '@coreui/icons'
 
 new Vue({
   router,
   store,
-  icons: { cilX, cilPlus, cilCog, cilTrash, cilGroup, cilArrowLeft, cilArrowRight, cilArrowTop, cilArrowBottom, cilPencil, cilLockLocked, cilEnvelopeClosed },
+  icons: { cilX, cilPlus, cilCog, cilTrash, cilGroup, cilArrowLeft, cilArrowRight, cilArrowTop, cilArrowBottom, cilPencil, cilLockLocked, cilEnvelopeClosed, cilPrint },
   render: h => h(App)
 }).$mount('#app')

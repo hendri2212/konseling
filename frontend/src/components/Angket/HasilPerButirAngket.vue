@@ -31,6 +31,12 @@ export default {
             return this.$route.query.id
         }
     },
+    beforeRouteEnter(to, from, next) {
+        if (!to.query.id) {
+            next({ name: "Angket" })
+        }
+        next()
+    },
     created() {
         this.getData()
     },

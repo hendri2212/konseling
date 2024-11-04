@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateServiceImplementationPlansTable extends Migration
+class CreateServiceImplementationPlanKlasikalsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateServiceImplementationPlansTable extends Migration
      */
     public function up()
     {
-        Schema::create('service_implementation_plans', function (Blueprint $table) {
+        Schema::create('service_implementation_plan_klasikals', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid("survey_id");
             $table->uuid("survey_item_id");
@@ -34,6 +34,6 @@ class CreateServiceImplementationPlansTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('service_implementation_plans');
+        Schema::dropIfExists('service_implementation_plan_klasikals');
     }
 }

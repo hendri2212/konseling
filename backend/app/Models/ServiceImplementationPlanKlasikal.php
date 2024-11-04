@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ServiceImplementationPlan extends Model
+class ServiceImplementationPlanKlasikal extends Model
 {
     use HasFactory;
 
@@ -25,6 +25,6 @@ class ServiceImplementationPlan extends Model
 
     public function serviceImplementationPlanDetails()
     {
-        return $this->hasMany(ServiceImplementationPlanDetail::class, 'service_implementation_plan_id', 'id');
+        return $this->hasMany(ServiceImplementationPlanKlasikalDetail::class, 'sip_id', 'id');
     }
 }
