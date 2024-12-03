@@ -52,15 +52,8 @@ class SurveyAttemptController extends Controller
     {
         try {
             $sum_result_of_survey_items = SurveyResponse::JoinSurveyAttemptAndwhereSurveyId($survey_id)->count();
-            $databaseDriver = Config::get('database.default');
-            if ($databaseDriver === 'mysql') {
-                $query_sum_as_float = "CAST(SUM(answer) AS FLOAT)";
-            } elseif ($databaseDriver === 'pgsql') {
-                $query_sum_as_float = "SUM(answer)::float";
-            }
-            $result_per_survey_items = SurveyResponse::with(["surveyItem.serviceImplementationPlan" => function ($q) use ($survey_id) {
-                $q->where('survey_id', $survey_id);
-            }])->joinSurveyAttemptAndwhereSurveyId($survey_id)->select("survey_items.id as survey_item_id", "survey_items.order", "survey_items.question", DB::raw("SUM(answer) as result, ($query_sum_as_float / $sum_result_of_survey_items * 100) as result_as_percent, sum(case when answer=1 then 1 else 0 end) as students_count"))->joinSurveyItems()->groupBy("survey_items.id", "survey_items.question", "survey_items.order")->orderBy("order");
+            $query_sum_as_float = "CAST(SUM(answer) AS FLOAT)";
+            $result_per_survey_items = SurveyResponse::joinSurveyAttemptAndwhereSurveyId($survey_id)->select("survey_items.id as survey_item_id", "survey_items.order", "survey_items.question", DB::raw("SUM(answer) as result, ($query_sum_as_float / $sum_result_of_survey_items * 100) as result_as_percent, sum(case when answer=1 then 1 else 0 end) as students_count"))->joinSurveyItems()->groupBy("survey_items.id", "survey_items.question", "survey_items.order")->orderBy("order");
 
             if (isset($request->filter_by_service_strategy)) {
                 $result_per_survey_items = $result_per_survey_items->where("survey_items.service_strategy", $request->filter_by_service_strategy);

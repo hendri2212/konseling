@@ -24,6 +24,8 @@ class DefaultServiceImplementationPlanDetail extends Model
 
     public function child()
     {
-        return $this->hasMany(DefaultServiceImplementationPlanDetail::class)->with('child');
+        return $this->hasMany(DefaultServiceImplementationPlanDetail::class)->with(['child' => function($query) {
+            return $query->orderBy("created_at");
+        }]);
     }
 }

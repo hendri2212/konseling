@@ -11,7 +11,7 @@ use App\Http\Controllers\admin\SurveyController;
 use App\Http\Controllers\admin\ClassModelController;
 use App\Http\Controllers\admin\GuruController;
 use App\Http\Controllers\admin\ManageSiswaController;
-use App\Http\Controllers\admin\ServiceImplementationPlanController;
+use App\Http\Controllers\admin\ServiceImplementationPlanKlasikalController;
 use App\Http\Controllers\admin\SurveyAttemptController;
 use App\Http\Controllers\admin\SurveyItemController;
 use App\Http\Controllers\student\AuthenticationController as StudentAuthenticationController;
@@ -90,14 +90,21 @@ Route::middleware('api')->group(function () {
                 Route::patch('{id}/close', [SurveyController::class, 'close']);
                 Route::get('{survey_id}/results', [SurveyAttemptController::class, 'resultOfSurveys'])->name('surveys.result_of_surveys');
                 Route::get('{survey_id}/result-per-survey-items', [SurveyAttemptController::class, 'resultOfSurveysPerSurveyItems'])->name('surveys.result_of_surveys_per_survey_items');
-                Route::get('{survey_id}/service-implementation-plans', [ServiceImplementationPlanController::class, 'index']);
-                Route::post('{survey_id}/service-implementation-plans', [ServiceImplementationPlanController::class, 'store']);
-                Route::get('{survey_id}/service-implementation-plans/{survey_item_id}', [ServiceImplementationPlanController::class, 'show']);
-                Route::post('{survey_id}/service-implementation-plans/{survey_item_id}', [ServiceImplementationPlanController::class, 'store']);
-                // Route::get('service-implementation-plans/{sip_id}', [ServiceImplementationPlanController::class, 'show']);
+                Route::get('{survey_id}/service-implementation-plan-klasikals', [ServiceImplementationPlanKlasikalController::class, 'index']);
+                Route::post('{survey_id}/service-implementation-plan-klasikals', [ServiceImplementationPlanKlasikalController::class, 'store']);
+                Route::get('{survey_id}/service-implementation-plans-klasikals/{survey_item_id}', [ServiceImplementationPlanKlasikalController::class, 'show']);
+                // Route::post('{survey_id}/service-implementation-plans/{survey_item_id}', [ServiceImplementationPlanKlasikalController::class, 'store']);
+                // Route::get('service-implementation-plans/{sip_id}', [ServiceImplementationPlanKlasikalController::class, 'show']);
                 // Route::get('classes/{id}', [SurveyController::class, 'setiapClassModel']);
             });
-            Route::put('service-implementation-plans/{sipl_id}', [ServiceImplementationPlanController::class, 'save']);
+
+            Route::get('default-service-implementation-plan-details', [DefaultServiceImplementationPlanDetailController::class, 'index']);
+
+            Route::prefix('service-implementation-plan-klasikals')->group(function () {
+                Route::get('{sip_id}', [ServiceImplementationPlanKlasikalController::class, 'show']);
+                // Route::get('classes/{id}', [SurveyController::class, 'setiapClassModel']);
+                // Route::put('{sip_id}', [ServiceImplementationPlanKlasikalController::class, 'save']);
+            });
             Route::get('classes-analysis/{id}', [ClassAnalysisController::class, 'class_profile']);
             Route::get('analisis-profile-konseling/{id}', [ClassAnalysisController::class, 'profile_konseling']);
 

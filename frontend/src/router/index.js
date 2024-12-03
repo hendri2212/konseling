@@ -4,6 +4,7 @@ import store from '@/store/index'
 
 
 // Views
+const Page404 = () => import("@/views/404.vue")
 const DashboardPage = () => import('@/views/DashboardPage')
 const ParentPage = () => import('@/views/Parent')
 const KomponenLayananPage = () => import('@/views/KomponenLayanan/KomponenLayananPage')
@@ -20,13 +21,14 @@ const SoalPage = () => import('@/views/SoalAkpd/SoalPage')
 // const ProfileKelasPage = () => import('@/views/ProfileKelas/Page')
 // const ProfileKelasPerKelasPage = () => import('@/views/ProfileKelas/PerKelasPage')
 // const ProfileKelasPerAngketPage = () => import('@/views/ProfileKelas/PerAngketPage')
-const AngketPage = () => import('@/views/Angket/AngketPage')
 const Angket = () => import('@/views/Angket/Angket')
+const AngketDetail = () => import('@/views/Angket/AngketDetail')
 const HasilAngket = () => import('@/components/Angket/Hasil')
 const HasilPerButirAngket = () => import('@/components/Angket/HasilPerButirAngket')
 // const RplKlasikal = () => import('@/components/Angket/RplKlasikal/RplKlasikal')
-const ListRplKlasikal = () => import('@/components/Angket/RplKlasikal/ListRplKlasikal')
-const AddRplKlasikal = () => import('@/components/Angket/RplKlasikal/AddRplKlasikal')
+const ListRplKlasikal = () => import('@/components/Angket/Rpl/Klasikal/ListRpl')
+const AddRplKlasikal = () => import('@/components/Angket/Rpl/Klasikal/AddRpl')
+const PrintRplKlasikal = () => import('@/components/Angket/Rpl/Klasikal/PrintRpl')
 
 
 // Views - Pages
@@ -38,6 +40,12 @@ Vue.use(VueRouter)
 
 function configRoutes() {
   return [
+    // error page
+    {
+      path: "/404",
+      name: "Error404",
+      component: Page404,
+    },
     // Login Admin
     {
       path: '/secret-page/login',
@@ -234,8 +242,8 @@ function configRoutes() {
     // },
     {
       path: '/angket',
-      name: "AngketPage",
-      component: AngketPage,
+      name: "Angket",
+      component: Angket,
       meta: {
         requiredLogin: true
       },
@@ -243,7 +251,7 @@ function configRoutes() {
     {
       path: '/angket',
       name: "AngketDetail",
-      component: Angket,
+      component: AngketDetail,
       redirect: { path: "/angket/analisis-siswa" },
       meta: {
         requiredLogin: true
@@ -280,7 +288,37 @@ function configRoutes() {
           meta: {
             requiredLogin: true
           },
-        }
+        },
+        {
+          path: 'rpl-klasikal/cetak',
+          name: "CetakRplKlasikal",
+          component: PrintRplKlasikal,
+          meta: {
+            requiredLogin: true
+          },
+        },
+        // {
+        //   path: 'rpl-kelompok',
+        //   name: "ListRplKelompok",
+        //   component: ListRpl,
+        //   props: {
+        //     service_strategy: "kelompok"
+        //   },
+        //   meta: {
+        //     requiredLogin: true
+        //   },
+        // },
+        // {
+        //   path: 'rpl-kelompok/tambah',
+        //   name: "AddRplKelompok",
+        //   component: AddRpl,
+        //   props: {
+        //     service_strategy: "kelompok"
+        //   },
+        //   meta: {
+        //     requiredLogin: true
+        //   },
+        // }
       ]
     },
   ]

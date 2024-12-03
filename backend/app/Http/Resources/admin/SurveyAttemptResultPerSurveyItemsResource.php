@@ -22,7 +22,6 @@ class SurveyAttemptResultPerSurveyItemsResource extends JsonResource
             'students_count' => (int) $this->students_count,
             'result' => (int) $this->result,
             'result_as_percent' => (float) $this->result_as_percent,
-            'have_sip' => count($this->surveyItem->serviceImplementationPlan) > 0,
         ];
     }
 }

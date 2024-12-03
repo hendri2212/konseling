@@ -1,65 +1,242 @@
 <template>
-    <div>
-        <CCard accent-color="primary">
-            <CCardHeader>
-                Angket semester genap 2022
+  <div>
+    <CCard accent-color="primary">
+      <CCardHeader> Angket
+        <div class="card-header-actions">
+          <CButton color="primary" @click="$refs.addModal.setModal(true)">Tambah Angket</CButton>
+          <AddModal @saved="saved" ref="addModal"></AddModal>
+        </div>
+      </CCardHeader>
 
-                <div class="card-header-actions">
-                    <!-- <CButton color="primary" @click="$refs.addModal.setModal(true)">Tambah Angket</CButton>
-                    <AddModal @saved="saved" ref="addModal"></AddModal> -->
-                </div>
-            </CCardHeader>
+      <CCardBody>
+        <CDataTable :responsive="false" v-if="datatable" :items="items" :fields="fields" hover>
+          <template #name="{ item }">
+            <td><router-link :to="{ name: 'AngketDetail', query: { id: item.id } }">{{ item.name }}</router-link></td>
+          </template>
+          <template #class="{ item }">
+            <td>{{ item.class.name }}</td>
+          </template>
+          <template #date="{ item }">
+            <td>{{ getDate(item.date) }}</td>
+          </template>
+          <template #status="{ item }">
+            <td>
+              <CBadge :color="item.status == 'close' ? 'danger' : 'success'">
+                {{ item.status }}
+              </CBadge>
+            </td>
+          </template>
+          <template #actions="{ item, index }">
+            <td align="left">
+              <CDropdown color="secondary" toggler-text="Dropdown Button">
+                <template #toggler-content>
+                  <CIcon name="cil-cog" />
+                </template>
+                <CDropdownItem @click="bukaAngket(item.id)" v-if="item.status == 'close'" class="text-success">
+                  <CIcon name="cil-cog" class="mr-1" />
+                  Open
+                </CDropdownItem>
+                <CDropdownItem @click="tutupAngket(item.id)" v-else class="text-danger">
+                  <CIcon name="cil-cog" class="mr-1" />
+                  Close
+                </CDropdownItem>
+                <!-- <CDropdownItem @click="$refs.addModal.setModal(true, item)">
+                  <CIcon name="cil-cog" class="mr-1" />
+                  Edit
+                </CDropdownItem> -->
+                <CDropdownItem
+                  @click="(deleteData.index = index), (deleteData.name = item.name), (deleteData.modal = true)">
+                  <CIcon name="cil-trash" class="mr-1" />
+                  Delete
+                </CDropdownItem>
+              </CDropdown>
+            </td>
+          </template>
+          <template #under-table>
+            <CPagination :activePage.sync="pagination.active" @update:activePage="getData" :pages="pagination.max_page"
+              align="center" />
+          </template>
+        </CDataTable>
 
-            <CNav variant="tabs">
-                <CNavItem :active="$route.name == 'Hasil'">
-                    <router-link class="nav-link" :to="{ name: 'Hasil', query: { id: id } }">Analisis
-                        Siswa</router-link>
-                </CNavItem>
-                <CNavItem :active="$route.name == 'HasilPerButir'">
-                    <router-link class="nav-link" :to="{ name: 'HasilPerButir', query: { id: id } }">Analisis
-                        Butir</router-link>
-                </CNavItem>
-                <CNavItem :active="$route.name == 'RplKlasikal'">
-                    <router-link class="nav-link" :to="{ name: 'ListRplKlasikal', query: { id: id } }">RPL
-                        Klasikal</router-link>
-                </CNavItem>
-            </CNav>
-        </CCard>
-        <transition name="fade" mode="out-in">
-            <keep-alive>
-                <router-view></router-view>
-            </keep-alive>
-        </transition>
-        <Loading ref="loading"></Loading>
-    </div>
+        <CModal title="Hapus Angket" color="danger" :show.sync="deleteData.modal">
+          <span>Hapus angket {{ deleteData.name }} ?</span>
+          <template #footer>
+            <CButton color="primary" variant="outline" @click="deleteData.modal = false">Batal</CButton>
+            <CButton @click="remove">Oke</CButton>
+          </template>
+        </CModal>
+      </CCardBody>
+    </CCard>
+    <Loading :loading="loading"></Loading>
+  </div>
 </template>
 
 <script>
+import AddModal from '../../components/Angket/AddModal.vue';
 import Loading from '@/components/Loading.vue'
+
+// fields
+const fields = [
+  { label: 'Angket', key: 'name' },
+  { label: 'Kelas', key: 'class' },
+  { label: 'Tanggal Angket', key: 'date' },
+  { label: 'Status', key: 'status' },
+  { label: 'Edit', key: 'actions' }
+]
+
 export default {
-    name: "AngketView",
-    components: {
-        Loading,
+  name: 'Angket',
+  components: {
+    AddModal,
+    Loading,
+  },
+  data() {
+    return {
+      loading: true,
+      datatable: true,
+      pagination: {
+        max_page: 1,
+        active: 1,
+      },
+      items: [],
+      fields,
+      deleteData: {
+        index: -1,
+        name: '',
+        modal: false,
+      },
+    };
+  },
+  async created() {
+    this.getData()
+  },
+  methods: {
+    getDate(milis) {
+      let date = new Date(milis)
+      return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
     },
-    computed: {
-        id() {
-            return this.$route.query.id
+    async getData(param = null) {
+      let page = param ?? 1
+      this.loading = true
+      try {
+        const { data } = await this.axios.get(`surveys?page=${page}`, {
+          headers: {
+            Authorization: "Bearer " + this.$store.state.auth.token
+          }
+        })
+        this.items = data.data
+        this.pagination.max_page = data.pagination.max_page
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+    },
+    async forceRerender() {
+      this.datatable = false;
+      await this.$nextTick();
+      this.datatable = true;
+    },
+    async saved() {
+      await this.getData(this.pagination.active)
+      await this.forceRerender()
+    },
+    async remove() {
+      if (this.deleteData.index == -1 || !this.items[this.deleteData.index]) {
+        this.deleteData.modal = false
+        return;
+      }
+      try {
+        // di sini fungsi axios
+        const { data } = await this.axios.delete(`surveys/${this.items[this.deleteData.index].id}`, {
+          headers: {
+            Authorization: "Bearer " + this.$store.state.auth.token
+          }
+        })
+        await this.$swal({
+          icon: 'success',
+          title: 'Berhasil!',
+          text: data.message,
+        })
+      } catch (e) {
+        var icon = 'error'
+        var title = 'Terjadi Kesalahan'
+        var text = 'Terjadi Kesalahan di aplikasi'
+        if (e.response.status == 422) {
+          text = ''
+          icon = 'warning'
+          for (var key in e.response.errors) {
+            text += e.response.errors[key] + "<br>"
+          }
         }
-    }
-}
+        await this.$swal({
+          icon: icon,
+          title: title,
+          html: text,
+        })
+      } finally {
+        this.deleteData.index = -1
+        this.deleteData.modal = false
+        this.deleteData.name = ""
+        this.loading = false
+        this.getData(this.pagination.active)
+      }
+    },
+    bukaAngket(id) {
+      this.axios.patch(`surveys/${id}/open`, {}, {
+        headers: {
+          Authorization: 'Bearer ' + this.$store.state.auth.token
+        }
+      }).then(response => {
+        let index = this.items.findIndex(p => p.id == id)
+        this.items[index].status = 'open'
+        this.$swal({
+          icon: 'success',
+          title: 'Berhasil!',
+          text: response.data.data.data,
+        })
+      }).catch(e => {
+        let status = e.response.status
+        let data = e.response.data.errors
+        if (status == 422) {
+          this.$swal({
+            icon: 'warning',
+            title: 'Gagal!',
+            text: data,
+          })
+        } else {
+          this.$swal({
+            icon: 'error',
+            title: 'Gagal!',
+            text: data,
+          })
+        }
+      })
+    },
+    tutupAngket(id) {
+      this.axios.patch(`surveys/${id}/close`, {}, {
+        headers: {
+          Authorization: 'Bearer ' + this.$store.state.auth.token
+        }
+      }).then(response => {
+        let index = this.items.findIndex(p => p.id == id)
+        this.items[index].status = 'close'
+        this.$swal({
+          icon: 'success',
+          title: 'Berhasil!',
+          text: response.data.data.data,
+        })
+      }).catch(e => {
+        let data = e.response.data.errors
+        this.$swal({
+          icon: 'error',
+          title: 'Gagal!',
+          text: data,
+        })
+      })
+    },
+  },
+};
 </script>
-<style>
-.fade-enter-active,
-.fade-leave-active {
-    transition: opacity 0.5s ease;
-}
 
-.fade-enter-from,
-.fade-leave-to {
-    opacity: 0;
-}
-
-.nav-item>.nav-link {
-    padding: 0;
-}
-</style>
+<style></style>

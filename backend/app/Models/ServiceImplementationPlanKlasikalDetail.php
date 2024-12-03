@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ServiceImplementationPlanDetail extends Model
+class ServiceImplementationPlanKlasikalDetail extends Model
 {
     use HasFactory;
     protected $keyType = 'string';
@@ -18,6 +18,8 @@ class ServiceImplementationPlanDetail extends Model
 
     public function child()
     {
-        return $this->hasMany(ServiceImplementationPlanDetail::class, 'parent_id', 'id')->with('child');
+        return $this->hasMany(ServiceImplementationPlanKlasikalDetail::class, 'parent_id', 'id')->with(['child' => function($query) {
+            return $query->orderBy("created_at");
+        }]);
     }
 }

@@ -4,47 +4,36 @@
             <CCol class="transition" :lg="!add_rpl_state ? '12' : '5'">
                 <CCard accent-color="primary">
                     <CCardBody>
-                        <CButton color="primary" class="mb-3" @click="$router.push({ name: 'AddRplKlasikal', query: $route.query })">Tambah RPL
+                        <CButton color="primary" class="mb-3"
+                            @click="$router.push({ name: 'AddRplKlasikal', query: $route.query })">Tambah RPL
                         </CButton>
-                        <CDataTable :responsive="true" :items="items" :fields="fields" hover>
+                        <CDataTable :responsive="true" :items="items" :loading="loading" :fields="fields" hover>
                             <template #order="{ index }">
                                 <td>{{ index + 1 }}</td>
                             </template>
                             <template #question="{ item }">
                                 <td>{{ item.survey_item.question }}</td>
                             </template>
+                            <template #action="{ item }">
+                                <td>
+                                    <CButton color="info" class="mr-1">
+                                        <router-link class="text-decoration-none text-white d-flex"
+                                            :to='{ name: "CetakRplKlasikal", query: { ...$route.query, sip_id: item.id } }'>
+                                            <CIcon class="mr-1" name="cil-print" /> Cetak
+                                        </router-link>
+
+                                    </CButton>
+                                    <CButton color="danger">
+                                        <span class="d-flex">
+                                            <CIcon class="mr-1" name="cil-trash" /> Hapus
+                                        </span>
+                                    </CButton>
+                                </td>
+                            </template>
                         </CDataTable>
                     </CCardBody>
                 </CCard>
             </CCol>
-            <!-- <CCol v-if="add_rpl_state" lg="7">
-                <CCard class="position-sticky" style="top:140px;" accent-color="primary">
-                    <CCardBody>
-                        <CRow>
-                            <CCol sm="12">
-                                <CInput label="Name" placeholder="Enter your name" />
-                            </CCol>
-                        </CRow>
-                        <CRow>
-                            <CCol sm="12">
-                                <CInput label="Credit Card Number" placeholder="0000 0000 0000 0000" />
-                            </CCol>
-                        </CRow>
-                        <CRow>
-                            <CCol sm="4">
-                                <CSelect label="Month" :options="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]" />
-                            </CCol>
-                            <CCol sm="4">
-                                <CSelect label="Year"
-                                    :options="[2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025]" />
-                            </CCol>
-                            <CCol sm="4">
-                                <CInput label="CVV/CVC" placeholder="123" />
-                            </CCol>
-                        </CRow>
-                    </CCardBody>
-                </CCard>
-            </CCol> -->
         </CRow>
     </div>
 </template>
@@ -54,16 +43,17 @@ import moment from 'moment'
 
 const fields = [
     { label: 'No', key: 'order' },
-    // { label: 'Butir Angket', key: 'question' },
-    { label: 'ID Survey', key: 'survey_id' },
-    { label: 'ID Survery Item', key: 'survey_item_id' }
+    // { label: 'ID Survey', key: 'survey_id' },
+    // { label: 'ID Survery Item', key: 'survey_item_id' },
+    { label: 'Butir Angket', key: 'question' },
+    { label: '', key: 'action' },
 ]
 
 export default {
-    name: "ListRplKlasikal",
-    props: ['moveComponent'],
+    name: "ListRpl",
     data() {
         return {
+            loading: true,
             fields: fields,
             items: [],
             add_rpl_state: false,
@@ -73,6 +63,12 @@ export default {
         survey_id() {
             return this.$route.query.id
         }
+    },
+    beforeRouteEnter(to, from, next) {
+        if (!to.query.id) {
+            next({ name: "Angket" })
+        }
+        next()
     },
     created() {
         this.getData()
@@ -87,7 +83,7 @@ export default {
         async getData() {
             this.loading = true
             try {
-                const { data } = await this.axios.get(`surveys/${this.survey_id}/service-implementation-plans?service_strategy=klasikal`, {
+                const { data } = await this.axios.get(`surveys/${this.survey_id}/service-implementation-plan-klasikals`, {
                     headers: {
                         Authorization: "Bearer " + this.$store.state.auth.token
                     }
