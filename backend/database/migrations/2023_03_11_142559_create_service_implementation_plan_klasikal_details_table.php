@@ -22,7 +22,7 @@ class CreateServiceImplementationPlanKlasikalDetailsTable extends Migration
             $table->uuid('school_id')->nullable();
             $table->bigInteger('created_at')->nullable();
             $table->bigInteger('updated_at')->nullable();
-            $table->foreign('sip_id', 'sip_id')->references('id')->on('service_implementation_plan_klasikals')->onDelete('cascade');
+            $table->foreign('sip_id')->references('id')->on('service_implementation_plan_klasikals')->onDelete('cascade');
             $table->foreign('school_id')->references('id')->on('schools')->onDelete('set null');
         });
     }
