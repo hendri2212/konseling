@@ -15,8 +15,20 @@ import vSelect from 'vue-select'
 import 'vue-select/dist/vue-select.css';
 Vue.component('v-select', vSelect)
 
-axios.defaults.baseURL = "http://127.0.0.1:8000/api/admin/";
-// axios.defaults.baseURL = "http://api.akukonselor.com/api/admin/";
+// Function to determine the base URL
+function getBaseURL() {
+  // Check if the current hostname is localhost or 127.0.0.1
+  const currentHost = window.location.hostname;
+  
+  // Simple conditional logic to set the base URL
+  if (currentHost === 'localhost' || currentHost === '127.0.0.1') {
+    return 'http://127.0.0.1:8000/api/admin/';
+  } else {
+    return 'https://apikonselor.saijaan.com/api/admin/';
+  }
+}
+
+axios.defaults.baseURL = getBaseURL();
 
 // const baseURL1 = "http://127.0.0.1:8000/api/admin/";
 // const baseURL2 = "http://127.0.0.1:8000/api/teacher/";
@@ -48,11 +60,11 @@ axios.interceptors.response.use(function (response) {
 
 Vue.use(VueAxios, axios)
 
-import { cilX, cilPlus, cilCog, cilTrash, cilGroup, cilArrowLeft, cilArrowRight, cilArrowTop, cilArrowBottom, cilPencil, cilLockLocked, cilEnvelopeClosed, cilPrint } from '@coreui/icons'
+import { cilX, cilPlus, cilCog, cilTrash, cilGroup, cilArrowLeft, cilArrowRight, cilArrowTop, cilArrowBottom, cilSpeedometer, cilPencil, cilLockLocked, cilEnvelopeClosed, cilPrint } from '@coreui/icons'
 
 new Vue({
   router,
   store,
-  icons: { cilX, cilPlus, cilCog, cilTrash, cilGroup, cilArrowLeft, cilArrowRight, cilArrowTop, cilArrowBottom, cilPencil, cilLockLocked, cilEnvelopeClosed, cilPrint },
+  icons: { cilX, cilPlus, cilCog, cilTrash, cilGroup, cilArrowLeft, cilArrowRight, cilArrowTop, cilArrowBottom, cilSpeedometer, cilPencil, cilLockLocked, cilEnvelopeClosed, cilPrint },
   render: h => h(App)
 }).$mount('#app')

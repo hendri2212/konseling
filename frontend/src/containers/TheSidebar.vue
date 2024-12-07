@@ -5,8 +5,8 @@
     :show="show"
     @update:show="check"
   >
-    <CSidebarBrand class="d-md-down-none" to="/">
-      <CIcon 
+    <CSidebarBrand class="d-md-down-none px-3 font-weight-bold" style="justify-content: flex-start;" to="/">
+      <!-- <CIcon 
         class="c-sidebar-brand-full" 
         name="logo" 
         size="custom-size" 
@@ -19,7 +19,8 @@
         size="custom-size" 
         :height="35" 
         viewBox="0 0 110 134"
-      />
+      /> -->
+      <span class="fw-bold mr-2">AKU KONSELOR</span>
       <CBadge color="success">Beta</CBadge>
     </CSidebarBrand>
 
