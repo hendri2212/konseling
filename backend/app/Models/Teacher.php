@@ -31,7 +31,8 @@ class Teacher extends Authenticatable
 
     public function school()
     {
-        return $this->hasOne(School::class, 'school_id', 'id');
+        // Teacher belongs to a School via teachers.school_id -> schools.id
+        return $this->belongsTo(School::class, 'school_id', 'id');
     }
 
     public function class()

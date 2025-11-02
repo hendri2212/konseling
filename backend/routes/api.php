@@ -72,9 +72,8 @@ Route::middleware('api')->group(function () {
             Route::resource('survey-items', SurveyItemController::class);
         });
 
-        Route::middleware('auth:schools,teachers')->get('classes', [ClassModelController::class, 'index']);
-
         Route::middleware('auth:schools')->group(function () {
+            Route::get('classes', [ClassModelController::class, 'index']); // ✅ Dan ini juga untuk schools
             Route::get('teachers/search', [GuruController::class, 'search']);
             Route::resource('teachers', GuruController::class);
             Route::post('classes/{id}/assign', [ClassModelController::class, 'assign']);
@@ -84,6 +83,7 @@ Route::middleware('api')->group(function () {
         });
 
         Route::middleware('auth:teachers')->group(function () {
+            Route::get('classes', [ClassModelController::class, 'index']); // ✅ Tambahkan ini
             Route::resource('surveys', SurveyController::class);
             Route::prefix('surveys')->group(function () {
                 Route::patch('{id}/open', [SurveyController::class, 'open']);

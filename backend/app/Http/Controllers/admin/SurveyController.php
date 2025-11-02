@@ -23,22 +23,26 @@ class SurveyController extends Controller
         $this->responseRepository = $rr;
     }
 
-    public function index(Request $request)
-    {
+    public function index(Request $request) {
         try {
             $max = 10;
-            $page = isset($request->page) ? ((int)$request->page >= 1 ? (int)$request->page : 1)  : 1;
-            $class_id = ClassModel::where('teacher_id', auth()->id())->get()->pluck('id');
-            $count_all_angket = Survey::whereIn('class_id', $class_id)->count();
-            $angket = Survey::whereIn('class_id', $class_id)->paginate($max);
-            $data = SurveyResource::collection($angket);
-            $pagination = [
-                'max_page' => ceil($count_all_angket / $max),
-                'next' => null
-            ];
-            if ($page < $pagination['max_page']) {
-                $pagination['next'] = route('surveys.index', ['page' => $page + 1]);
+            $classIds = ClassModel::where('teacher_id', auth()->id())->pluck('id');
+            
+            if ($classIds->isEmpty()) {
+                return $this->responseRepository->ResponseSuccess([], "Successfull", 200, [
+                    'max_page' => 0,
+                    'next' => null
+                ]);
             }
+            
+            $surveys = Survey::whereIn('class_id', $classIds)->paginate($max);
+            $data = SurveyResource::collection($surveys);
+            $pagination = [
+                'max_page' => $surveys->lastPage(),
+                'current_page' => $surveys->currentPage(),
+                'total' => $surveys->total(),
+                'next' => $surveys->nextPageUrl()
+            ];
             return $this->responseRepository->ResponseSuccess($data, "Successfull", 200, $pagination);
         } catch (\Exception $e) {
             return $this->responseRepository->ResponseError($e->getMessage());

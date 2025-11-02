@@ -51,7 +51,7 @@ import Loading from '../../components/Loading.vue'
 const fields = [
     { key: "email", label: 'Email' },
     { key: "name", label: 'Nama' },
-    { key: "name", label: 'Status' },
+    // { key: "name", label: 'Status' },
     {
         key: "show_details",
         label: "Action",
