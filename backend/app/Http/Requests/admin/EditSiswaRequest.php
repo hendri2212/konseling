@@ -12,6 +12,14 @@ class EditSiswaRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation()
+    {
+        // Treat empty password as null so it won't be validated or updated
+        if ($this->has('password') && trim((string)$this->password) === '') {
+            $this->merge(['password' => null]);
+        }
+    }
+
     public function rules()
     {
         return [
@@ -21,7 +29,8 @@ class EditSiswaRequest extends FormRequest
                     return $query->where('school_id', auth()->id())->where('email', '!=', $this->email);
                 }),
             ],
-            'password' => 'required|min:8',
+            // Only validate password if present; allow null (no change)
+            'password' => 'sometimes|nullable|string|min:8',
             'name' => 'required',
         ];
     }
@@ -31,7 +40,6 @@ class EditSiswaRequest extends FormRequest
         return [
             'email.required' => 'Email wajib diisi',
             'email.unique' => 'Email ini sudah digunakan siswa lain',
-            'password.required' => 'Password wajib diisi',
             'password.min' => 'Password minimal 8 karakter',
             'name.required' => 'Nama wajib diisi',
         ];

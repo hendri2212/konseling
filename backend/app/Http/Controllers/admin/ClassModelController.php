@@ -61,6 +61,9 @@ class ClassModelController extends Controller
                 $kelas->teacher_id = $request->teacher_id;
             }
             $kelas->school_id = auth()->id();
+            $nowMs = (int) round(microtime(true) * 1000);
+            $kelas->created_at = $nowMs;
+            $kelas->updated_at = $nowMs;
             $kelas->save();
 
             return $this->responseRepository->ResponseSuccess(null, "Berhasil membuat data kelas", 201);
@@ -87,6 +90,8 @@ class ClassModelController extends Controller
             if (isset($request->teacher_id)) {
                 $kelas->teacher_id = $request->teacher_id;
             }
+            // bump updated_at in milliseconds
+            $kelas->updated_at = (int) round(microtime(true) * 1000);
             $kelas->save();
 
             return $this->responseRepository->ResponseSuccess(null, "Berhasil mengubah data kelas", 200);

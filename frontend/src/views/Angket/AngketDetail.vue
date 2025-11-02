@@ -12,20 +12,19 @@
 
             <CNav variant="tabs">
                 <CNavItem>
-                    <router-link class="nav-link" :to="{ name: 'Hasil', query: { id: id } }">Analisis
-                        Siswa</router-link>
+                    <router-link class="nav-link" :to="{ name: 'Hasil', query: { id: id } }">Analisis Siswa</router-link>
                 </CNavItem>
                 <CNavItem>
-                    <router-link class="nav-link" :to="{ name: 'HasilPerButir', query: { id: id } }">Analisis
-                        Butir</router-link>
+                    <router-link class="nav-link" :to="{ name: 'HasilPerButir', query: { id: id } }">Analisis Butir</router-link>
                 </CNavItem>
-                <!-- <CNavItem>
-                    <router-link class="nav-link" :to="{ name: 'ListRplKelompok', query: { id: id } }">RPL
-                        Kelompok</router-link>
-                </CNavItem> -->
                 <CNavItem>
-                    <router-link class="nav-link" :to="{ name: 'ListRplKlasikal', query: { id: id } }">RPL
-                        Klasikal</router-link>
+                    <router-link class="nav-link" :to="{ name: 'ListRplIndividual', query: { id: id } }">RPL Individual</router-link>
+                </CNavItem>
+                <CNavItem>
+                    <router-link class="nav-link" :to="{ name: 'ListRplKelompok', query: { id: id } }">RPL Kelompok</router-link>
+                </CNavItem>
+                <CNavItem>
+                    <router-link class="nav-link" :to="{ name: 'ListRplKlasikal', query: { id: id } }">RPL Klasikal</router-link>
                 </CNavItem>
             </CNav>
         </CCard>

@@ -19,7 +19,12 @@
                     <CCol sm="12">
                         <div class="form-group">
                             <label for="">Topik / Tema Layanan</label>
-                            <v-select :options="[1, 2, 3, 4]"></v-select>
+                            <v-select
+                                v-model="rpl.sip_id"
+                                :options="items"
+                                label="question"
+                                :reduce="item => item.id"
+                            ></v-select>
                         </div>
                     </CCol>
                 </CRow>
@@ -74,6 +79,7 @@ export default {
                 sip_id: null,
                 service_implementation_plan_details: [],
             },
+            items: [],
         }
     },
     computed: {
@@ -89,6 +95,20 @@ export default {
             next({ name: "Angket" })
         }
         next()
+    },
+    created(){
+        this.axios
+        .get(`surveys/${this.survey_id}/result-per-survey-items`, {
+            headers: {
+                Authorization: "Bearer " + this.$store.state.auth.token
+            }
+        })
+        .then(response => {
+            this.items = response.data.data.map(question => ({
+                id: question.id,
+                question: question.question
+            }));
+        })
     },
     async mounted() {
         if (this.sip_id) {

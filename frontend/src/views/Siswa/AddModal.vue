@@ -92,7 +92,7 @@ export default {
                         email: this.email,
                         name: this.name,
                     }
-                    if (this.password != null) {
+                    if (this.password && this.password.trim() !== '') {
                         payload.password = this.password
                     }
                     const { data } = await this.axios.post("students", payload, {
@@ -112,10 +112,10 @@ export default {
                         email: this.email,
                         name: this.name
                     }
-                    if (this.password != '') {
+                    if (this.password && this.password.trim() !== '') {
                         payload.password = this.password
                     }
-                    const { data } = await this.axios.put(`siswa/${this.id}`, payload, {
+                    const { data } = await this.axios.put(`students/${this.id}`, payload, {
                         headers: {
                             Authorization: "Bearer " + this.$store.state.auth.token
                         }

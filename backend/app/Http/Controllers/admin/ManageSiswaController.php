@@ -92,12 +92,12 @@ class ManageSiswaController extends Controller
         //
     }
 
-    public function update(EditSiswaRequest $request, $id)
-    {
+    public function update(EditSiswaRequest $request, $id) {
         try {
             $user = Student::find($id);
             $user->email = $request->email;
-            if ($request->has('password')) {
+            // Only update password if provided and not empty
+            if ($request->filled('password')) {
                 $user->password = Hash::make($request->password);
             }
             $user->name = $request->name;

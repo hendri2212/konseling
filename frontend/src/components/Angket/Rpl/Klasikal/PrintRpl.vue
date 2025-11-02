@@ -32,7 +32,11 @@
                         </tr>
                         <!-- Child rows -->
                         <template v-for="(child2, index2) in child.child">
-                            <tr :key="getNodeKey(child2, index2, child)">
+                            <!-- <tr :key="getNodeKey(child2, index2, child)"> -->
+                            <tr
+                                v-for="(child2, index2) in child.child.slice(1)"
+                                :key="getNodeKey(child2, index2, child) + '-' + index2"
+                            >
                                 <td :rowspan="getRowspan(child2)" class="text-center align-top">
                                     {{ index2 + 1 }}
                                 </td>
@@ -63,7 +67,11 @@
                         <!-- Level 2: child2 iterations -->
                          
                         <template v-for="(child2, index2) in child.child">
-                            <tr :key="getNodeKey(child2, index2, child)">
+                            <!-- <tr :key="getNodeKey(child2, index2, child)"> -->
+                            <tr
+                                v-for="(child2, index2) in child.child.slice(1)"
+                                :key="getNodeKey(child2, index2, child) + '-' + index2"
+                            >
                                 <td :rowspan="getChild2Rowspan(child2)" class="text-center align-top">
                                     {{ index2 + 1 }}
                                 </td>
@@ -307,10 +315,33 @@ export default {
             return node.child && node.child.length > 0
         },
 
+        // getNodeKey(node, index, parent = null, suffix = '') {
+        //     const nodeId = node.id ?? `${index}-${this.hashString(node.value)}`
+        //     const parentId = parent?.id ?? ''
+        //     return `${parentId}-${nodeId}${suffix}`
+        // },
         getNodeKey(node, index, parent = null, suffix = '') {
-            const nodeId = node.id ?? `${index}-${this.hashString(node.value)}`
-            const parentId = parent?.id ?? ''
-            return `${parentId}-${nodeId}${suffix}`
+            // 1. pastikan node ada
+            if (!node) return `empty-${index}-${suffix}`
+
+            // 2. kalau id-nya null / undefined / '' / 0 → anggap TIDAK valid
+            const rawId = node.id
+            const hasValidId = rawId !== null && rawId !== undefined && rawId !== '' && rawId !== 0
+
+            const nodeId = hasValidId
+                ? rawId
+                : `${index}-${this.hashString(node.value || '')}`
+
+            // 3. parent juga dibersihkan
+            const rawParentId = parent?.id
+            const hasValidParentId = rawParentId !== null && rawParentId !== undefined && rawParentId !== '' && rawParentId !== 0
+
+            const parentId = hasValidParentId
+                ? rawParentId
+                : this.hashString(parent?.value || 'root')
+
+            // 4. gabungkan
+            return `${parentId}-${nodeId}${suffix ? '-' + suffix : ''}`
         },
 
         hashString(str) {
