@@ -81,6 +81,9 @@ import {
     cilRoom,
     cilSchool,
     cilInstitution,
+    cilCog,
+    cilTrash,
+    cilGroup,
 } from '@coreui/icons'
 import { logo } from './logo'
 
@@ -137,6 +140,9 @@ export const iconsSet = Object.assign(
         cilRoom,
         cilSchool,
         cilInstitution,
+        cilCog,
+        cilTrash,
+        cilGroup,
     },
     {
         cifUs,
