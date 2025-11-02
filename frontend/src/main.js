@@ -13,19 +13,20 @@ Vue.use(CoreuiVue)
 Vue.use(VueSweetalert2);
 import vSelect from 'vue-select'
 import 'vue-select/dist/vue-select.css';
+import { iconsSet as icons } from './assets/icons/icons'
 Vue.component('v-select', vSelect)
 
 // Function to determine the base URL
 function getBaseURL() {
-  // Check if the current hostname is localhost or 127.0.0.1
-  const currentHost = window.location.hostname;
-  
-  // Simple conditional logic to set the base URL
-  if (currentHost === 'localhost' || currentHost === '127.0.0.1') {
-    return 'http://127.0.0.1:8000/api/admin/';
-  } else {
-    return 'https://apikonselor.saijaan.com/api/admin/';
-  }
+    // Check if the current hostname is localhost or 127.0.0.1
+    const currentHost = window.location.hostname;
+
+    // Simple conditional logic to set the base URL
+    if (currentHost === 'localhost' || currentHost === '127.0.0.1') {
+        return 'http://127.0.0.1:8000/api/admin/';
+    } else {
+        return 'https://apikonselor.saijaan.com/api/admin/';
+    }
 }
 
 axios.defaults.baseURL = getBaseURL();
@@ -43,28 +44,24 @@ axios.defaults.baseURL = getBaseURL();
 
 // axios.interceptors.response.use(undefined, function (error) {
 axios.interceptors.response.use(function (response) {
-  return response
+    return response
 }, function (error) {
-  if (error) {
-    const originalRequest = error.config;
-    if (error.response.status === 401 && !originalRequest._retry) {
+    if (error) {
+        const originalRequest = error.config;
+        if (error.response.status === 401 && !originalRequest._retry) {
 
-      originalRequest._retry = true;
-      store.dispatch("auth/logout")
-      return router.push({ name: "Login" })
+            originalRequest._retry = true;
+            store.dispatch("auth/logout")
+            return router.push({ name: "Login" })
+        }
+        return Promise.reject(error);
     }
-    return Promise.reject(error);
-  }
 })
 
-
 Vue.use(VueAxios, axios)
-
-import { cilX, cilPlus, cilCog, cilTrash, cilGroup, cilArrowLeft, cilArrowRight, cilArrowTop, cilArrowBottom, cilSpeedometer, cilPencil, cilLockLocked, cilEnvelopeClosed, cilPrint } from '@coreui/icons'
-
 new Vue({
-  router,
-  store,
-  icons: { cilX, cilPlus, cilCog, cilTrash, cilGroup, cilArrowLeft, cilArrowRight, cilArrowTop, cilArrowBottom, cilSpeedometer, cilPencil, cilLockLocked, cilEnvelopeClosed, cilPrint },
-  render: h => h(App)
+    router,
+    store,
+    icons,
+    render: h => h(App)
 }).$mount('#app')
